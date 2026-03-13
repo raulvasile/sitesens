@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_blocks_program_items",
+  "info": {
+    "displayName": "Program Item",
+    "icon": "seed"
+  },
+  "attributes": {
+    "area": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

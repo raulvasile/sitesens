@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_blocks_newsletter_ctas",
+  "info": {
+    "displayName": "Newsletter CTA",
+    "icon": "envelop"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "placeholder_text": {
+      "type": "string",
+      "default": "email@exemplu.ro"
+    }
+  }
+}

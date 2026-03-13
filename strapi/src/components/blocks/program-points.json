@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_blocks_program_points",
+  "info": {
+    "displayName": "Program Points",
+    "icon": "seed"
+  },
+  "attributes": {
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blocks.program-item"
+    },
+    "show_link": {
+      "type": "boolean",
+      "default": true
+    },
+    "link_text": {
+      "type": "string",
+      "default": "Vezi programul complet"
+    },
+    "link_url": {
+      "type": "string",
+      "default": "/despre-noi"
+    }
+  }
+}

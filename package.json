@@ -1,0 +1,14 @@
+{
+  "name": "sens-site",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n strapi,frontend -c blue,green \"npm run dev:strapi\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:strapi": "cd strapi && npm run develop",
+    "build:frontend": "cd frontend && npm run build",
+    "build:strapi": "cd strapi && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

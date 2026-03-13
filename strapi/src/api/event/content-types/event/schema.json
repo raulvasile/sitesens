@@ -1,0 +1,71 @@
+{
+  "kind": "collectionType",
+  "collectionName": "events",
+  "info": {
+    "singularName": "event",
+    "pluralName": "events",
+    "displayName": "Event",
+    "description": "Evenimente: dezbateri, acțiuni, marșuri, online"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "start_date": {
+      "type": "datetime",
+      "required": true
+    },
+    "end_date": {
+      "type": "datetime"
+    },
+    "location_name": {
+      "type": "string"
+    },
+    "location_coords": {
+      "type": "json"
+    },
+    "cover_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "max_participants": {
+      "type": "integer"
+    },
+    "registration_open": {
+      "type": "boolean",
+      "default": true
+    },
+    "event_type": {
+      "type": "enumeration",
+      "enum": ["dezbatere", "actiune", "mars", "online"],
+      "required": true
+    },
+    "social_posts": {
+      "type": "component",
+      "repeatable": true,
+      "component": "event.social-post"
+    },
+    "ical_url": {
+      "type": "string"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

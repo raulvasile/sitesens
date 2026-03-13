@@ -1,0 +1,40 @@
+{
+  "kind": "singleType",
+  "collectionName": "donate_pages",
+  "info": {
+    "singularName": "donate-page",
+    "pluralName": "donate-pages",
+    "displayName": "Donate Page",
+    "description": "Pagina de donații — sume, CMF, transparență"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Donează pentru SENS"
+    },
+    "description": {
+      "type": "text"
+    },
+    "preset_amounts": {
+      "type": "json",
+      "default": [25, 50, 100, 200]
+    },
+    "cmf_text": {
+      "type": "text",
+      "default": "Mandatar financiar CMF nr. 11240065"
+    },
+    "transparency_items": {
+      "type": "json"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

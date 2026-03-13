@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_event_social_posts",
+  "info": {
+    "displayName": "Social Post",
+    "icon": "message"
+  },
+  "attributes": {
+    "platform": {
+      "type": "enumeration",
+      "enum": ["facebook", "instagram", "twitter", "tiktok"],
+      "required": true
+    },
+    "post_url": {
+      "type": "string",
+      "required": true
+    },
+    "embed_text": {
+      "type": "text"
+    },
+    "media": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images", "videos"]
+    }
+  }
+}

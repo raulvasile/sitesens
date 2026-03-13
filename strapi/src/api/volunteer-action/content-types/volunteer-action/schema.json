@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "volunteer_actions",
+  "info": {
+    "singularName": "volunteer-action",
+    "pluralName": "volunteer-actions",
+    "displayName": "Volunteer Action",
+    "description": "Acțiuni de voluntariat — participare, QR check-in, ore"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "location": {
+      "type": "string"
+    },
+    "required_volunteers": {
+      "type": "integer",
+      "min": 1
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["upcoming", "ongoing", "completed"],
+      "default": "upcoming",
+      "required": true
+    }
+  }
+}

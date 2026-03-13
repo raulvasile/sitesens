@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_blocks_image_galleries",
+  "info": {
+    "displayName": "Image Gallery",
+    "icon": "picture"
+  },
+  "attributes": {
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "layout": {
+      "type": "enumeration",
+      "enum": ["grid", "carousel"],
+      "default": "grid"
+    },
+    "caption": {
+      "type": "string"
+    }
+  }
+}

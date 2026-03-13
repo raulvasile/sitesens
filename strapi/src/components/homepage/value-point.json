@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_homepage_value_points",
+  "info": {
+    "displayName": "Value Point",
+    "icon": "check"
+  },
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

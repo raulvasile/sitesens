@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "donations",
+  "info": {
+    "singularName": "donation",
+    "pluralName": "donations",
+    "displayName": "Donation",
+    "description": "Donații — conformitate CMF + GDPR"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "decimal",
+      "required": true,
+      "min": 1
+    },
+    "donor_name": {
+      "type": "string",
+      "required": true,
+      "private": true
+    },
+    "donor_cnp": {
+      "type": "text",
+      "private": true
+    },
+    "donor_email": {
+      "type": "email",
+      "required": true,
+      "private": true
+    },
+    "payment_method": {
+      "type": "enumeration",
+      "enum": ["card", "transfer"],
+      "required": true
+    },
+    "payment_reference": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "completed", "failed"],
+      "default": "pending",
+      "required": true
+    },
+    "is_recurring": {
+      "type": "boolean",
+      "default": false
+    },
+    "cmf_reported": {
+      "type": "boolean",
+      "default": false
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

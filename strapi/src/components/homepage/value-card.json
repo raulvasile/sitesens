@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_homepage_value_cards",
+  "info": {
+    "displayName": "Value Card",
+    "icon": "star"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "short_text": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "points": {
+      "type": "component",
+      "repeatable": true,
+      "component": "homepage.value-point"
+    },
+    "link_text": {
+      "type": "string"
+    },
+    "link_url": {
+      "type": "string"
+    }
+  }
+}
