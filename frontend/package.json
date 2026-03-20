@@ -22,6 +22,7 @@
 	},
 	"dependencies": {
 		"@sveltejs/adapter-cloudflare": "^7.2.8",
+		"isomorphic-dompurify": "^3.5.1",
 		"sveltekit-superforms": "^2.30.0",
 		"zod": "^4.3.6"
 	}

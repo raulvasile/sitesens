@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { sanitizeHtml, sanitizeUrl } from '$lib/sanitize';
+
 	interface Props {
 		data: {
 			body: unknown;
@@ -18,11 +20,14 @@
 		switch (block.type) {
 			case 'paragraph':
 				return `<p>${renderInline(block.children as unknown[])}</p>`;
-			case 'heading':
-				return `<h${block.level}>${renderInline(block.children as unknown[])}</h${block.level}>`;
-			case 'list':
+			case 'heading': {
+				const level = Math.min(Math.max(Number(block.level) || 2, 1), 6);
+				return `<h${level}>${renderInline(block.children as unknown[])}</h${level}>`;
+			}
+			case 'list': {
 				const tag = block.format === 'ordered' ? 'ol' : 'ul';
 				return `<${tag}>${(block.children as unknown[]).map((item) => `<li>${renderInline((item as Record<string, unknown>).children as unknown[])}</li>`).join('')}</${tag}>`;
+			}
 			case 'quote':
 				return `<blockquote>${renderInline(block.children as unknown[])}</blockquote>`;
 			default:
@@ -30,19 +35,29 @@
 		}
 	}
 
+	function escapeHtml(str: string): string {
+		return str
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
+	}
+
 	function renderInline(children: unknown[]): string {
 		if (!Array.isArray(children)) return '';
 		return children
 			.map((child) => {
 				const c = child as Record<string, unknown>;
-				let text = c.text as string || '';
+				if (c.type === 'link') {
+					const href = sanitizeUrl(c.url as string);
+					if (!href) return renderInline(c.children as unknown[]);
+					return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${renderInline(c.children as unknown[])}</a>`;
+				}
+				let text = escapeHtml(c.text as string || '');
 				if (c.bold) text = `<strong>${text}</strong>`;
 				if (c.italic) text = `<em>${text}</em>`;
 				if (c.underline) text = `<u>${text}</u>`;
 				if (c.code) text = `<code>${text}</code>`;
-				if (c.type === 'link') {
-					text = `<a href="${c.url}">${renderInline(c.children as unknown[])}</a>`;
-				}
 				return text;
 			})
 			.join('');
@@ -53,7 +68,7 @@
 	<div class="container">
 		<div class="text-block__content prose">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html renderBlocks(data.body)}
+			{@html sanitizeHtml(renderBlocks(data.body))}
 		</div>
 	</div>
 </section>

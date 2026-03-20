@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getIconSvg } from '$lib/icons';
+	import { sanitizeSvg } from '$lib/sanitize';
 
 	interface CardPoint { text: string; }
 	interface CardItem {
@@ -35,7 +36,7 @@
 						{@const svg = getIconSvg(card.icon)}
 						{#if svg}
 							<span class="card-grid__icon card-grid__icon--svg">
-								{@html svg}
+								{@html sanitizeSvg(svg)}
 							</span>
 						{:else}
 							<!-- Fallback: render raw text (emoji or unknown key) -->

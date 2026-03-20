@@ -737,9 +737,17 @@ export interface ApiMembershipRequestMembershipRequest
     draftAndPublish: false;
   };
   attributes: {
-    address: Schema.Attribute.Text & Schema.Attribute.Required;
+    address: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
     birth_date: Schema.Attribute.Date & Schema.Attribute.Required;
-    city: Schema.Attribute.String & Schema.Attribute.Required;
+    city: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
     consent_data_processing: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
@@ -751,25 +759,53 @@ export interface ApiMembershipRequestMembershipRequest
     consent_statute: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
-    county: Schema.Attribute.String & Schema.Attribute.Required;
+    county: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email &
       Schema.Attribute.Required &
-      Schema.Attribute.Unique;
-    first_name: Schema.Attribute.String & Schema.Attribute.Required;
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 254;
+      }>;
+    first_name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+        minLength: 1;
+      }>;
     interests: Schema.Attribute.JSON;
-    last_name: Schema.Attribute.String & Schema.Attribute.Required;
+    last_name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+        minLength: 1;
+      }>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::membership-request.membership-request'
     > &
       Schema.Attribute.Private;
-    motivation: Schema.Attribute.Text;
-    notes: Schema.Attribute.Text & Schema.Attribute.Private;
-    phone: Schema.Attribute.String & Schema.Attribute.Required;
+    motivation: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 1000;
+      }>;
+    notes: Schema.Attribute.Text &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 2000;
+      }>;
+    phone: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
     publishedAt: Schema.Attribute.DateTime;
     status: Schema.Attribute.Enumeration<['pending', 'approved', 'rejected']> &
       Schema.Attribute.Required &
@@ -834,17 +870,31 @@ export interface ApiNewsletterSubscriberNewsletterSubscriber
       Schema.Attribute.Private;
     email: Schema.Attribute.Email &
       Schema.Attribute.Required &
-      Schema.Attribute.Unique;
-    ip_address: Schema.Attribute.String & Schema.Attribute.Private;
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 254;
+      }>;
+    ip_address: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 45;
+      }>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::newsletter-subscriber.newsletter-subscriber'
     > &
       Schema.Attribute.Private;
-    name: Schema.Attribute.String;
+    name: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
     publishedAt: Schema.Attribute.DateTime;
-    source: Schema.Attribute.String & Schema.Attribute.DefaultTo<'website'>;
+    source: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Schema.Attribute.DefaultTo<'website'>;
     status: Schema.Attribute.Enumeration<
       ['pending', 'confirmed', 'unsubscribed']
     > &

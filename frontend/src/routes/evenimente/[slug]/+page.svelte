@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
+	import { sanitizeHtml, sanitizeUrl } from '$lib/sanitize';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import type { PageData } from './$types';
@@ -55,7 +56,7 @@
 			case 'paragraph':
 				return `<p>${renderInline(block.children as unknown[])}</p>`;
 			case 'heading': {
-				const level = block.level ?? 2;
+				const level = Math.min(Math.max(Number(block.level) || 2, 1), 6);
 				return `<h${level}>${renderInline(block.children as unknown[])}</h${level}>`;
 			}
 			case 'list': {
@@ -72,17 +73,27 @@
 		}
 	}
 
+	function escapeHtml(str: string): string {
+		return str
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
+	}
+
 	function renderInline(children: unknown[]): string {
 		if (!Array.isArray(children)) return '';
 		return children
 			.map((child: any) => {
-				let text: string = child.text ?? '';
+				if (child.type === 'link') {
+					const href = sanitizeUrl(child.url as string);
+					if (!href) return renderInline(child.children);
+					return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${renderInline(child.children)}</a>`;
+				}
+				let text: string = escapeHtml(child.text ?? '');
 				if (child.bold) text = `<strong>${text}</strong>`;
 				if (child.italic) text = `<em>${text}</em>`;
 				if (child.underline) text = `<u>${text}</u>`;
-				if (child.type === 'link') {
-					return `<a href="${child.url}" target="_blank" rel="noopener">${renderInline(child.children)}</a>`;
-				}
 				return text;
 			})
 			.join('');
@@ -135,7 +146,7 @@
 	<main class="event-content">
 		{#if event.description}
 			<div class="rich-text">
-				{@html renderBlocks(event.description)}
+				{@html sanitizeHtml(renderBlocks(event.description))}
 			</div>
 		{/if}
 

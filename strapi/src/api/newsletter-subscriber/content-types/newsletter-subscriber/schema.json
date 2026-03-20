@@ -15,10 +15,12 @@
     "email": {
       "type": "email",
       "required": true,
-      "unique": true
+      "unique": true,
+      "maxLength": 254
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "maxLength": 200
     },
     "consent_date": {
       "type": "datetime",
@@ -26,7 +28,8 @@
     },
     "source": {
       "type": "string",
-      "default": "website"
+      "default": "website",
+      "maxLength": 50
     },
     "status": {
       "type": "enumeration",
@@ -36,7 +39,8 @@
     },
     "ip_address": {
       "type": "string",
-      "private": true
+      "private": true,
+      "maxLength": 45
     }
   }
 }

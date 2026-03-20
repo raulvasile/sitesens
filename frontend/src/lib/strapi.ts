@@ -94,13 +94,19 @@ export async function mutateStrapi<T = unknown>(
 	return res.json();
 }
 
-const PREVIEW_SECRET = import.meta.env.VITE_PREVIEW_SECRET || 'sens-preview-secret-local-dev';
+const PREVIEW_SECRET = import.meta.env.VITE_PREVIEW_SECRET;
+
+if (!PREVIEW_SECRET && typeof window === 'undefined') {
+	console.warn('[SENS] VITE_PREVIEW_SECRET is not set — preview mode is disabled in production.');
+}
 
 /**
  * Verifică dacă URL-ul curent este în modul preview.
  * Returnează parametrii Strapi necesari pentru draft content.
  */
 export function getPreviewStatus(url: URL): { isPreview: boolean; params: Record<string, string> } {
+	if (!PREVIEW_SECRET) return { isPreview: false, params: {} };
+
 	const secret = url.searchParams.get('secret');
 	const status = url.searchParams.get('status');
 

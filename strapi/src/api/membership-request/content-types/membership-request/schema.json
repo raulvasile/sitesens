@@ -14,20 +14,27 @@
   "attributes": {
     "first_name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 100,
+      "minLength": 1
     },
     "last_name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 100,
+      "minLength": 1
     },
     "email": {
       "type": "email",
       "required": true,
-      "unique": true
+      "unique": true,
+      "maxLength": 254
     },
     "phone": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 20,
+      "regex": "^(\\+?4)?0[0-9]{9}$"
     },
     "birth_date": {
       "type": "date",
@@ -35,18 +42,22 @@
     },
     "county": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 50
     },
     "city": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 100
     },
     "address": {
       "type": "text",
-      "required": true
+      "required": true,
+      "maxLength": 500
     },
     "motivation": {
-      "type": "text"
+      "type": "text",
+      "maxLength": 1000
     },
     "interests": {
       "type": "json"
@@ -78,7 +89,8 @@
     },
     "notes": {
       "type": "text",
-      "private": true
+      "private": true,
+      "maxLength": 2000
     }
   }
 }
