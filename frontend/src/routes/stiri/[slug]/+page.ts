@@ -1,8 +1,10 @@
 import type { PageLoad } from './$types';
-import { fetchStrapi } from '$lib/strapi';
+import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
 import { error } from '@sveltejs/kit';
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, url }) => {
+	const { params: previewParams } = getPreviewStatus(url);
+
 	const [articleRes, relatedRes] = await Promise.all([
 		fetchStrapi('/articles', {
 			'filters[slug][$eq]': params.slug,
@@ -11,6 +13,7 @@ export const load: PageLoad = async ({ params }) => {
 			'populate[author][populate][photo]': 'true',
 			'populate[tags]': 'true',
 			'populate[seo][populate][og_image]': 'true',
+			...previewParams,
 		}),
 		// Articole din aceeași categorie (se va filtra pe client)
 		fetchStrapi('/articles', {

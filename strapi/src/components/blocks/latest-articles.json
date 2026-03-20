@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_blocks_latest_articles",
+  "info": {
+    "displayName": "Ultimele Articole",
+    "icon": "file"
+  },
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "default": "Ultimele știri"
+    },
+    "count": {
+      "type": "integer",
+      "default": 3,
+      "min": 1,
+      "max": 12
+    },
+    "show_category": {
+      "type": "boolean",
+      "default": true
+    },
+    "cta_text": {
+      "type": "string",
+      "default": "Toate știrile"
+    },
+    "cta_link": {
+      "type": "string",
+      "default": "/stiri"
+    }
+  }
+}

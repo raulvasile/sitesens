@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
+	import SeoHead from '$lib/components/SeoHead.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -102,10 +103,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{event.seo?.meta_title ?? event.title} — SENS</title>
-	<meta name="description" content={event.seo?.meta_description ?? `${event.title} — eveniment Partidul SENS`} />
-</svelte:head>
+<SeoHead
+	title={event.seo?.meta_title ?? event.title}
+	description={event.seo?.meta_description ?? `${event.title} — eveniment Partidul SENS`}
+/>
 
 <!-- ═══════ HERO ═══════ -->
 <section

@@ -1,12 +1,15 @@
 import type { PageLoad } from './$types';
-import { fetchStrapi } from '$lib/strapi';
+import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
 
-export const load: PageLoad = async () => {
+export const load: PageLoad = async ({ url }) => {
+	const { params: previewParams } = getPreviewStatus(url);
+
 	const [pageRes, teamRes] = await Promise.all([
 		fetchStrapi('/pages', {
 			'filters[slug][$eq]': 'despre-noi',
 			'populate[content][populate]': '*',
 			'populate[seo]': 'true',
+			...previewParams,
 		}).catch(() => ({ data: [] })),
 		fetchStrapi('/team-members', {
 			'populate': '*',

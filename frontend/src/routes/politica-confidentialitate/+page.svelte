@@ -1,7 +1,12 @@
 <!-- TODO: Faza 1 — Conținut GDPR/Privacy Policy (din Strapi sau static) -->
-<svelte:head>
-	<title>Politica de confidențialitate — SENS</title>
-</svelte:head>
+<script lang="ts">
+	import SeoHead from '$lib/components/SeoHead.svelte';
+</script>
+
+<SeoHead
+	title="Politica de confidențialitate"
+	description="Politica de confidențialitate a Partidului SENS. Informații despre protecția datelor personale."
+/>
 
 <div class="container page-content">
 	<nav aria-label="Breadcrumb" class="breadcrumb">

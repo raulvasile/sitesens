@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import { fetchStrapi } from '$lib/strapi';
+import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
 import { error } from '@sveltejs/kit';
 
 export interface EventDetail {
@@ -24,7 +24,9 @@ export interface EventDetail {
 	} | null;
 }
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, url }) => {
+	const { params: previewParams } = getPreviewStatus(url);
+
 	const res = await fetchStrapi<EventDetail[]>('/events', {
 		'filters[slug][$eq]': params.slug,
 		'populate[cover_image][fields][0]': 'url',
@@ -32,7 +34,8 @@ export const load: PageLoad = async ({ params }) => {
 		'populate[cover_image][fields][2]': 'width',
 		'populate[cover_image][fields][3]': 'height',
 		'populate[social_posts]': 'true',
-		'populate[seo]': 'true'
+		'populate[seo]': 'true',
+		...previewParams,
 	});
 
 	const event = res.data?.[0];

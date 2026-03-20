@@ -93,6 +93,26 @@ export async function mutateStrapi<T = unknown>(
 	return res.json();
 }
 
+const PREVIEW_SECRET = import.meta.env.VITE_PREVIEW_SECRET || 'sens-preview-secret-local-dev';
+
+/**
+ * Verifică dacă URL-ul curent este în modul preview.
+ * Returnează parametrii Strapi necesari pentru draft content.
+ */
+export function getPreviewStatus(url: URL): { isPreview: boolean; params: Record<string, string> } {
+	const secret = url.searchParams.get('secret');
+	const status = url.searchParams.get('status');
+
+	if (secret === PREVIEW_SECRET && status === 'draft') {
+		return {
+			isPreview: true,
+			params: { status: 'draft' }
+		};
+	}
+
+	return { isPreview: false, params: {} };
+}
+
 /**
  * Construiește URL complet pentru media din Strapi.
  */

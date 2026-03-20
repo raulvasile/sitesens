@@ -1,5 +1,6 @@
 import type { PageLoad } from './$types';
 import { fetchStrapi } from '$lib/strapi';
+import { error } from '@sveltejs/kit';
 
 export const load: PageLoad = async ({ url }) => {
 	const page = parseInt(url.searchParams.get('page') ?? '1');
@@ -24,17 +25,22 @@ export const load: PageLoad = async ({ url }) => {
 		params['filters[title][$containsi]'] = search;
 	}
 
-	const [articlesRes, categoriesRes] = await Promise.all([
-		fetchStrapi('/articles', params).catch(() => ({ data: [], meta: {} })),
-		fetchStrapi('/categories', { 'sort[0]': 'name:asc' }).catch(() => ({ data: [] })),
-	]);
+	try {
+		const [articlesRes, categoriesRes] = await Promise.all([
+			fetchStrapi('/articles', params),
+			fetchStrapi('/categories', { 'sort[0]': 'name:asc' }).catch(() => ({ data: [], meta: {} })),
+		]);
 
-	return {
-		articles: (articlesRes as any)?.data ?? [],
-		pagination: (articlesRes as any)?.meta?.pagination ?? { page: 1, pageCount: 1, total: 0 },
-		categories: (categoriesRes as any)?.data ?? [],
-		currentCategory: category,
-		currentSearch: search,
-		currentPage: page,
-	};
+		return {
+			articles: (articlesRes as any)?.data ?? [],
+			pagination: (articlesRes as any)?.meta?.pagination ?? { page: 1, pageCount: 1, total: 0 },
+			categories: (categoriesRes as any)?.data ?? [],
+			currentCategory: category,
+			currentSearch: search,
+			currentPage: page,
+			loadError: false,
+		};
+	} catch {
+		throw error(503, 'Serviciul nu este disponibil momentan. Încearcă din nou în câteva momente.');
+	}
 };

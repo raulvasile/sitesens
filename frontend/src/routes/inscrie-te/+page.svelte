@@ -1,8 +1,12 @@
 <!-- TODO: Faza 2 — Formular multi-step (5 pași): Date personale, Adresă, Motivație, Consimțământ, Confirmare -->
-<svelte:head>
-	<title>Înscrie-te în SENS</title>
-	<meta name="description" content="Alătură-te Partidului SENS. Completează formularul de înscriere." />
-</svelte:head>
+<script lang="ts">
+	import SeoHead from '$lib/components/SeoHead.svelte';
+</script>
+
+<SeoHead
+	title="Înscrie-te în SENS"
+	description="Alătură-te Partidului SENS. Completează formularul de înscriere."
+/>
 
 <div class="container page-header">
 	<nav aria-label="Breadcrumb" class="breadcrumb">

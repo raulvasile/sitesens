@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { getStrapiMediaUrl } from '$lib/strapi';
+	import SeoHead from '$lib/components/SeoHead.svelte';
 
 	let { data } = $props();
 	let searchValue = $state(data.currentSearch);
@@ -42,10 +43,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Știri — SENS</title>
-	<meta name="description" content="Ultimele comunicate, analize și acțiuni ale Partidului SENS." />
-</svelte:head>
+<SeoHead
+	title="Știri"
+	description="Ultimele comunicate, analize și acțiuni ale Partidului SENS."
+/>
 
 <div class="container stiri-page">
 	<nav aria-label="Breadcrumb" class="breadcrumb">

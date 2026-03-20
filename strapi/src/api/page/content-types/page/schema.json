@@ -4,7 +4,7 @@
   "info": {
     "singularName": "page",
     "pluralName": "pages",
-    "displayName": "Page",
+    "displayName": "Pagină",
     "description": "Pagini statice cu layout flexibil (Dynamic Zone)"
   },
   "options": {
@@ -33,7 +33,12 @@
         "blocks.video-embed",
         "blocks.stats-counter",
         "blocks.program-points",
-        "blocks.newsletter-cta"
+        "blocks.newsletter-cta",
+        "blocks.card-grid",
+        "blocks.latest-articles",
+        "blocks.upcoming-events",
+        "blocks.contact-form",
+        "blocks.spacer"
       ]
     },
     "seo": {

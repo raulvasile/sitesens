@@ -5,23 +5,29 @@
 	import Footer from '$components/layout/Footer.svelte';
 	import Toast from '$components/ui/Toast.svelte';
 	import AccessibilityWidget from '$components/ui/AccessibilityWidget.svelte';
+	import NavigationProgress from '$components/ui/NavigationProgress.svelte';
+	import PreviewBanner from '$lib/components/PreviewBanner.svelte';
+	import { page } from '$app/stores';
 	import type { Snippet } from 'svelte';
 
-	interface Props { children: Snippet; }
-	let { children }: Props = $props();
+	interface Props { children: Snippet; data: any; }
+	let { children, data }: Props = $props();
+	const isPreview = $derived($page.url.searchParams.get('status') === 'draft');
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Navbar />
+<NavigationProgress />
+<Navbar navigation={data.navigation} />
 
 <main class="main-content">
 	{@render children()}
 </main>
 
 <Footer />
+<PreviewBanner visible={isPreview} />
 <Toast />
 <AccessibilityWidget />
 

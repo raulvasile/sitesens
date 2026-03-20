@@ -10,6 +10,11 @@
 	import StatsCounter from './blocks/StatsCounter.svelte';
 	import ProgramPoints from './blocks/ProgramPoints.svelte';
 	import NewsletterCta from './blocks/NewsletterCta.svelte';
+	import CardGrid from './blocks/CardGrid.svelte';
+	import LatestArticles from './blocks/LatestArticles.svelte';
+	import UpcomingEvents from './blocks/UpcomingEvents.svelte';
+	import ContactForm from './blocks/ContactForm.svelte';
+	import Spacer from './blocks/Spacer.svelte';
 
 	interface Props {
 		content: Array<{ __component: string; [key: string]: unknown }>;
@@ -28,7 +33,12 @@
 		'blocks.video-embed': VideoEmbed,
 		'blocks.stats-counter': StatsCounter,
 		'blocks.program-points': ProgramPoints,
-		'blocks.newsletter-cta': NewsletterCta
+		'blocks.newsletter-cta': NewsletterCta,
+		'blocks.card-grid': CardGrid,
+		'blocks.latest-articles': LatestArticles,
+		'blocks.upcoming-events': UpcomingEvents,
+		'blocks.contact-form': ContactForm,
+		'blocks.spacer': Spacer
 	};
 </script>
 

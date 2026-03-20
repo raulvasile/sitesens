@@ -434,7 +434,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   collectionName: 'articles';
   info: {
     description: '\u0218tiri, comunicate de pres\u0103, analize';
-    displayName: 'Article';
+    displayName: 'Blog';
     pluralName: 'articles';
     singularName: 'article';
   };
@@ -485,7 +485,7 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
     description: 'Categorii pentru articole';
-    displayName: 'Category';
+    displayName: 'Categorii';
     pluralName: 'categories';
     singularName: 'category';
   };
@@ -519,7 +519,7 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
   collectionName: 'contact_pages';
   info: {
     description: 'Pagina de contact \u2014 date, formular, newsletter';
-    displayName: 'Contact Page';
+    displayName: 'Pagina Contact';
     pluralName: 'contact-pages';
     singularName: 'contact-page';
   };
@@ -558,7 +558,7 @@ export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
   collectionName: 'donate_pages';
   info: {
     description: 'Pagina de dona\u021Bii \u2014 sume, CMF, transparen\u021B\u0103';
-    displayName: 'Donate Page';
+    displayName: 'Pagina Dona\u021Bii';
     pluralName: 'donate-pages';
     singularName: 'donate-page';
   };
@@ -592,66 +592,11 @@ export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
   };
 }
 
-export interface ApiDonationDonation extends Struct.CollectionTypeSchema {
-  collectionName: 'donations';
-  info: {
-    description: 'Dona\u021Bii \u2014 conformitate CMF + GDPR';
-    displayName: 'Donation';
-    pluralName: 'donations';
-    singularName: 'donation';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    amount: Schema.Attribute.Decimal &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMax<
-        {
-          min: 1;
-        },
-        number
-      >;
-    cmf_reported: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    donor_cnp: Schema.Attribute.Text & Schema.Attribute.Private;
-    donor_email: Schema.Attribute.Email &
-      Schema.Attribute.Required &
-      Schema.Attribute.Private;
-    donor_name: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Private;
-    is_recurring: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::donation.donation'
-    > &
-      Schema.Attribute.Private;
-    payment_method: Schema.Attribute.Enumeration<['card', 'transfer']> &
-      Schema.Attribute.Required;
-    payment_reference: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<['pending', 'completed', 'failed']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'pending'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-  };
-}
-
 export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   collectionName: 'events';
   info: {
     description: 'Evenimente: dezbateri, ac\u021Biuni, mar\u0219uri, online';
-    displayName: 'Event';
+    displayName: 'Eveniment';
     pluralName: 'events';
     singularName: 'event';
   };
@@ -693,8 +638,8 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
 export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
   collectionName: 'homepages';
   info: {
-    description: 'Con\u021Binutul paginii principale';
-    displayName: 'Homepage';
+    description: 'Con\u021Binutul paginii principale \u2014 page builder cu Dynamic Zone';
+    displayName: 'Pagina Principal\u0103';
     pluralName: 'homepages';
     singularName: 'homepage';
   };
@@ -702,77 +647,72 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    content: Schema.Attribute.DynamicZone<
+      [
+        'blocks.hero',
+        'blocks.text-block',
+        'blocks.cta-banner',
+        'blocks.image-gallery',
+        'blocks.accordion',
+        'blocks.quote',
+        'blocks.video-embed',
+        'blocks.stats-counter',
+        'blocks.program-points',
+        'blocks.newsletter-cta',
+        'blocks.card-grid',
+        'blocks.latest-articles',
+        'blocks.upcoming-events',
+        'blocks.contact-form',
+        'blocks.spacer',
+      ]
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    hero_cta_link: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'/inscrie-te'>;
-    hero_cta_text: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'\u00CEnscrie-te'>;
-    hero_image: Schema.Attribute.Media<'images'>;
-    hero_subtitle: Schema.Attribute.Text;
-    hero_title: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::homepage.homepage'
     > &
       Schema.Attribute.Private;
-    newsletter_description: Schema.Attribute.Text;
-    newsletter_title: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'R\u0103m\u00E2i la curent'>;
-    program_points: Schema.Attribute.Component<'blocks.program-item', true>;
     publishedAt: Schema.Attribute.DateTime;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    values: Schema.Attribute.Component<'homepage.value-card', true>;
   };
 }
 
-export interface ApiMemberProfileMemberProfile
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'member_profiles';
+export interface ApiNavigationNavigation extends Struct.SingleTypeSchema {
+  collectionName: 'navigations';
   info: {
-    description: 'Profil membru partid \u2014 aderare, card digital, gamification';
-    displayName: 'Member Profile';
-    pluralName: 'member-profiles';
-    singularName: 'member-profile';
+    description: 'Meniul principal al site-ului \u2014 gestionat din CMS';
+    displayName: 'Meniu Header';
+    pluralName: 'navigations';
+    singularName: 'navigation';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    card_number: Schema.Attribute.String & Schema.Attribute.Unique;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    filial: Schema.Attribute.String;
-    gamification_data: Schema.Attribute.JSON;
-    joined_date: Schema.Attribute.Date;
+    cta_link: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'/inscrie-te'>;
+    cta_text: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\u00CEnscrie-te'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::member-profile.member-profile'
+      'api::navigation.navigation'
     > &
       Schema.Attribute.Private;
-    membership_type: Schema.Attribute.Enumeration<
-      ['simpatizant', 'membru', 'moderator']
-    > &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'simpatizant'>;
+    main_menu: Schema.Attribute.Component<'navigation.menu-item', true>;
     publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<['pending', 'active', 'suspended']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'pending'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::users-permissions.user'
-    >;
   };
 }
 
@@ -781,7 +721,7 @@ export interface ApiNewsletterSubscriberNewsletterSubscriber
   collectionName: 'newsletter_subscribers';
   info: {
     description: 'Abona\u021Bi newsletter \u2014 double opt-in, GDPR';
-    displayName: 'Newsletter Subscriber';
+    displayName: 'Abonat Newsletter';
     pluralName: 'newsletter-subscribers';
     singularName: 'newsletter-subscriber';
   };
@@ -821,7 +761,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
     description: 'Pagini statice cu layout flexibil (Dynamic Zone)';
-    displayName: 'Page';
+    displayName: 'Pagin\u0103';
     pluralName: 'pages';
     singularName: 'page';
   };
@@ -841,6 +781,11 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'blocks.stats-counter',
         'blocks.program-points',
         'blocks.newsletter-cta',
+        'blocks.card-grid',
+        'blocks.latest-articles',
+        'blocks.upcoming-events',
+        'blocks.contact-form',
+        'blocks.spacer',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -893,7 +838,7 @@ export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
   collectionName: 'team_members';
   info: {
     description: 'Membri echip\u0103 \u0219i conducere partid';
-    displayName: 'Team Member';
+    displayName: 'Membru Conducere';
     pluralName: 'team-members';
     singularName: 'team-member';
   };
@@ -919,49 +864,6 @@ export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     role: Schema.Attribute.String & Schema.Attribute.Required;
     social_links: Schema.Attribute.Component<'shared.social-link', true>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiVolunteerActionVolunteerAction
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'volunteer_actions';
-  info: {
-    description: 'Ac\u021Biuni de voluntariat \u2014 participare, QR check-in, ore';
-    displayName: 'Volunteer Action';
-    pluralName: 'volunteer-actions';
-    singularName: 'volunteer-action';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    date: Schema.Attribute.Date & Schema.Attribute.Required;
-    description: Schema.Attribute.Text;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::volunteer-action.volunteer-action'
-    > &
-      Schema.Attribute.Private;
-    location: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    required_volunteers: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          min: 1;
-        },
-        number
-      >;
-    status: Schema.Attribute.Enumeration<['upcoming', 'ongoing', 'completed']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'upcoming'>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1483,15 +1385,13 @@ declare module '@strapi/strapi' {
       'api::category.category': ApiCategoryCategory;
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::donate-page.donate-page': ApiDonatePageDonatePage;
-      'api::donation.donation': ApiDonationDonation;
       'api::event.event': ApiEventEvent;
       'api::homepage.homepage': ApiHomepageHomepage;
-      'api::member-profile.member-profile': ApiMemberProfileMemberProfile;
+      'api::navigation.navigation': ApiNavigationNavigation;
       'api::newsletter-subscriber.newsletter-subscriber': ApiNewsletterSubscriberNewsletterSubscriber;
       'api::page.page': ApiPagePage;
       'api::tag.tag': ApiTagTag;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
-      'api::volunteer-action.volunteer-action': ApiVolunteerActionVolunteerAction;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

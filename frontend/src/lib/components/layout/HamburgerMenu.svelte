@@ -1,35 +1,27 @@
 <script lang="ts">
 	import { currentUser } from '$stores/auth';
+	import type { NavigationData } from '../../../routes/+layout';
 
 	interface Props {
 		open: boolean;
 		onClose: () => void;
+		navigation?: NavigationData;
 	}
 
-	let { open, onClose }: Props = $props();
+	let { open, onClose, navigation }: Props = $props();
 
-	const mainLinks = [
-		{ href: '/', label: 'Acasă' },
-		{ href: '/stiri', label: 'Știri' },
-		{
-			label: 'Despre Noi',
-			children: [
-				{ href: '/despre-noi', label: 'Misiune & Viziune' },
-				{ href: '/despre-noi#echipa', label: 'Echipa' },
-				{ href: '/despre-noi#program', label: 'Program Politic' },
-				{ href: '/despre-noi#statut', label: 'Statut' },
-				{ href: '/despre-noi#manifest', label: 'Manifest' }
-			]
-		},
-		{ href: '/evenimente', label: 'Evenimente' },
-		{ href: '/contact', label: 'Contact' },
-		{ href: '/doneaza', label: 'Donează' }
-	];
+	const menuItems = $derived(navigation?.main_menu ?? []);
+	const ctaText = $derived(navigation?.cta_text ?? 'Înscrie-te');
+	const ctaLink = $derived(navigation?.cta_link ?? '/inscrie-te');
 
-	let aboutExpanded = $state(false);
+	let expandedIndex = $state<number | null>(null);
 
 	function handleLinkClick() {
 		onClose();
+	}
+
+	function toggleExpand(index: number) {
+		expandedIndex = expandedIndex === index ? null : index;
 	}
 
 	$effect(() => {
@@ -62,15 +54,17 @@
 		</div>
 
 		<nav class="hamburger-menu__nav">
-			{#each mainLinks as link}
-				{#if link.children}
+			<a href="/" class="hamburger-menu__link" onclick={handleLinkClick}>Acasă</a>
+
+			{#each menuItems as item, i}
+				{#if item.children?.length > 0}
 					<div class="hamburger-menu__group">
 						<button
 							class="hamburger-menu__group-toggle"
-							aria-expanded={aboutExpanded}
-							onclick={() => (aboutExpanded = !aboutExpanded)}
+							aria-expanded={expandedIndex === i}
+							onclick={() => toggleExpand(i)}
 						>
-							{link.label}
+							{item.label}
 							<svg
 								width="16"
 								height="16"
@@ -78,16 +72,21 @@
 								fill="none"
 								stroke="currentColor"
 								stroke-width="2"
-								class:rotated={aboutExpanded}
+								class:rotated={expandedIndex === i}
 							>
 								<path d="M6 9l6 6 6-6" />
 							</svg>
 						</button>
-						{#if aboutExpanded}
+						{#if expandedIndex === i}
 							<ul class="hamburger-menu__sub">
-								{#each link.children as child}
+								<li>
+									<a href={item.url} class="hamburger-menu__sub-link" onclick={handleLinkClick}>
+										{item.label}
+									</a>
+								</li>
+								{#each item.children as child}
 									<li>
-										<a href={child.href} class="hamburger-menu__sub-link" onclick={handleLinkClick}>
+										<a href={child.url} class="hamburger-menu__sub-link" onclick={handleLinkClick}>
 											{child.label}
 										</a>
 									</li>
@@ -96,16 +95,24 @@
 						{/if}
 					</div>
 				{:else}
-					<a href={link.href} class="hamburger-menu__link" onclick={handleLinkClick}>
-						{link.label}
+					<a
+						href={item.url}
+						class="hamburger-menu__link"
+						target={item.open_in_new_tab ? '_blank' : undefined}
+						rel={item.open_in_new_tab ? 'noopener noreferrer' : undefined}
+						onclick={handleLinkClick}
+					>
+						{item.label}
 					</a>
 				{/if}
 			{/each}
+
+			<a href="/doneaza" class="hamburger-menu__link" onclick={handleLinkClick}>Donează</a>
 		</nav>
 
 		<div class="hamburger-menu__footer">
-			<a href="/inscrie-te" class="btn btn-primary hamburger-menu__cta" onclick={handleLinkClick}>
-				Înscrie-te în SENS
+			<a href={ctaLink} class="btn btn-primary hamburger-menu__cta" onclick={handleLinkClick}>
+				{ctaText}
 			</a>
 			<a
 				href={$currentUser ? '/cont' : '/auth/login'}

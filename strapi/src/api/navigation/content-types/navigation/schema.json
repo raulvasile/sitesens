@@ -1,0 +1,29 @@
+{
+  "kind": "singleType",
+  "collectionName": "navigations",
+  "info": {
+    "singularName": "navigation",
+    "pluralName": "navigations",
+    "displayName": "Meniu Header",
+    "description": "Meniul principal al site-ului — gestionat din CMS"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "main_menu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.menu-item"
+    },
+    "cta_text": {
+      "type": "string",
+      "default": "Înscrie-te"
+    },
+    "cta_link": {
+      "type": "string",
+      "default": "/inscrie-te"
+    }
+  }
+}

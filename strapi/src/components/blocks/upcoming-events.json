@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_blocks_upcoming_events",
+  "info": {
+    "displayName": "Evenimente Viitoare",
+    "icon": "calendar"
+  },
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "default": "Evenimente viitoare"
+    },
+    "count": {
+      "type": "integer",
+      "default": 3,
+      "min": 1,
+      "max": 12
+    },
+    "cta_text": {
+      "type": "string",
+      "default": "Toate evenimentele"
+    },
+    "cta_link": {
+      "type": "string",
+      "default": "/evenimente"
+    }
+  }
+}

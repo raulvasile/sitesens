@@ -2,16 +2,21 @@
 	import { page } from '$app/stores';
 	import { currentUser } from '$stores/auth';
 	import HamburgerMenu from './HamburgerMenu.svelte';
+	import type { NavigationData } from '../../../routes/+layout';
+
+	interface Props {
+		navigation?: NavigationData;
+	}
+
+	let { navigation }: Props = $props();
 
 	let menuOpen = $state(false);
 	let scrolled = $state(false);
+	let activeDropdown = $state<number | null>(null);
 
-	const navLinks = [
-		{ href: '/stiri', label: 'Știri' },
-		{ href: '/despre-noi', label: 'Despre' },
-		{ href: '/evenimente', label: 'Evenimente' },
-		{ href: '/contact', label: 'Contact' }
-	];
+	const navLinks = $derived(navigation?.main_menu ?? []);
+	const ctaText = $derived(navigation?.cta_text ?? 'Înscrie-te');
+	const ctaLink = $derived(navigation?.cta_link ?? '/inscrie-te');
 
 	$effect(() => {
 		function handleScroll() {
@@ -24,7 +29,17 @@
 	function isActive(href: string) {
 		return $page.url.pathname.startsWith(href);
 	}
+
+	function toggleDropdown(index: number) {
+		activeDropdown = activeDropdown === index ? null : index;
+	}
+
+	function closeDropdowns() {
+		activeDropdown = null;
+	}
 </script>
+
+<svelte:window onclick={closeDropdowns} />
 
 <nav class="navbar" class:scrolled>
 	<div class="container navbar__inner">
@@ -45,20 +60,57 @@
 			<img src="/logo-sens.svg" alt="Partidul SENS" width="80" height="32" />
 		</a>
 
-		<!-- Desktop: linkuri navigare -->
+		<!-- Desktop: linkuri navigare din CMS -->
 		<ul class="navbar__links">
-			{#each navLinks as link}
-				<li>
-					<a href={link.href} class="navbar__link" class:active={isActive(link.href)}>
-						{link.label}
-					</a>
+			{#each navLinks as link, i}
+				<li class="navbar__item" class:has-dropdown={link.children?.length > 0}>
+					{#if link.children?.length > 0}
+						<button
+							class="navbar__link navbar__dropdown-trigger"
+							class:active={isActive(link.url)}
+							onclick={(e: MouseEvent) => { e.stopPropagation(); toggleDropdown(i); }}
+							aria-expanded={activeDropdown === i}
+							aria-haspopup="true"
+						>
+							{link.label}
+							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+								<path d="M6 9l6 6 6-6" />
+							</svg>
+						</button>
+						{#if activeDropdown === i}
+							<ul class="navbar__dropdown" onclick={(e: MouseEvent) => e.stopPropagation()}>
+								<li>
+									<a href={link.url} class="navbar__dropdown-link" onclick={closeDropdowns}>
+										{link.label}
+									</a>
+								</li>
+								{#each link.children as child}
+									<li>
+										<a href={child.url} class="navbar__dropdown-link" onclick={closeDropdowns}>
+											{child.label}
+										</a>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					{:else}
+						<a
+							href={link.url}
+							class="navbar__link"
+							class:active={isActive(link.url)}
+							target={link.open_in_new_tab ? '_blank' : undefined}
+							rel={link.open_in_new_tab ? 'noopener noreferrer' : undefined}
+						>
+							{link.label}
+						</a>
+					{/if}
 				</li>
 			{/each}
 		</ul>
 
 		<!-- Dreapta: CTA + icon user -->
 		<div class="navbar__actions">
-			<a href="/inscrie-te" class="btn btn-primary navbar__cta">Înscrie-te</a>
+			<a href={ctaLink} class="btn btn-primary navbar__cta">{ctaText}</a>
 			<a
 				href={$currentUser ? '/cont' : '/auth/login'}
 				class="navbar__user-icon"
@@ -73,7 +125,11 @@
 	</div>
 </nav>
 
-<HamburgerMenu open={menuOpen} onClose={() => (menuOpen = false)} />
+<HamburgerMenu
+	open={menuOpen}
+	onClose={() => (menuOpen = false)}
+	{navigation}
+/>
 
 <style>
 	.navbar {
@@ -131,11 +187,31 @@
 		gap: var(--space-6);
 	}
 
+	.navbar__item { position: relative; }
+
 	.navbar__link {
 		color: rgba(255, 255, 255, 0.85);
 		font-size: var(--text-sm);
 		font-weight: 500;
 		transition: color var(--transition-fast);
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-family: var(--font-body);
+	}
+
+	.navbar__dropdown-trigger {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1);
+	}
+
+	.navbar__dropdown-trigger svg {
+		transition: transform var(--transition-fast);
+	}
+
+	.navbar__dropdown-trigger[aria-expanded='true'] svg {
+		transform: rotate(180deg);
 	}
 
 	.navbar__link:hover,
@@ -146,6 +222,41 @@
 	.navbar__link.active {
 		border-bottom: 2px solid var(--color-green-leaf);
 		padding-bottom: 2px;
+	}
+
+	.navbar__dropdown {
+		position: absolute;
+		top: calc(100% + 8px);
+		left: 50%;
+		transform: translateX(-50%);
+		background-color: var(--color-white);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-lg);
+		list-style: none;
+		min-width: 200px;
+		padding: var(--space-2);
+		z-index: 110;
+		animation: dropdown-in 0.15s ease;
+	}
+
+	@keyframes dropdown-in {
+		from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+		to { opacity: 1; transform: translateX(-50%) translateY(0); }
+	}
+
+	.navbar__dropdown-link {
+		display: block;
+		padding: var(--space-2) var(--space-3);
+		font-size: var(--text-sm);
+		color: var(--color-text);
+		border-radius: var(--radius-sm);
+		transition: background-color var(--transition-fast);
+		white-space: nowrap;
+	}
+
+	.navbar__dropdown-link:hover {
+		background-color: var(--color-bg);
+		color: var(--color-green-dark);
 	}
 
 	.navbar__actions {

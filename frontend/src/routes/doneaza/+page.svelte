@@ -1,8 +1,12 @@
 <!-- TODO: Faza 2 — Pagina donații cu sume predefinite, tip (unică/recurentă), CNP, plată card/transfer, conformitate CMF -->
-<svelte:head>
-	<title>Donează — SENS</title>
-	<meta name="description" content="Susține Partidul SENS cu o donație. Fiecare leu contează." />
-</svelte:head>
+<script lang="ts">
+	import SeoHead from '$lib/components/SeoHead.svelte';
+</script>
+
+<SeoHead
+	title="Donează"
+	description="Susține Partidul SENS cu o donație. Fiecare leu contează."
+/>
 
 <div class="container page-header">
 	<nav aria-label="Breadcrumb" class="breadcrumb">

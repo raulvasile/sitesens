@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
+	import SeoHead from '$lib/components/SeoHead.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -52,10 +53,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Evenimente — SENS</title>
-	<meta name="description" content="Evenimente ale Partidului SENS — dezbateri, acțiuni, marșuri, întâlniri online." />
-</svelte:head>
+<SeoHead
+	title="Evenimente"
+	description="Evenimente ale Partidului SENS — dezbateri, acțiuni, marșuri, întâlniri online."
+/>
 
 <div class="container page-header">
 	<nav aria-label="Breadcrumb" class="breadcrumb">

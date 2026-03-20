@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_navigation_menu_sub_items",
+  "info": {
+    "displayName": "Sub-element Meniu",
+    "icon": "arrowRight"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

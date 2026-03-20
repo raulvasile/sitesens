@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import { fetchStrapi } from '$lib/strapi';
+import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
 
 export interface ContactPageData {
 	id: number;
@@ -13,15 +13,19 @@ export interface ContactPageData {
 	seo: {
 		meta_title: string | null;
 		meta_description: string | null;
+		og_image: { url: string } | null;
 		canonical_url: string | null;
 		no_index: boolean;
 	} | null;
 }
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageLoad = async ({ url }) => {
+	const { params: previewParams } = getPreviewStatus(url);
+
 	try {
 		const res = await fetchStrapi<ContactPageData>('/contact-page', {
-			'populate': 'seo'
+			'populate': 'seo',
+			...previewParams,
 		});
 		return { contactPage: res.data };
 	} catch {

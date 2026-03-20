@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { mutateStrapi } from '$lib/strapi';
 	import { toasts } from '$lib/stores/toast';
+	import SeoHead from '$lib/components/SeoHead.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -61,10 +62,13 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{cp?.seo?.meta_title ?? 'Contact — SENS'}</title>
-	<meta name="description" content={cp?.seo?.meta_description ?? 'Contactează Partidul SENS sau abonează-te la newsletter.'} />
-</svelte:head>
+<SeoHead
+	title={cp?.seo?.meta_title ?? 'Contact — SENS'}
+	description={cp?.seo?.meta_description ?? 'Contactează Partidul SENS sau abonează-te la newsletter.'}
+	ogImage={cp?.seo?.og_image?.url}
+	canonicalUrl={cp?.seo?.canonical_url}
+	noIndex={cp?.seo?.no_index ?? false}
+/>
 
 <div class="container page-header">
 	<nav aria-label="Breadcrumb" class="breadcrumb">

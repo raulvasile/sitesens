@@ -1,5 +1,6 @@
 import type { PageLoad } from './$types';
 import { fetchStrapi } from '$lib/strapi';
+import { error } from '@sveltejs/kit';
 
 export interface StrapiEvent {
 	id: number;
@@ -50,11 +51,6 @@ export const load: PageLoad = async ({ url }) => {
 			activeType: type
 		};
 	} catch {
-		return {
-			events: [] as StrapiEvent[],
-			pagination: { page: 1, pageSize: 9, pageCount: 1, total: 0 },
-			activeTab: tab,
-			activeType: type
-		};
+		throw error(503, 'Serviciul nu este disponibil momentan. Încearcă din nou în câteva momente.');
 	}
 };

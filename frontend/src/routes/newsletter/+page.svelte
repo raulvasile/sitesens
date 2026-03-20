@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { mutateStrapi } from '$lib/strapi';
 	import { toasts } from '$lib/stores/toast';
+	import SeoHead from '$lib/components/SeoHead.svelte';
 
 	let name = $state('');
 	let email = $state('');
@@ -38,10 +39,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Newsletter — SENS</title>
-	<meta name="description" content="Abonează-te la newsletterul SENS pentru ultimele știri și actualizări." />
-</svelte:head>
+<SeoHead
+	title="Newsletter"
+	description="Abonează-te la newsletterul SENS pentru ultimele știri și actualizări."
+/>
 
 <div class="container newsletter-page">
 	<div class="newsletter-card">

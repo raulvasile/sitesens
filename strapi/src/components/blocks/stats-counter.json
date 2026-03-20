@@ -1,7 +1,7 @@
 {
   "collectionName": "components_blocks_stats_counters",
   "info": {
-    "displayName": "Stats Counter",
+    "displayName": "Contor Statistici",
     "icon": "chartBubble"
   },
   "attributes": {

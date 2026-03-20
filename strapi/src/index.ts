@@ -9,6 +9,9 @@ export default {
 
     // ── Seed: date demo (doar dacă nu există deja) ──
     await seedData(strapi);
+
+    // ── Admin: etichete câmpuri în română ──
+    await configureAdminLabels(strapi);
   },
 };
 
@@ -30,11 +33,11 @@ async function setupPublicPermissions(strapi: Core.Strapi) {
     { controller: 'api::event.event', actions: ['find', 'findOne'] },
     { controller: 'api::team-member.team-member', actions: ['find', 'findOne'] },
     { controller: 'api::page.page', actions: ['find', 'findOne'] },
-    { controller: 'api::volunteer-action.volunteer-action', actions: ['find', 'findOne'] },
     // Single types
     { controller: 'api::homepage.homepage', actions: ['find'] },
     { controller: 'api::contact-page.contact-page', actions: ['find'] },
     { controller: 'api::donate-page.donate-page', actions: ['find'] },
+    { controller: 'api::navigation.navigation', actions: ['find'] },
     // Newsletter — doar create (subscribe)
     { controller: 'api::newsletter-subscriber.newsletter-subscriber', actions: ['create'] },
   ];
@@ -372,79 +375,137 @@ async function seedData(strapi: Core.Strapi) {
     }),
   ]);
 
-  // ── Homepage Single Type ──
+  // ── Homepage Single Type (Dynamic Zone) ──
   await strapi.documents('api::homepage.homepage').create({
     data: {
-      hero_title: 'O Românie verde, echitabilă și modernă',
-      hero_subtitle: 'Construim împreună un viitor bazat pe Sănătate, Educație, Natură și Sustenabilitate. Alătură-te mișcării SENS.',
-      hero_cta_text: 'Înscrie-te acum',
-      hero_cta_link: '/inscrie-te',
-      values: [
+      content: [
         {
-          title: 'Sănătate',
-          short_text: 'Acces echitabil la sănătate',
-          description: 'Un sistem de sănătate centrat pe prevenție, accesibil tuturor, indiferent de venit sau locație.',
-          points: [
-            { text: 'Centre de prevenție în fiecare comunitate' },
-            { text: 'Check-up anual gratuit pentru toți cetățenii' },
-            { text: 'Digitalizarea completă a sistemului medical' },
-          ],
-          link_text: 'Află mai mult',
-          link_url: '/despre-noi#sanatate',
+          __component: 'blocks.hero',
+          title: 'O Românie verde, echitabilă și modernă',
+          subtitle: 'Construim împreună un viitor bazat pe Sănătate, Educație, Natură și Sustenabilitate. Alătură-te mișcării SENS.',
+          cta_text: 'Înscrie-te acum',
+          cta_link: '/inscrie-te',
+          cta_secondary_text: 'Donează',
+          cta_secondary_link: '/doneaza',
         },
         {
-          title: 'Educație',
-          short_text: 'Educație pentru viitor',
-          description: 'Un sistem educațional care pregătește generațiile viitoare pentru provocările climatice și tehnologice.',
-          points: [
-            { text: 'Educație ecologică obligatorie din clasa a V-a' },
-            { text: 'Grădini și laboratoare verzi în fiecare școală' },
-            { text: 'Formarea continuă a cadrelor didactice' },
+          __component: 'blocks.card-grid',
+          heading: 'Valorile noastre',
+          columns: '4',
+          cards: [
+            {
+              icon: '🏥',
+              title: 'Sănătate',
+              description: 'Un sistem de sănătate centrat pe prevenție, accesibil tuturor, indiferent de venit sau locație.',
+              points: [
+                { text: 'Centre de prevenție în fiecare comunitate' },
+                { text: 'Check-up anual gratuit pentru toți cetățenii' },
+                { text: 'Digitalizarea completă a sistemului medical' },
+              ],
+              link_text: 'Află mai mult',
+              link_url: '/despre-noi#sanatate',
+            },
+            {
+              icon: '📚',
+              title: 'Educație',
+              description: 'Un sistem educațional care pregătește generațiile viitoare pentru provocările climatice și tehnologice.',
+              points: [
+                { text: 'Educație ecologică obligatorie din clasa a V-a' },
+                { text: 'Grădini și laboratoare verzi în fiecare școală' },
+                { text: 'Formarea continuă a cadrelor didactice' },
+              ],
+              link_text: 'Află mai mult',
+              link_url: '/despre-noi#educatie',
+            },
+            {
+              icon: '🌿',
+              title: 'Natură',
+              description: 'Protecția naturii nu este un obiectiv secundar — este fundamentul pe care se construiește orice societate sustenabilă.',
+              points: [
+                { text: '1 milion de arbori plantați până în 2030' },
+                { text: 'Zone cu emisii zero în centrele orașelor' },
+                { text: 'Protecția ariilor naturale și a biodiversității' },
+              ],
+              link_text: 'Află mai mult',
+              link_url: '/despre-noi#natura',
+            },
+            {
+              icon: '♻️',
+              title: 'Sustenabilitate',
+              description: 'O economie care crește fără să distrugă. Tranziția verde nu este un cost, ci cea mai mare oportunitate economică a generației noastre.',
+              points: [
+                { text: '100% energie regenerabilă până în 2040' },
+                { text: 'Economia circulară ca standard industrial' },
+                { text: 'Joburi verzi și reconversie profesională' },
+              ],
+              link_text: 'Află mai mult',
+              link_url: '/despre-noi#sustenabilitate',
+            },
           ],
-          link_text: 'Află mai mult',
-          link_url: '/despre-noi#educatie',
         },
         {
-          title: 'Natură',
-          short_text: 'Protejăm mediul înconjurător',
-          description: 'Protecția naturii nu este un obiectiv secundar — este fundamentul pe care se construiește orice societate sustenabilă.',
-          points: [
-            { text: '1 milion de arbori plantați până în 2030' },
-            { text: 'Zone cu emisii zero în centrele orașelor' },
-            { text: 'Protecția ariilor naturale și a biodiversității' },
+          __component: 'blocks.program-points',
+          items: [
+            { area: 'Energie', text: 'Tranziție completă la energie regenerabilă și independență energetică prin solar, eolian și hidrogen verde.' },
+            { area: 'Transport', text: 'Rețea națională de transport public electric și infrastructură pentru mobilitate activă în toate orașele.' },
+            { area: 'Agricultură', text: 'Sprijin pentru agricultura ecologică, circuite scurte de distribuție și securitate alimentară.' },
+            { area: 'Digitalizare', text: 'Guvernare transparentă prin tehnologie, servicii publice digitale accesibile tuturor cetățenilor.' },
+            { area: 'Locuire', text: 'Program național de renovare energetică a clădirilor și construcții noi cu standard Nearly Zero Energy.' },
+            { area: 'Tineret', text: 'Consilii locale ale tinerilor, stagii verzi garantate și programe de antreprenoriat sustenabil.' },
           ],
-          link_text: 'Află mai mult',
-          link_url: '/despre-noi#natura',
+          show_link: true,
+          link_text: 'Vezi programul complet',
+          link_url: '/despre-noi',
         },
         {
-          title: 'Sustenabilitate',
-          short_text: 'Economie verde și circulară',
-          description: 'O economie care crește fără să distrugă. Tranziția verde nu este un cost, ci cea mai mare oportunitate economică a generației noastre.',
-          points: [
-            { text: '100% energie regenerabilă până în 2040' },
-            { text: 'Economia circulară ca standard industrial' },
-            { text: 'Joburi verzi și reconversie profesională' },
-          ],
-          link_text: 'Află mai mult',
-          link_url: '/despre-noi#sustenabilitate',
+          __component: 'blocks.latest-articles',
+          heading: 'Ultimele știri',
+          count: 3,
+          show_category: true,
+          cta_text: 'Toate știrile',
+          cta_link: '/stiri',
+        },
+        {
+          __component: 'blocks.upcoming-events',
+          heading: 'Evenimente viitoare',
+          count: 3,
+          cta_text: 'Toate evenimentele',
+          cta_link: '/evenimente',
+        },
+        {
+          __component: 'blocks.newsletter-cta',
+          title: 'Rămâi la curent cu SENS',
+          description: 'Abonează-te la newsletter pentru comunicate, analize și invitații la evenimente.',
+          placeholder_text: 'email@exemplu.ro',
         },
       ],
-      program_points: [
-        { area: 'Energie', text: 'Tranziție completă la energie regenerabilă și independență energetică prin solar, eolian și hidrogen verde.' },
-        { area: 'Transport', text: 'Rețea națională de transport public electric și infrastructură pentru mobilitate activă în toate orașele.' },
-        { area: 'Agricultură', text: 'Sprijin pentru agricultura ecologică, circuite scurte de distribuție și securitate alimentară.' },
-        { area: 'Digitalizare', text: 'Guvernare transparentă prin tehnologie, servicii publice digitale accesibile tuturor cetățenilor.' },
-        { area: 'Locuire', text: 'Program național de renovare energetică a clădirilor și construcții noi cu standard Nearly Zero Energy.' },
-        { area: 'Tineret', text: 'Consilii locale ale tinerilor, stagii verzi garantate și programe de antreprenoriat sustenabil.' },
-      ],
-      newsletter_title: 'Rămâi la curent cu SENS',
-      newsletter_description: 'Abonează-te la newsletter pentru comunicate, analize și invitații la evenimente.',
       seo: {
         meta_title: 'SENS — Sănătate · Educație · Natură · Sustenabilitate',
         meta_description: 'Partidul SENS — O Românie verde, echitabilă și modernă. Înscrie-te sau donează astăzi.',
       },
     } as any,
     status: 'published',
+  });
+
+  // ── Navigație ──
+  await strapi.documents('api::navigation.navigation').create({
+    data: {
+      main_menu: [
+        { label: 'Știri', url: '/stiri', order: 1, open_in_new_tab: false },
+        {
+          label: 'Despre noi', url: '/despre-noi', order: 2, open_in_new_tab: false,
+          children: [
+            { label: 'Misiune', url: '/despre-noi#misiune' },
+            { label: 'Echipa', url: '/despre-noi#echipa' },
+            { label: 'Familia Europeană', url: '/despre-noi#europa' },
+          ],
+        },
+        { label: 'Evenimente', url: '/evenimente', order: 3, open_in_new_tab: false },
+        { label: 'Contact', url: '/contact', order: 4, open_in_new_tab: false },
+      ],
+      cta_text: 'Înscrie-te',
+      cta_link: '/inscrie-te',
+    } as any,
   });
 
   // ── Contact Page Single Type ──
@@ -533,4 +594,299 @@ async function seedData(strapi: Core.Strapi) {
   });
 
   strapi.log.info('✅ Seed data created successfully');
+}
+
+/**
+ * Configurare etichete câmpuri în română pentru panoul admin.
+ * Setează label-urile în limba română prin content-manager store.
+ * API-ul rămâne în engleză, doar interfața admin devine prietenoasă.
+ */
+async function configureAdminLabels(strapi: Core.Strapi) {
+  // Mapare: UID content type/componentă → { numeField: 'Etichetă în română' }
+  const contentTypeLabels: Record<string, Record<string, string>> = {
+    'api::article.article': {
+      title: 'Titlu',
+      slug: 'URL (slug)',
+      excerpt: 'Rezumat',
+      body: 'Conținut',
+      cover_image: 'Imagine copertă',
+      category: 'Categorie',
+      author: 'Autor',
+      tags: 'Etichete',
+      seo: 'SEO',
+      reading_time: 'Timp de citire (min)',
+    },
+    'api::category.category': {
+      name: 'Nume',
+      slug: 'URL (slug)',
+      color: 'Culoare',
+      articles: 'Articole',
+    },
+    'api::tag.tag': {
+      name: 'Nume',
+      slug: 'URL (slug)',
+      articles: 'Articole',
+    },
+    'api::event.event': {
+      title: 'Titlu',
+      slug: 'URL (slug)',
+      description: 'Descriere',
+      start_date: 'Data început',
+      end_date: 'Data sfârșit',
+      location_name: 'Locație',
+      location_coords: 'Coordonate GPS',
+      cover_image: 'Imagine copertă',
+      max_participants: 'Număr maxim participanți',
+      registration_open: 'Înscrieri deschise',
+      event_type: 'Tip eveniment',
+      social_posts: 'Postări social media',
+      ical_url: 'Link calendar',
+      seo: 'SEO',
+    },
+    'api::team-member.team-member': {
+      name: 'Nume',
+      role: 'Funcție',
+      bio: 'Biografie',
+      photo: 'Fotografie',
+      social_links: 'Rețele sociale',
+      display_order: 'Ordine afișare',
+      is_leadership: 'Conducere',
+      articles: 'Articole',
+    },
+    'api::page.page': {
+      title: 'Titlu',
+      slug: 'URL (slug)',
+      content: 'Conținut pagină',
+      seo: 'SEO',
+    },
+    'api::newsletter-subscriber.newsletter-subscriber': {
+      email: 'Email',
+      name: 'Nume',
+      consent_date: 'Data consimțământ',
+      source: 'Sursă',
+      status: 'Status',
+      ip_address: 'Adresă IP',
+    },
+    'api::homepage.homepage': {
+      content: 'Conținut pagină',
+      seo: 'SEO',
+    },
+    'api::navigation.navigation': {
+      main_menu: 'Meniu principal',
+      cta_text: 'Text buton CTA',
+      cta_link: 'Link buton CTA',
+    },
+    'api::contact-page.contact-page': {
+      title: 'Titlu',
+      subtitle: 'Subtitlu',
+      email: 'Email contact',
+      address: 'Adresă sediu',
+      schedule: 'Program',
+      newsletter_title: 'Titlu newsletter',
+      newsletter_description: 'Descriere newsletter',
+      seo: 'SEO',
+    },
+    'api::donate-page.donate-page': {
+      title: 'Titlu',
+      description: 'Descriere',
+      preset_amounts: 'Sume predefinite',
+      cmf_text: 'Text mandatar CMF',
+      transparency_items: 'Elemente transparență',
+      seo: 'SEO',
+    },
+  };
+
+  const componentLabels: Record<string, Record<string, string>> = {
+    'blocks.hero': {
+      title: 'Titlu',
+      subtitle: 'Subtitlu',
+      cta_text: 'Text buton',
+      cta_link: 'Link buton',
+      cta_secondary_text: 'Text buton secundar',
+      cta_secondary_link: 'Link buton secundar',
+      background_image: 'Imagine fundal',
+    },
+    'blocks.text-block': {
+      body: 'Conținut',
+      alignment: 'Aliniere',
+    },
+    'blocks.cta-banner': {
+      title: 'Titlu',
+      description: 'Descriere',
+      button_text: 'Text buton',
+      button_link: 'Link buton',
+      background_color: 'Culoare fundal',
+    },
+    'blocks.image-gallery': {
+      images: 'Imagini',
+      layout: 'Aranjament',
+      caption: 'Legendă',
+    },
+    'blocks.accordion': {
+      heading: 'Titlu secțiune',
+      items: 'Elemente',
+    },
+    'blocks.accordion-item': {
+      title: 'Titlu',
+      content: 'Conținut',
+    },
+    'blocks.quote': {
+      text: 'Citat',
+      author: 'Autor',
+      role: 'Funcție',
+    },
+    'blocks.video-embed': {
+      url: 'Link video (YouTube/Vimeo)',
+      caption: 'Legendă',
+    },
+    'blocks.stats-counter': {
+      items: 'Statistici',
+    },
+    'blocks.stat-item': {
+      number: 'Număr',
+      label: 'Etichetă',
+    },
+    'blocks.program-points': {
+      items: 'Puncte program',
+      show_link: 'Afișează link',
+      link_text: 'Text link',
+      link_url: 'URL link',
+    },
+    'blocks.program-item': {
+      area: 'Domeniu',
+      text: 'Descriere',
+    },
+    'blocks.newsletter-cta': {
+      title: 'Titlu',
+      description: 'Descriere',
+      placeholder_text: 'Text placeholder',
+    },
+    'shared.seo': {
+      meta_title: 'Titlu SEO',
+      meta_description: 'Descriere SEO',
+      og_image: 'Imagine partajare',
+      canonical_url: 'URL canonic',
+      no_index: 'Ascunde de motoarele de căutare',
+    },
+    'shared.social-link': {
+      platform: 'Platformă',
+      url: 'Link',
+    },
+    'homepage.value-card': {
+      title: 'Titlu',
+      short_text: 'Text scurt',
+      description: 'Descriere',
+      points: 'Puncte cheie',
+      link_text: 'Text link',
+      link_url: 'URL link',
+    },
+    'homepage.value-point': {
+      text: 'Text',
+    },
+    'event.social-post': {
+      platform: 'Platformă',
+      post_url: 'Link postare',
+      embed_text: 'Text',
+      media: 'Media',
+    },
+    'navigation.menu-item': {
+      label: 'Etichetă',
+      url: 'URL',
+      order: 'Ordine',
+      open_in_new_tab: 'Deschide în tab nou',
+      children: 'Sub-elemente',
+    },
+    'navigation.menu-sub-item': {
+      label: 'Etichetă',
+      url: 'URL',
+    },
+    'blocks.card-grid': {
+      heading: 'Titlu secțiune',
+      columns: 'Coloane',
+      cards: 'Carduri',
+    },
+    'blocks.card-grid-item': {
+      icon: 'Pictogramă (emoji)',
+      title: 'Titlu',
+      description: 'Descriere',
+      points: 'Puncte cheie',
+      link_text: 'Text link',
+      link_url: 'URL link',
+      image: 'Imagine',
+    },
+    'blocks.latest-articles': {
+      heading: 'Titlu secțiune',
+      count: 'Număr articole',
+      show_category: 'Afișează categoria',
+      cta_text: 'Text buton',
+      cta_link: 'Link buton',
+    },
+    'blocks.upcoming-events': {
+      heading: 'Titlu secțiune',
+      count: 'Număr evenimente',
+      cta_text: 'Text buton',
+      cta_link: 'Link buton',
+    },
+    'blocks.contact-form': {
+      heading: 'Titlu',
+      description: 'Descriere',
+      success_message: 'Mesaj de succes',
+    },
+    'blocks.spacer': {
+      height: 'Înălțime',
+    },
+  };
+
+  // Aplică label-uri pe content types
+  for (const [uid, labels] of Object.entries(contentTypeLabels)) {
+    await applyLabels(strapi, `configuration_content_types::${uid}`, labels);
+  }
+
+  // Aplică label-uri pe componente
+  for (const [uid, labels] of Object.entries(componentLabels)) {
+    await applyLabels(strapi, `configuration_components::${uid}`, labels);
+  }
+
+  strapi.log.info('✅ Admin field labels configured (RO)');
+}
+
+async function applyLabels(
+  strapi: Core.Strapi,
+  storeKey: string,
+  labels: Record<string, string>
+) {
+  try {
+    const fullKey = `plugin_content_manager_configuration_${storeKey.replace('configuration_', '')}`;
+    const row = await strapi.db.query('strapi::core-store').findOne({
+      where: { key: fullKey },
+    });
+
+    if (!row) return; // Configurația nu există încă — se va crea la primul acces admin
+
+    const config = typeof row.value === 'string' ? JSON.parse(row.value) : row.value;
+    if (!config?.metadatas) return;
+
+    let changed = false;
+    for (const [field, label] of Object.entries(labels)) {
+      if (config.metadatas[field]) {
+        if (config.metadatas[field].edit) {
+          config.metadatas[field].edit.label = label;
+          changed = true;
+        }
+        if (config.metadatas[field].list) {
+          config.metadatas[field].list.label = label;
+          changed = true;
+        }
+      }
+    }
+
+    if (changed) {
+      await strapi.db.query('strapi::core-store').update({
+        where: { id: row.id },
+        data: { value: JSON.stringify(config) },
+      });
+    }
+  } catch {
+    // Silently skip — configuration will be set on next admin access
+  }
 }
