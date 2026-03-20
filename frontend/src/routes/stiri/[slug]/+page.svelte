@@ -2,6 +2,7 @@
 	import { getStrapiMediaUrl } from '$lib/strapi';
 	import TextBlock from '$components/blocks/TextBlock.svelte';
 	import SeoHead from '$lib/components/SeoHead.svelte';
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 
 	let { data } = $props();
 	const article = $derived(data.article);
@@ -48,11 +49,10 @@
 	{/if}
 
 	<div class="container article-container">
-		<nav aria-label="Breadcrumb" class="breadcrumb">
-			<a href="/">Acasă</a> <span>/</span>
-			<a href="/stiri">Știri</a> <span>/</span>
-			<span>{article.title}</span>
-		</nav>
+		<Breadcrumb items={[
+			{ label: 'Știri', href: '/stiri' },
+			{ label: article.title }
+		]} />
 
 		<!-- Header -->
 		<header class="article-header">
@@ -133,10 +133,6 @@
 
 <style>
 	.article-page { padding-bottom: var(--space-16); }
-	.breadcrumb { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-6); display: flex; gap: var(--space-2); flex-wrap: wrap; }
-	.breadcrumb a { color: var(--color-text-muted); }
-	.breadcrumb a:hover { color: var(--color-green-dark); }
-
 	.article-hero { width: 100%; max-height: 480px; overflow: hidden; }
 	.article-hero__img { width: 100%; height: 100%; object-fit: cover; max-height: 480px; }
 

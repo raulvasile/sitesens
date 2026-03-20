@@ -1,6 +1,7 @@
 <!-- TODO: Faza 1 — Conținut GDPR/Privacy Policy (din Strapi sau static) -->
 <script lang="ts">
 	import SeoHead from '$lib/components/SeoHead.svelte';
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 </script>
 
 <SeoHead
@@ -9,9 +10,7 @@
 />
 
 <div class="container page-content">
-	<nav aria-label="Breadcrumb" class="breadcrumb">
-		<a href="/">Acasă</a> / <span>Politica de confidențialitate</span>
-	</nav>
+	<Breadcrumb items={[{ label: 'Politica de confidențialitate' }]} />
 	<h1>Politica de confidențialitate</h1>
 	<p class="text-muted">Partidul SENS — CMF nr. 11240065</p>
 	<!-- TODO: Conținut complet GDPR conform cerințelor ANSPDCP -->

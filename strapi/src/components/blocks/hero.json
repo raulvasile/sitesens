@@ -28,6 +28,11 @@
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"]
+    },
+    "variant": {
+      "type": "enumeration",
+      "enum": ["default", "compact"],
+      "default": "default"
     }
   }
 }

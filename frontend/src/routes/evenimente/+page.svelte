@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
 	import SeoHead from '$lib/components/SeoHead.svelte';
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -59,9 +60,7 @@
 />
 
 <div class="container page-header">
-	<nav aria-label="Breadcrumb" class="breadcrumb">
-		<a href="/">Acasă</a> / <span>Evenimente</span>
-	</nav>
+	<Breadcrumb items={[{ label: 'Evenimente' }]} />
 	<h1>Evenimente</h1>
 </div>
 

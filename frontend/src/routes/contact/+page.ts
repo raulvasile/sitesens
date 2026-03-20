@@ -19,14 +19,14 @@ export interface ContactPageData {
 	} | null;
 }
 
-export const load: PageLoad = async ({ url }) => {
+export const load: PageLoad = async ({ url, fetch }) => {
 	const { params: previewParams } = getPreviewStatus(url);
 
 	try {
 		const res = await fetchStrapi<ContactPageData>('/contact-page', {
 			'populate': 'seo',
 			...previewParams,
-		});
+		}, undefined, fetch);
 		return { contactPage: res.data };
 	} catch {
 		return {

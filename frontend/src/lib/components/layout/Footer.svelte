@@ -1,67 +1,78 @@
 <script lang="ts">
-	const footerLinks = [
-		{ href: '/stiri', label: 'Știri' },
-		{ href: '/despre-noi', label: 'Despre Noi' },
-		{ href: '/evenimente', label: 'Evenimente' },
-		{ href: '/contact', label: 'Contact' },
-		{ href: '/doneaza', label: 'Donează' }
-	];
+	import { getStrapiMediaUrl } from '$lib/strapi';
+	import type { FooterData, NavigationData } from '../../../routes/+layout';
 
-	const socialLinks = [
-		{ href: 'https://facebook.com/cusens', label: 'Facebook', icon: 'fb' },
-		{ href: 'https://instagram.com/cusens', label: 'Instagram', icon: 'ig' },
-		{ href: 'https://twitter.com/cusens', label: 'X / Twitter', icon: 'x' },
-		{ href: 'https://tiktok.com/@cusens', label: 'TikTok', icon: 'tt' }
-	];
+	interface Props {
+		footer?: FooterData | null;
+		navigation?: NavigationData | null;
+	}
+
+	let { footer = null, navigation = null }: Props = $props();
+
+	// Logo: prefer footer logo, fallback to header logo, then static
+	const logoUrl = $derived(
+		footer?.logo?.url
+			? getStrapiMediaUrl(footer.logo.url)
+			: navigation?.logo?.url
+				? getStrapiMediaUrl(navigation.logo.url)
+				: '/logo.png'
+	);
+
+	const tagline = $derived(footer?.tagline ?? 'Sănătate · Educație · Natură · Sustenabilitate');
+	const euText = $derived(footer?.eu_text ?? '');
+	const footerLinks = $derived(footer?.footer_links ?? []);
+	const socialLinks = $derived(footer?.social_links ?? []);
+	const legalText = $derived(footer?.legal_text ?? 'Partidul SENS · Mandatar financiar CMF nr. 11240065');
+	const privacyText = $derived(footer?.privacy_link_text ?? 'Politica de confidențialitate');
+	const privacyUrl = $derived(footer?.privacy_link_url ?? '/politica-confidentialitate');
 </script>
 
 <footer class="footer">
 	<div class="container footer__inner">
 		<div class="footer__brand">
-			<img src="/logo-sens-white.svg" alt="Partidul SENS" width="100" height="40" class="footer__logo" />
-			<p class="footer__tagline">Sănătate · Educație · Natură · Sustenabilitate</p>
-			<p class="footer__eu">
-				Membru al
-				<strong>European Greens</strong>
-				și al grupului
-				<strong>Verzi/ALE</strong>
-				din Parlamentul European
-			</p>
+			<img src={logoUrl} alt="Partidul SENS" height="40" class="footer__logo" />
+			<p class="footer__tagline">{tagline}</p>
+			{#if euText}
+				<p class="footer__eu">{euText}</p>
+			{/if}
 		</div>
 
-		<nav class="footer__nav" aria-label="Navigare footer">
-			<ul>
-				{#each footerLinks as link}
-					<li><a href={link.href}>{link.label}</a></li>
-				{/each}
-			</ul>
-		</nav>
+		{#if footerLinks.length > 0}
+			<nav class="footer__nav" aria-label="Navigare footer">
+				<ul>
+					{#each footerLinks as link}
+						<li><a href={link.url}>{link.label}</a></li>
+					{/each}
+				</ul>
+			</nav>
+		{/if}
 
-		<div class="footer__social">
-			<p class="footer__social-title">Urmărește-ne</p>
-			<div class="footer__social-links">
-				{#each socialLinks as social}
-					<a
-						href={social.href}
-						aria-label={social.label}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="footer__social-link"
-					>
-						{social.label}
-					</a>
-				{/each}
+		{#if socialLinks.length > 0}
+			<div class="footer__social">
+				<p class="footer__social-title">Urmărește-ne</p>
+				<div class="footer__social-links">
+					{#each socialLinks as social}
+						<a
+							href={social.url}
+							aria-label={social.label}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="footer__social-link"
+						>
+							{social.label}
+						</a>
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/if}
 	</div>
 
 	<div class="footer__bottom">
 		<div class="container footer__bottom-inner">
 			<p class="footer__legal">
-				© {new Date().getFullYear()} Partidul SENS · Mandatar financiar CMF nr.
-				<strong>11240065</strong>
+				&copy; {new Date().getFullYear()} {legalText}
 			</p>
-			<a href="/politica-confidentialitate" class="footer__privacy">Politica de confidențialitate</a>
+			<a href={privacyUrl} class="footer__privacy">{privacyText}</a>
 		</div>
 	</div>
 </footer>
@@ -70,7 +81,6 @@
 	.footer {
 		background-color: var(--color-green-dark);
 		color: rgba(255, 255, 255, 0.8);
-		margin-top: var(--space-24);
 	}
 
 	.footer__inner {
@@ -101,10 +111,6 @@
 		font-size: var(--text-xs);
 		color: rgba(255, 255, 255, 0.5);
 		line-height: 1.6;
-	}
-
-	.footer__eu strong {
-		color: var(--color-green-leaf);
 	}
 
 	.footer__nav ul {
@@ -145,7 +151,7 @@
 	}
 
 	.footer__social-link:hover {
-		color: var(--color-green-leaf);
+		color: var(--color-brand-vibrant);
 	}
 
 	.footer__bottom {
@@ -164,10 +170,6 @@
 	.footer__legal {
 		font-size: var(--text-xs);
 		color: rgba(255, 255, 255, 0.5);
-	}
-
-	.footer__legal strong {
-		color: rgba(255, 255, 255, 0.7);
 	}
 
 	.footer__privacy {

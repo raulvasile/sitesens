@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "membership_requests",
+  "info": {
+    "singularName": "membership-request",
+    "pluralName": "membership-requests",
+    "displayName": "👥 Cerere Aderare",
+    "description": "Cereri de aderare la Partidul SENS"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "first_name": {
+      "type": "string",
+      "required": true
+    },
+    "last_name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "phone": {
+      "type": "string",
+      "required": true
+    },
+    "birth_date": {
+      "type": "date",
+      "required": true
+    },
+    "county": {
+      "type": "string",
+      "required": true
+    },
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "address": {
+      "type": "text",
+      "required": true
+    },
+    "motivation": {
+      "type": "text"
+    },
+    "interests": {
+      "type": "json"
+    },
+    "consent_gdpr": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "consent_statute": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "consent_data_processing": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "consent_newsletter": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "approved", "rejected"],
+      "default": "pending",
+      "required": true
+    },
+    "notes": {
+      "type": "text",
+      "private": true
+    }
+  }
+}

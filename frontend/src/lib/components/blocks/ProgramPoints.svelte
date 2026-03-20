@@ -63,7 +63,7 @@
 		background-color: var(--color-bg);
 		border-radius: var(--radius-md);
 		padding: var(--space-6);
-		border-left: 4px solid var(--color-green-leaf);
+		border-left: 4px solid var(--color-brand-neon);
 	}
 
 	.program-points__area {
@@ -91,5 +91,5 @@
 		transition: color var(--transition-fast);
 	}
 
-	.program-points__link:hover { color: var(--color-green-leaf); }
+	.program-points__link:hover { color: var(--color-brand-vibrant); }
 </style>

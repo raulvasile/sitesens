@@ -2,7 +2,7 @@ import type { PageLoad } from './$types';
 import { fetchStrapi } from '$lib/strapi';
 import { error } from '@sveltejs/kit';
 
-export const load: PageLoad = async ({ url }) => {
+export const load: PageLoad = async ({ url, fetch }) => {
 	const page = parseInt(url.searchParams.get('page') ?? '1');
 	const category = url.searchParams.get('categorie') ?? '';
 	const search = url.searchParams.get('q') ?? '';
@@ -27,8 +27,8 @@ export const load: PageLoad = async ({ url }) => {
 
 	try {
 		const [articlesRes, categoriesRes] = await Promise.all([
-			fetchStrapi('/articles', params),
-			fetchStrapi('/categories', { 'sort[0]': 'name:asc' }).catch(() => ({ data: [], meta: {} })),
+			fetchStrapi('/articles', params, undefined, fetch),
+			fetchStrapi('/categories', { 'sort[0]': 'name:asc' }, undefined, fetch).catch(() => ({ data: [], meta: {} })),
 		]);
 
 		return {

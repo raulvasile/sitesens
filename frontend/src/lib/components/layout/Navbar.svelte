@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { currentUser } from '$stores/auth';
+	import { getStrapiMediaUrl } from '$lib/strapi';
 	import HamburgerMenu from './HamburgerMenu.svelte';
 	import type { NavigationData } from '../../../routes/+layout';
 
@@ -9,14 +9,14 @@
 	}
 
 	let { navigation }: Props = $props();
+	const logoUrl = $derived(navigation?.logo?.url ? getStrapiMediaUrl(navigation.logo.url) : '/logo.png');
 
 	let menuOpen = $state(false);
 	let scrolled = $state(false);
 	let activeDropdown = $state<number | null>(null);
 
 	const navLinks = $derived(navigation?.main_menu ?? []);
-	const ctaText = $derived(navigation?.cta_text ?? 'Înscrie-te');
-	const ctaLink = $derived(navigation?.cta_link ?? '/inscrie-te');
+	const secondaryMenu = $derived(navigation?.secondary_menu ?? []);
 
 	$effect(() => {
 		function handleScroll() {
@@ -43,21 +43,22 @@
 
 <nav class="navbar" class:scrolled>
 	<div class="container navbar__inner">
-		<!-- Mobile: hamburger stânga -->
+		<!-- Mobile: hamburger stânga cu animatie -->
 		<button
 			class="navbar__hamburger"
-			aria-label="Deschide meniul"
+			class:navbar__hamburger--active={menuOpen}
+			aria-label={menuOpen ? 'Închide meniul' : 'Deschide meniul'}
 			aria-expanded={menuOpen}
-			onclick={() => (menuOpen = true)}
+			onclick={() => (menuOpen = !menuOpen)}
 		>
-			<span></span>
-			<span></span>
-			<span></span>
+			<span class="navbar__hamburger-bar"></span>
+			<span class="navbar__hamburger-bar"></span>
+			<span class="navbar__hamburger-bar"></span>
 		</button>
 
 		<!-- Logo centrat pe mobile, stânga pe desktop -->
 		<a href="/" class="navbar__logo" aria-label="SENS — Acasă">
-			<img src="/logo-sens.svg" alt="Partidul SENS" width="80" height="32" />
+			<img src={logoUrl} alt="Partidul SENS" height="32" />
 		</a>
 
 		<!-- Desktop: linkuri navigare din CMS -->
@@ -108,19 +109,29 @@
 			{/each}
 		</ul>
 
-		<!-- Dreapta: CTA + icon user -->
+		<!-- Dreapta: meniu secundar -->
 		<div class="navbar__actions">
-			<a href={ctaLink} class="btn btn-primary navbar__cta">{ctaText}</a>
-			<a
-				href={$currentUser ? '/cont' : '/auth/login'}
-				class="navbar__user-icon"
-				aria-label={$currentUser ? 'Contul meu' : 'Autentificare'}
-			>
-				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<circle cx="12" cy="8" r="4" />
-					<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-				</svg>
-			</a>
+			{#each secondaryMenu as item, i}
+				{#if i === secondaryMenu.length - 1}
+					<a
+						href={item.url}
+						class="btn btn-primary navbar__cta"
+						target={item.open_in_new_tab ? '_blank' : undefined}
+						rel={item.open_in_new_tab ? 'noopener noreferrer' : undefined}
+					>
+						{item.label}
+					</a>
+				{:else}
+					<a
+						href={item.url}
+						class="navbar__secondary-link"
+						target={item.open_in_new_tab ? '_blank' : undefined}
+						rel={item.open_in_new_tab ? 'noopener noreferrer' : undefined}
+					>
+						{item.label}
+					</a>
+				{/if}
+			{/each}
 		</div>
 	</div>
 </nav>
@@ -145,7 +156,7 @@
 
 	.navbar.scrolled {
 		backdrop-filter: blur(12px);
-		background-color: rgba(0, 56, 39, 0.92);
+		background-color: rgba(16, 50, 41, 0.95);
 		box-shadow: var(--shadow-md);
 	}
 
@@ -170,15 +181,32 @@
 		cursor: pointer;
 		padding: var(--space-2);
 		margin-right: auto;
+		z-index: 202;
+		position: relative;
 	}
 
-	.navbar__hamburger span {
+	.navbar__hamburger-bar {
 		display: block;
 		width: 22px;
 		height: 2px;
 		background-color: var(--color-white);
 		border-radius: 2px;
-		transition: transform var(--transition-fast);
+		transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+			opacity 0.2s ease;
+		transform-origin: center;
+	}
+
+	.navbar__hamburger--active .navbar__hamburger-bar:nth-child(1) {
+		transform: translateY(7px) rotate(45deg);
+	}
+
+	.navbar__hamburger--active .navbar__hamburger-bar:nth-child(2) {
+		opacity: 0;
+		transform: scaleX(0);
+	}
+
+	.navbar__hamburger--active .navbar__hamburger-bar:nth-child(3) {
+		transform: translateY(-7px) rotate(-45deg);
 	}
 
 	.navbar__links {
@@ -220,7 +248,7 @@
 	}
 
 	.navbar__link.active {
-		border-bottom: 2px solid var(--color-green-leaf);
+		border-bottom: 2px solid var(--color-brand-neon);
 		padding-bottom: 2px;
 	}
 
@@ -266,30 +294,29 @@
 		margin-left: auto;
 	}
 
+	.navbar__secondary-link {
+		display: none;
+		color: rgba(255, 255, 255, 0.85);
+		font-size: var(--text-sm);
+		font-weight: 500;
+		transition: color var(--transition-fast);
+	}
+
+	.navbar__secondary-link:hover {
+		color: var(--color-white);
+	}
+
 	.navbar__cta {
 		display: none;
 		font-size: var(--text-sm);
 		padding: 0.5rem 1.25rem;
 	}
 
-	.navbar__user-icon {
-		color: var(--color-white);
-		display: flex;
-		align-items: center;
-		padding: var(--space-2);
-		border-radius: var(--radius-full);
-		transition: background-color var(--transition-fast);
-	}
-
-	.navbar__user-icon:hover {
-		background-color: rgba(255, 255, 255, 0.12);
-		color: var(--color-white);
-	}
-
 	@media (min-width: 768px) {
 		.navbar__hamburger { display: none; }
 		.navbar__links { display: flex; }
 		.navbar__cta { display: inline-flex; }
+		.navbar__secondary-link { display: inline-flex; }
 
 		.navbar__logo {
 			margin-right: var(--space-6);

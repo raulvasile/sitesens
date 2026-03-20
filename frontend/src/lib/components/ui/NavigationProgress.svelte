@@ -21,7 +21,7 @@
 
 	.nav-progress__bar {
 		height: 100%;
-		background: linear-gradient(90deg, var(--color-green-leaf), var(--color-orange));
+		background: linear-gradient(90deg, var(--color-brand-neon), var(--color-brand-vibrant));
 		animation: nav-progress 2s ease-in-out infinite;
 		transform-origin: left;
 	}

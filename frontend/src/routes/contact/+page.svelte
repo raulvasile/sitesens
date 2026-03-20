@@ -2,6 +2,7 @@
 	import { mutateStrapi } from '$lib/strapi';
 	import { toasts } from '$lib/stores/toast';
 	import SeoHead from '$lib/components/SeoHead.svelte';
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -71,9 +72,7 @@
 />
 
 <div class="container page-header">
-	<nav aria-label="Breadcrumb" class="breadcrumb">
-		<a href="/">Acasă</a> / <span>Contact</span>
-	</nav>
+	<Breadcrumb items={[{ label: 'Contact' }]} />
 	<h1>{cp.title}</h1>
 	{#if cp.subtitle}
 		<p class="page-subtitle">{cp.subtitle}</p>

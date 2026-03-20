@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getIconSvg } from '$lib/icons';
+
 	interface CardPoint { text: string; }
 	interface CardItem {
 		icon?: string;
@@ -30,7 +32,15 @@
 			{#each data.cards as card}
 				<article class="card-grid__card">
 					{#if card.icon}
-						<span class="card-grid__icon">{card.icon}</span>
+						{@const svg = getIconSvg(card.icon)}
+						{#if svg}
+							<span class="card-grid__icon card-grid__icon--svg">
+								{@html svg}
+							</span>
+						{:else}
+							<!-- Fallback: render raw text (emoji or unknown key) -->
+							<span class="card-grid__icon">{card.icon}</span>
+						{/if}
 					{/if}
 					{#if card.image?.url}
 						<img
@@ -51,7 +61,10 @@
 						</ul>
 					{/if}
 					{#if card.link_text && card.link_url}
-						<a href={card.link_url} class="card-grid__link">{card.link_text} &rarr;</a>
+						<a href={card.link_url} class="card-grid__link">
+							{card.link_text}
+							<span class="arrow-animate">&rarr;</span>
+						</a>
 					{/if}
 				</article>
 			{/each}
@@ -66,6 +79,7 @@
 		font-size: var(--text-2xl);
 		text-align: center;
 		margin-bottom: var(--space-10);
+		padding-bottom: var(--space-8);
 		color: var(--color-green-dark);
 	}
 
@@ -107,6 +121,23 @@
 		display: block;
 		font-size: 2.5rem;
 		margin-bottom: var(--space-4);
+	}
+
+	.card-grid__icon--svg {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 48px;
+		height: 48px;
+		border-radius: var(--radius-md);
+		background-color: var(--color-green-dark);
+		color: var(--color-white);
+		font-size: unset;
+	}
+
+	.card-grid__icon--svg :global(svg) {
+		width: 24px;
+		height: 24px;
 	}
 
 	.card-grid__image {
@@ -153,7 +184,9 @@
 	}
 
 	.card-grid__link {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
 		font-weight: 600;
 		font-size: var(--text-sm);
 		color: var(--color-green-dark);
@@ -161,4 +194,13 @@
 	}
 
 	.card-grid__link:hover { color: var(--color-green-leaf); }
+
+	.card-grid__link .arrow-animate {
+		display: inline-block;
+		transition: transform 0.2s ease;
+	}
+
+	.card-grid__link:hover .arrow-animate {
+		transform: translateX(4px);
+	}
 </style>

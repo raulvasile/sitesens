@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
 	import SeoHead from '$lib/components/SeoHead.svelte';
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -115,9 +116,10 @@
 >
 	<div class="event-hero__overlay"></div>
 	<div class="container event-hero__content">
-		<nav aria-label="Breadcrumb" class="breadcrumb breadcrumb--light">
-			<a href="/">Acasă</a> / <a href="/evenimente">Evenimente</a> / <span>{event.title}</span>
-		</nav>
+		<Breadcrumb light items={[
+			{ label: 'Evenimente', href: '/evenimente' },
+			{ label: event.title }
+		]} />
 		<div class="event-hero__badges">
 			<span class="badge {badgeClass(event.event_type)}">{typeLabel(event.event_type)}</span>
 			{#if isPast}
@@ -277,9 +279,6 @@
 		z-index: 1;
 		color: var(--color-white);
 	}
-	.breadcrumb--light a { color: rgba(255, 255, 255, 0.7); }
-	.breadcrumb--light a:hover { color: var(--color-white); }
-	.breadcrumb--light span { color: var(--color-white); }
 	.event-hero__badges {
 		display: flex;
 		gap: var(--space-2);

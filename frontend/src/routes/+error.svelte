@@ -37,7 +37,6 @@
 				</button>
 			{/if}
 			<a href="/" class="btn btn-secondary">Pagina principală</a>
-			<a href="/contact" class="btn btn-secondary">Contactează-ne</a>
 		</div>
 	</div>
 </div>

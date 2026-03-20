@@ -22,18 +22,29 @@
 <NavigationProgress />
 <Navbar navigation={data.navigation} />
 
-<main class="main-content">
-	{@render children()}
-</main>
+<div class="page-wrapper">
+	<main class="main-content">
+		{@render children()}
+	</main>
 
-<Footer />
+	<Footer footer={data.footer} navigation={data.navigation} />
+</div>
+
 <PreviewBanner visible={isPreview} />
 <Toast />
 <AccessibilityWidget />
 
 <style>
-	.main-content {
-		min-height: calc(100dvh - var(--navbar-height));
+	.page-wrapper {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		min-height: 100dvh;
 		padding-top: var(--navbar-height);
+	}
+
+	.main-content {
+		flex: 1;
 	}
 </style>

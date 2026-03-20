@@ -5,7 +5,7 @@
 
 <div class="auth-page">
 	<div class="auth-card">
-		<img src="/logo-sens.svg" alt="SENS" class="auth-logo" width="80" height="32" />
+		<img src="/logo.png" alt="SENS" class="auth-logo" height="32" />
 		<h1 class="auth-title">Bine ai revenit</h1>
 		<p class="text-muted auth-subtitle">Conectează-te la contul tău SENS</p>
 

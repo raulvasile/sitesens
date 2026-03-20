@@ -1,5 +1,6 @@
 import type { PageLoad } from './$types';
 import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
+import { enrichDynamicZone } from '$lib/enrichDynamicZone';
 
 export interface HomepageData {
 	content: Array<{ __component: string; [key: string]: unknown }>;
@@ -12,7 +13,7 @@ export interface HomepageData {
 	} | null;
 }
 
-export const load: PageLoad = async ({ url }) => {
+export const load: PageLoad = async ({ url, fetch }) => {
 	const { params: previewParams } = getPreviewStatus(url);
 
 	try {
@@ -20,9 +21,15 @@ export const load: PageLoad = async ({ url }) => {
 			'populate[content][populate]': '*',
 			'populate[seo][populate]': '*',
 			...previewParams,
-		});
+		}, undefined, fetch);
 
-		return { homepage: res.data ?? null };
+		const homepage = res.data ?? null;
+
+		if (homepage?.content) {
+			homepage.content = await enrichDynamicZone(homepage.content, fetch);
+		}
+
+		return { homepage };
 	} catch {
 		return { homepage: null };
 	}

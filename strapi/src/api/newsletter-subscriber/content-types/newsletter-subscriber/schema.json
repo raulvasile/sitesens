@@ -4,7 +4,7 @@
   "info": {
     "singularName": "newsletter-subscriber",
     "pluralName": "newsletter-subscribers",
-    "displayName": "Abonat Newsletter",
+    "displayName": "👥 Abonat Newsletter",
     "description": "Abonați newsletter — double opt-in, GDPR"
   },
   "options": {

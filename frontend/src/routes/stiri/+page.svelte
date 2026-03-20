@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import { getStrapiMediaUrl } from '$lib/strapi';
 	import SeoHead from '$lib/components/SeoHead.svelte';
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 
 	let { data } = $props();
 	let searchValue = $state(data.currentSearch);
@@ -49,9 +50,7 @@
 />
 
 <div class="container stiri-page">
-	<nav aria-label="Breadcrumb" class="breadcrumb">
-		<a href="/">Acasă</a> <span>/</span> <span>Știri</span>
-	</nav>
+	<Breadcrumb items={[{ label: 'Știri' }]} />
 
 	<header class="stiri-header">
 		<h1>Știri</h1>
@@ -166,9 +165,6 @@
 
 <style>
 	.stiri-page { padding-block: var(--space-8); }
-	.breadcrumb { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4); display: flex; gap: var(--space-2); }
-	.breadcrumb a { color: var(--color-text-muted); }
-	.breadcrumb a:hover { color: var(--color-green-dark); }
 	.stiri-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); }
 	.stiri-header h1 { font-size: var(--text-3xl); }
 	.stiri-search { display: flex; gap: var(--space-2); }

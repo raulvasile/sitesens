@@ -1,5 +1,15 @@
 <script lang="ts">
-	import { fetchStrapi, getStrapiMediaUrl } from '$lib/strapi';
+	import { getStrapiMediaUrl } from '$lib/strapi';
+
+	interface StrapiEvent {
+		title: string;
+		slug: string;
+		start_date: string;
+		end_date?: string;
+		location_name?: string;
+		event_type: string;
+		cover_image?: { url: string; alternativeText?: string };
+	}
 
 	interface Props {
 		data: {
@@ -7,6 +17,7 @@
 			count?: number;
 			cta_text?: string;
 			cta_link?: string;
+			_events?: StrapiEvent[];
 		};
 	}
 
@@ -20,31 +31,8 @@
 		online: 'Online',
 	};
 
-	interface StrapiEvent {
-		title: string;
-		slug: string;
-		start_date: string;
-		end_date?: string;
-		location_name?: string;
-		event_type: string;
-		cover_image?: { url: string; alternativeText?: string };
-	}
-
-	let events = $state<StrapiEvent[]>([]);
-	let loaded = $state(false);
-
-	$effect(() => {
-		const now = new Date().toISOString();
-		fetchStrapi<StrapiEvent[]>('/events', {
-			'filters[start_date][$gte]': now,
-			'sort': 'start_date:asc',
-			'pagination[pageSize]': String(count),
-			'populate[cover_image]': '*',
-		}).then(res => {
-			events = res.data ?? [];
-			loaded = true;
-		}).catch(() => { loaded = true; });
-	});
+	const events = $derived(data._events ?? []);
+	const loaded = $derived(data._events !== undefined);
 
 	function formatEventDate(iso: string) {
 		const d = new Date(iso);
@@ -84,10 +72,13 @@
 						<div class="upcoming-events__info">
 							<span class="upcoming-events__type">{eventTypeLabels[event.event_type] ?? event.event_type}</span>
 							<h3 class="upcoming-events__title">{event.title}</h3>
-							{#if event.location_name}
-								<p class="upcoming-events__location">📍 {event.location_name}</p>
-							{/if}
-							<p class="upcoming-events__time">🕐 {d.time}</p>
+							<div class="upcoming-events__details">
+								{#if event.location_name}
+									<p class="upcoming-events__location">{event.location_name}</p>
+								{/if}
+								<p class="upcoming-events__time">{d.time}</p>
+							</div>
+							<span class="upcoming-events__link">Detalii <span class="arrow-animate">&rarr;</span></span>
 						</div>
 					</a>
 				{/each}
@@ -134,10 +125,11 @@
 
 	.upcoming-events__card {
 		display: flex;
-		gap: var(--space-4);
+		gap: var(--space-6);
+		align-items: center;
 		background-color: var(--color-white);
 		border-radius: var(--radius-lg);
-		padding: var(--space-5);
+		padding: var(--space-6);
 		border: 1px solid var(--color-border);
 		text-decoration: none;
 		color: inherit;
@@ -147,6 +139,10 @@
 	.upcoming-events__card:hover {
 		box-shadow: 0 8px 24px rgba(0, 56, 39, 0.08);
 		transform: translateY(-2px);
+	}
+
+	.upcoming-events__card:hover .upcoming-events__link {
+		color: var(--color-brand-vibrant);
 	}
 
 	.upcoming-events__date-block {
@@ -165,41 +161,71 @@
 	.upcoming-events__day {
 		font-family: var(--font-display);
 		font-size: var(--text-xl);
-		font-weight: 700;
+		font-weight: 800;
 		line-height: 1;
 	}
 
 	.upcoming-events__month {
-		font-size: var(--text-xs);
-		font-weight: 600;
-		letter-spacing: 0.05em;
+		font-size: 0.65rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		margin-top: 2px;
 	}
 
-	.upcoming-events__info { flex: 1; min-width: 0; }
+	.upcoming-events__info {
+		flex: 1;
+		min-width: 0;
+	}
 
 	.upcoming-events__type {
 		display: inline-block;
-		font-size: var(--text-xs);
-		font-weight: 600;
-		color: var(--color-green-leaf);
+		font-size: 0.65rem;
+		font-weight: 700;
+		color: var(--color-brand-vibrant);
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		letter-spacing: 0.06em;
 		margin-bottom: var(--space-1);
 	}
 
 	.upcoming-events__title {
-		font-size: var(--text-base);
+		font-size: var(--text-sm);
 		font-weight: 700;
 		color: var(--color-green-dark);
-		line-height: 1.3;
+		line-height: 1.4;
 		margin-bottom: var(--space-2);
+	}
+
+	.upcoming-events__details {
+		display: flex;
+		gap: var(--space-3);
+		flex-wrap: wrap;
+		margin-bottom: var(--space-3);
 	}
 
 	.upcoming-events__location,
 	.upcoming-events__time {
-		font-size: var(--text-sm);
+		font-size: var(--text-xs);
 		color: var(--color-text-muted);
-		line-height: 1.4;
+		line-height: 1.5;
+	}
+
+	.upcoming-events__link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1);
+		font-size: var(--text-xs);
+		font-weight: 600;
+		color: var(--color-green-dark);
+		transition: color var(--transition-fast);
+	}
+
+	.upcoming-events__link .arrow-animate {
+		display: inline-block;
+		transition: transform 0.2s ease;
+	}
+
+	.upcoming-events__card:hover .arrow-animate {
+		transform: translateX(4px);
 	}
 
 	.upcoming-events__empty {
@@ -217,10 +243,11 @@
 	/* Skeleton */
 	.upcoming-events__skeleton {
 		display: flex;
-		gap: var(--space-4);
-		padding: var(--space-5);
+		gap: var(--space-6);
+		padding: var(--space-6);
 		background-color: var(--color-white);
 		border-radius: var(--radius-lg);
+		align-items: center;
 	}
 
 	.skeleton {

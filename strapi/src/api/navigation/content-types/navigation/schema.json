@@ -4,26 +4,33 @@
   "info": {
     "singularName": "navigation",
     "pluralName": "navigations",
-    "displayName": "Meniu Header",
-    "description": "Meniul principal al site-ului — gestionat din CMS"
+    "displayName": "⚙️ Header",
+    "description": "Header-ul site-ului: logo, meniu principal, meniu secundar (dreapta), meniu mobil"
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
     "main_menu": {
       "type": "component",
       "repeatable": true,
       "component": "navigation.menu-item"
     },
-    "cta_text": {
-      "type": "string",
-      "default": "Înscrie-te"
+    "secondary_menu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.menu-item"
     },
-    "cta_link": {
-      "type": "string",
-      "default": "/inscrie-te"
+    "mobile_extra_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.menu-sub-item"
     }
   }
 }

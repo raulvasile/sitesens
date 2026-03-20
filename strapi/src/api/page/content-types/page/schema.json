@@ -4,7 +4,7 @@
   "info": {
     "singularName": "page",
     "pluralName": "pages",
-    "displayName": "Pagină",
+    "displayName": "📝 Pagini",
     "description": "Pagini statice cu layout flexibil (Dynamic Zone)"
   },
   "options": {
@@ -45,6 +45,12 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.seo"
+    },
+    "sections": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::section.section",
+      "mappedBy": "page"
     }
   }
 }

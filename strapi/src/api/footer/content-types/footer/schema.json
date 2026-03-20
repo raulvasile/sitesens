@@ -1,0 +1,51 @@
+{
+  "kind": "singleType",
+  "collectionName": "footers",
+  "info": {
+    "singularName": "footer",
+    "pluralName": "footers",
+    "displayName": "⚙️ Footer",
+    "description": "Footer-ul site-ului: logo, tagline, linkuri, social media, legal"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "tagline": {
+      "type": "string",
+      "default": "Sănătate · Educație · Natură · Sustenabilitate"
+    },
+    "eu_text": {
+      "type": "text",
+      "default": "Membru al European Greens și al grupului Verzi/ALE din Parlamentul European"
+    },
+    "footer_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.menu-sub-item"
+    },
+    "social_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "footer.social-link"
+    },
+    "legal_text": {
+      "type": "string",
+      "default": "Partidul SENS · Mandatar financiar CMF nr. 11240065"
+    },
+    "privacy_link_text": {
+      "type": "string",
+      "default": "Politica de confidențialitate"
+    },
+    "privacy_link_url": {
+      "type": "string",
+      "default": "/politica-confidentialitate"
+    }
+  }
+}

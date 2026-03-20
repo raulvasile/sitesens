@@ -1,18 +1,5 @@
 <script lang="ts">
-	import { fetchStrapi, getStrapiMediaUrl } from '$lib/strapi';
-
-	interface Props {
-		data: {
-			heading?: string;
-			count?: number;
-			show_category?: boolean;
-			cta_text?: string;
-			cta_link?: string;
-		};
-	}
-
-	let { data }: Props = $props();
-	const count = data.count ?? 3;
+	import { getStrapiMediaUrl } from '$lib/strapi';
 
 	interface Article {
 		title: string;
@@ -23,23 +10,24 @@
 		category?: { name: string; color?: string };
 	}
 
-	let articles = $state<Article[]>([]);
-	let loaded = $state(false);
+	interface Props {
+		data: {
+			heading?: string;
+			count?: number;
+			show_category?: boolean;
+			cta_text?: string;
+			cta_link?: string;
+			_articles?: Article[];
+		};
+	}
 
-	$effect(() => {
-		fetchStrapi<Article[]>('/articles', {
-			'pagination[pageSize]': String(count),
-			'sort': 'createdAt:desc',
-			'populate[cover_image]': '*',
-			'populate[category]': '*',
-		}).then(res => {
-			articles = res.data ?? [];
-			loaded = true;
-		}).catch(() => { loaded = true; });
-	});
+	let { data }: Props = $props();
+	const count = data.count ?? 3;
+	const articles = $derived(data._articles ?? []);
+	const loaded = $derived(data._articles !== undefined);
 
 	function formatDate(iso: string) {
-		return new Intl.DateTimeFormat('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
+		return new Intl.DateTimeFormat('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso));
 	}
 </script>
 
@@ -74,19 +62,22 @@
 							<div class="latest-articles__image-placeholder"></div>
 						{/if}
 						<div class="latest-articles__body">
-							{#if data.show_category !== false && article.category}
-								<span
-									class="latest-articles__category"
-									style="background-color: {article.category.color ?? 'var(--color-green-dark)'}"
-								>
-									{article.category.name}
-								</span>
-							{/if}
+							<div class="latest-articles__meta">
+								<time class="latest-articles__date">{formatDate(article.createdAt)}</time>
+								{#if data.show_category !== false && article.category}
+									<span
+										class="latest-articles__category"
+										style="background-color: {article.category.color ?? 'var(--color-green-dark)'}"
+									>
+										{article.category.name}
+									</span>
+								{/if}
+							</div>
 							<h3 class="latest-articles__title">{article.title}</h3>
 							{#if article.excerpt}
 								<p class="latest-articles__excerpt">{article.excerpt}</p>
 							{/if}
-							<time class="latest-articles__date">{formatDate(article.createdAt)}</time>
+							<span class="latest-articles__read-more">Citește tot <span class="arrow-animate">&rarr;</span></span>
 						</div>
 					</a>
 				{/each}
@@ -130,6 +121,8 @@
 	}
 
 	.latest-articles__card {
+		display: flex;
+		flex-direction: column;
 		background-color: var(--color-white);
 		border-radius: var(--radius-lg);
 		overflow: hidden;
@@ -144,54 +137,92 @@
 		transform: translateY(-2px);
 	}
 
+	.latest-articles__card:hover .latest-articles__read-more {
+		color: var(--color-brand-vibrant);
+	}
+
 	.latest-articles__image {
 		width: 100%;
-		height: 200px;
+		height: 180px;
 		object-fit: cover;
 	}
 
 	.latest-articles__image-placeholder {
 		width: 100%;
-		height: 200px;
+		height: 180px;
 		background: linear-gradient(135deg, var(--color-green-dark) 0%, var(--color-green-mid) 100%);
 	}
 
-	.latest-articles__body { padding: var(--space-5); }
-
-	.latest-articles__category {
-		display: inline-block;
-		font-size: var(--text-xs);
-		font-weight: 600;
-		color: var(--color-white);
-		padding: 2px 10px;
-		border-radius: var(--radius-full);
-		margin-bottom: var(--space-3);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
+	.latest-articles__body {
+		padding: 18px 20px 20px;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
 	}
 
-	.latest-articles__title {
-		font-size: var(--text-lg);
-		font-weight: 700;
-		color: var(--color-green-dark);
-		margin-bottom: var(--space-2);
-		line-height: 1.3;
-	}
-
-	.latest-articles__excerpt {
-		font-size: var(--text-sm);
-		color: var(--color-text-muted);
-		line-height: 1.5;
+	.latest-articles__meta {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-3);
 		margin-bottom: var(--space-3);
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
 	}
 
 	.latest-articles__date {
 		font-size: var(--text-xs);
 		color: var(--color-text-muted);
+	}
+
+	.latest-articles__category {
+		display: inline-block;
+		font-size: 0.65rem;
+		font-weight: 700;
+		color: var(--color-white);
+		padding: 3px 10px;
+		border-radius: var(--radius-full);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		white-space: nowrap;
+	}
+
+	.latest-articles__title {
+		font-size: var(--text-base);
+		font-weight: 700;
+		color: var(--color-green-dark);
+		margin-bottom: var(--space-2);
+		line-height: 1.4;
+	}
+
+	.latest-articles__excerpt {
+		font-size: var(--text-sm);
+		color: var(--color-text-muted);
+		line-height: 1.6;
+		margin-bottom: var(--space-4);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		flex: 1;
+	}
+
+	.latest-articles__read-more {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--color-green-dark);
+		margin-top: auto;
+		transition: color var(--transition-fast);
+	}
+
+	.latest-articles__read-more .arrow-animate {
+		display: inline-block;
+		transition: transform 0.2s ease;
+	}
+
+	.latest-articles__card:hover .arrow-animate {
+		transform: translateX(4px);
 	}
 
 	.latest-articles__cta {

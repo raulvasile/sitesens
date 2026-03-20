@@ -65,9 +65,9 @@
 	}
 
 	.cta-banner--green .cta-banner__btn {
-		background-color: var(--color-orange);
-		color: var(--color-white);
-		border-color: var(--color-orange);
+		background-color: var(--color-brand-neon);
+		color: var(--color-green-dark);
+		border-color: var(--color-brand-neon);
 		padding: 0.75rem 1.5rem;
 		border-radius: var(--radius-lg);
 		font-weight: 500;

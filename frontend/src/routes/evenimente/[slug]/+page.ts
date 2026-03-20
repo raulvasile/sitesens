@@ -24,7 +24,7 @@ export interface EventDetail {
 	} | null;
 }
 
-export const load: PageLoad = async ({ params, url }) => {
+export const load: PageLoad = async ({ params, url, fetch }) => {
 	const { params: previewParams } = getPreviewStatus(url);
 
 	const res = await fetchStrapi<EventDetail[]>('/events', {
@@ -36,7 +36,7 @@ export const load: PageLoad = async ({ params, url }) => {
 		'populate[social_posts]': 'true',
 		'populate[seo]': 'true',
 		...previewParams,
-	});
+	}, undefined, fetch);
 
 	const event = res.data?.[0];
 	if (!event) {

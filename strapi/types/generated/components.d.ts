@@ -102,6 +102,8 @@ export interface BlocksHero extends Struct.ComponentSchema {
     cta_text: Schema.Attribute.String;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    variant: Schema.Attribute.Enumeration<['default', 'compact']> &
+      Schema.Attribute.DefaultTo<'default'>;
   };
 }
 
@@ -301,6 +303,30 @@ export interface EventSocialPost extends Struct.ComponentSchema {
   };
 }
 
+export interface FooterSocialLink extends Struct.ComponentSchema {
+  collectionName: 'components_footer_social_links';
+  info: {
+    displayName: 'Link Social';
+    icon: 'link';
+  };
+  attributes: {
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    platform: Schema.Attribute.Enumeration<
+      [
+        'facebook',
+        'instagram',
+        'twitter',
+        'tiktok',
+        'youtube',
+        'linkedin',
+        'threads',
+      ]
+    > &
+      Schema.Attribute.Required;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface HomepageValueCard extends Struct.ComponentSchema {
   collectionName: 'components_homepage_value_cards';
   info: {
@@ -415,6 +441,7 @@ declare module '@strapi/strapi' {
       'blocks.upcoming-events': BlocksUpcomingEvents;
       'blocks.video-embed': BlocksVideoEmbed;
       'event.social-post': EventSocialPost;
+      'footer.social-link': FooterSocialLink;
       'homepage.value-card': HomepageValueCard;
       'homepage.value-point': HomepageValuePoint;
       'navigation.menu-item': NavigationMenuItem;

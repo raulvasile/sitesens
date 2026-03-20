@@ -3,21 +3,18 @@
 	let fontSize = $state(100);
 	let highContrast = $state(false);
 	let reduceMotion = $state(false);
-	let dyslexiaFont = $state(false);
 
 	$effect(() => {
 		const root = document.documentElement;
 		root.style.fontSize = `${fontSize}%`;
 		root.classList.toggle('high-contrast', highContrast);
 		root.classList.toggle('reduce-motion', reduceMotion);
-		root.classList.toggle('dyslexia-font', dyslexiaFont);
 	});
 
 	function resetAll() {
 		fontSize = 100;
 		highContrast = false;
 		reduceMotion = false;
-		dyslexiaFont = false;
 	}
 </script>
 
@@ -28,9 +25,10 @@
 		aria-expanded={open}
 		onclick={() => (open = !open)}
 	>
-		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-			<circle cx="12" cy="12" r="10" />
-			<path d="M12 8v4m0 4h.01" />
+		<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<circle cx="12" cy="4.5" r="2.5" />
+			<path d="M12 7v5m0 0l-3 5m3-5l3 5" />
+			<path d="M7 10h10" />
 		</svg>
 	</button>
 
@@ -60,11 +58,6 @@
 				<span>Dezactivează animațiile</span>
 			</label>
 
-			<label class="a11y-panel__option">
-				<input type="checkbox" bind:checked={dyslexiaFont} />
-				<span>Font pentru dislexie</span>
-			</label>
-
 			<button class="a11y-panel__reset" onclick={resetAll}>Resetează</button>
 		</div>
 	{/if}
@@ -75,14 +68,14 @@
 		position: fixed;
 		bottom: var(--space-6);
 		left: var(--space-4);
-		z-index: 400;
+		z-index: 90;
 	}
 
 	.a11y-widget__toggle {
-		width: 44px;
-		height: 44px;
+		width: 52px;
+		height: 52px;
 		border-radius: var(--radius-full);
-		background-color: var(--color-green-dark);
+		background-color: #1565C0;
 		color: var(--color-white);
 		border: none;
 		cursor: pointer;
@@ -94,7 +87,7 @@
 	}
 
 	.a11y-widget__toggle:hover {
-		background-color: var(--color-green-mid);
+		background-color: #0D47A1;
 	}
 
 	.a11y-panel {
@@ -196,8 +189,8 @@
 	}
 
 	.a11y-panel__reset:hover {
-		border-color: var(--color-green-dark);
-		color: var(--color-green-dark);
+		border-color: #1565C0;
+		color: #1565C0;
 	}
 
 	:global(.high-contrast) {
@@ -207,9 +200,5 @@
 	:global(.reduce-motion) * {
 		animation-duration: 0.01ms !important;
 		transition-duration: 0.01ms !important;
-	}
-
-	:global(.dyslexia-font) {
-		font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
 	}
 </style>

@@ -3,19 +3,21 @@
    ============================================================ */
 
 /* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
-/* Cabinet Grotesk via CDN (fallback la system-ui dacă nu e disponibil offline) */
-@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,600,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 /* --- Design Tokens --- */
 :root {
-	/* Culori */
-	--color-green-dark: #003827;
-	--color-green-mid: #004b24;
-	--color-green-leaf: #49bf07;
-	--color-orange: #d89302;
-	--color-orange-light: #fef3d0;
+	/* Brand Colors */
+	--color-green-dark: #103229;
+	--color-green-mid: #0C5118;
+	--color-green-leaf: #91FF00;
+	--color-orange: #00BF63;
+	--color-orange-light: #CCFFCC;
+	--color-brand-emerald: #5AB782;
+	--color-brand-vibrant: #00BF63;
+	--color-brand-lime: #6FD025;
+	--color-brand-neon: #91FF00;
+	--color-brand-custom: #00bd58;
 	--color-bg: #f7faf6;
 	--color-white: #ffffff;
 	--color-text: #1a1a1a;
@@ -25,8 +27,8 @@
 	--color-skeleton: #e9ede8;
 
 	/* Tipografie */
-	--font-display: 'Cabinet Grotesk', system-ui, sans-serif;
-	--font-body: 'Inter', system-ui, sans-serif;
+	--font-display: 'Manrope', system-ui, sans-serif;
+	--font-body: 'Manrope', system-ui, sans-serif;
 
 	/* Font sizes — mobile first */
 	--text-xs: 0.75rem;     /* 12px */
@@ -122,7 +124,7 @@ a {
 	transition: color var(--transition-fast);
 }
 
-a:hover { color: var(--color-green-leaf); }
+a:hover { color: var(--color-brand-vibrant); }
 
 img, video {
 	max-width: 100%;
@@ -145,7 +147,7 @@ img, video {
 	.container { padding-inline: var(--space-8); }
 }
 
-/* --- Butoane — clase globale (folosite și în Button.svelte) --- */
+/* --- Butoane — clase globale (folosite si in Button.svelte) --- */
 .btn {
 	display: inline-flex;
 	align-items: center;
@@ -153,7 +155,7 @@ img, video {
 	gap: var(--space-2);
 	font-family: var(--font-body);
 	font-size: var(--text-sm);
-	font-weight: 500;
+	font-weight: 600;
 	line-height: 1;
 	padding: 0.75rem 1.5rem;
 	border-radius: var(--radius-lg);
@@ -165,14 +167,14 @@ img, video {
 }
 
 .btn-primary {
-	background-color: var(--color-orange);
+	background-color: var(--color-brand-vibrant);
 	color: var(--color-white);
-	border-color: var(--color-orange);
+	border-color: var(--color-brand-vibrant);
 }
 
 .btn-primary:hover {
-	background-color: #c07f00;
-	border-color: #c07f00;
+	background-color: var(--color-brand-custom);
+	border-color: var(--color-brand-custom);
 	color: var(--color-white);
 }
 
@@ -195,7 +197,7 @@ img, video {
 }
 
 .btn-ghost:hover {
-	color: var(--color-green-leaf);
+	color: var(--color-brand-vibrant);
 }
 
 /* --- Skeleton loading --- */
@@ -228,12 +230,12 @@ img, video {
 }
 
 .badge-green {
-	background-color: var(--color-green-leaf);
+	background-color: var(--color-brand-vibrant);
 	color: var(--color-white);
 }
 
 .badge-orange {
-	background-color: var(--color-orange);
+	background-color: var(--color-brand-emerald);
 	color: var(--color-white);
 }
 
@@ -244,7 +246,7 @@ img, video {
 
 /* --- Accesibilitate --- */
 :focus-visible {
-	outline: 3px solid var(--color-orange);
+	outline: 3px solid var(--color-brand-vibrant);
 	outline-offset: 2px;
 	border-radius: var(--radius-sm);
 }
@@ -257,7 +259,7 @@ img, video {
 	}
 }
 
-/* --- Utilități --- */
+/* --- Utilitati --- */
 .sr-only {
 	position: absolute;
 	width: 1px;

@@ -16,7 +16,7 @@ export interface StrapiEvent {
 	max_participants: number | null;
 }
 
-export const load: PageLoad = async ({ url }) => {
+export const load: PageLoad = async ({ url, fetch }) => {
 	const tab = url.searchParams.get('tab') ?? 'viitoare';
 	const type = url.searchParams.get('type') ?? '';
 	const page = parseInt(url.searchParams.get('page') ?? '1');
@@ -43,7 +43,7 @@ export const load: PageLoad = async ({ url }) => {
 	}
 
 	try {
-		const res = await fetchStrapi<StrapiEvent[]>('/events', params);
+		const res = await fetchStrapi<StrapiEvent[]>('/events', params, undefined, fetch);
 		return {
 			events: res.data,
 			pagination: res.meta.pagination ?? { page: 1, pageSize: 9, pageCount: 1, total: 0 },

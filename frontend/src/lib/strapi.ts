@@ -26,7 +26,8 @@ export interface StrapiError {
 export async function fetchStrapi<T = unknown>(
 	endpoint: string,
 	params?: Record<string, string>,
-	token?: string
+	token?: string,
+	fetchFn: typeof fetch = fetch
 ): Promise<StrapiResponse<T>> {
 	const url = new URL(`/api${endpoint}`, STRAPI_URL);
 
@@ -44,7 +45,7 @@ export async function fetchStrapi<T = unknown>(
 		headers['Authorization'] = `Bearer ${token}`;
 	}
 
-	const res = await fetch(url.toString(), { headers });
+	const res = await fetchFn(url.toString(), { headers });
 
 	if (!res.ok) {
 		const error = await res.json().catch(() => ({ error: { message: res.statusText } }));

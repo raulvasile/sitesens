@@ -4,7 +4,7 @@
   "info": {
     "singularName": "article",
     "pluralName": "articles",
-    "displayName": "Blog",
+    "displayName": "📝 Știri",
     "description": "Știri, comunicate de presă, analize"
   },
   "options": {

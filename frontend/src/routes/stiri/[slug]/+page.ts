@@ -2,7 +2,7 @@ import type { PageLoad } from './$types';
 import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
 import { error } from '@sveltejs/kit';
 
-export const load: PageLoad = async ({ params, url }) => {
+export const load: PageLoad = async ({ params, url, fetch }) => {
 	const { params: previewParams } = getPreviewStatus(url);
 
 	const [articleRes, relatedRes] = await Promise.all([
@@ -14,7 +14,7 @@ export const load: PageLoad = async ({ params, url }) => {
 			'populate[tags]': 'true',
 			'populate[seo][populate][og_image]': 'true',
 			...previewParams,
-		}),
+		}, undefined, fetch),
 		// Articole din aceeași categorie (se va filtra pe client)
 		fetchStrapi('/articles', {
 			'populate[cover_image]': 'true',
@@ -22,7 +22,7 @@ export const load: PageLoad = async ({ params, url }) => {
 			'sort[0]': 'createdAt:desc',
 			'pagination[pageSize]': '4',
 			'filters[slug][$ne]': params.slug,
-		}).catch(() => ({ data: [] })),
+		}, undefined, fetch).catch(() => ({ data: [] })),
 	]);
 
 	const articles = (articleRes as any).data;
