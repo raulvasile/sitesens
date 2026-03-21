@@ -11,7 +11,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// Content Security Policy
 	const csp = [
 		`default-src 'self'`,
-		`script-src 'self'`,
+		`script-src 'self' 'unsafe-inline'`,
 		`style-src 'self' 'unsafe-inline'`,
 		`img-src 'self' ${strapiUrl} data: https:`,
 		`font-src 'self' data:`,
