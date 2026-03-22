@@ -398,7 +398,7 @@ async function seedData(strapi: Core.Strapi) {
           columns: '4',
           cards: [
             {
-              icon: '🏥',
+              icon: 'heart',
               title: 'Sănătate',
               description: 'Un sistem de sănătate centrat pe prevenție, accesibil tuturor, indiferent de venit sau locație.',
               points: [
@@ -410,7 +410,7 @@ async function seedData(strapi: Core.Strapi) {
               link_url: '/despre-noi#sanatate',
             },
             {
-              icon: '📚',
+              icon: 'book',
               title: 'Educație',
               description: 'Un sistem educațional care pregătește generațiile viitoare pentru provocările climatice și tehnologice.',
               points: [
@@ -422,7 +422,7 @@ async function seedData(strapi: Core.Strapi) {
               link_url: '/despre-noi#educatie',
             },
             {
-              icon: '🌿',
+              icon: 'leaf',
               title: 'Natură',
               description: 'Protecția naturii nu este un obiectiv secundar — este fundamentul pe care se construiește orice societate sustenabilă.',
               points: [
@@ -434,7 +434,7 @@ async function seedData(strapi: Core.Strapi) {
               link_url: '/despre-noi#natura',
             },
             {
-              icon: '♻️',
+              icon: 'globe',
               title: 'Sustenabilitate',
               description: 'O economie care crește fără să distrugă. Tranziția verde nu este un cost, ci cea mai mare oportunitate economică a generației noastre.',
               points: [
@@ -477,6 +477,16 @@ async function seedData(strapi: Core.Strapi) {
           cta_link: '/evenimente',
         },
         {
+          __component: 'blocks.social-feed',
+          title: 'Urmărește-ne',
+          subtitle: 'Fii la curent cu activitatea noastră pe rețelele sociale.',
+          facebook_url: 'https://www.facebook.com/miscarea.sens',
+          instagram_url: 'https://www.instagram.com/miscarea.sens/',
+          show_facebook: true,
+          show_instagram: true,
+          variant: 'compact',
+        },
+        {
           __component: 'blocks.newsletter-cta',
           title: 'Rămâi la curent cu SENS',
           description: 'Abonează-te la newsletter pentru comunicate, analize și invitații la evenimente.',
@@ -505,7 +515,8 @@ async function seedData(strapi: Core.Strapi) {
           ],
         },
         { label: 'Evenimente', url: '/evenimente', order: 3, open_in_new_tab: false },
-        { label: 'Contact', url: '/contact', order: 4, open_in_new_tab: false },
+        { label: 'Comunitate', url: '/comunitate', order: 4, open_in_new_tab: false },
+        { label: 'Contact', url: '/contact', order: 5, open_in_new_tab: false },
       ],
       secondary_menu: [
         { label: 'Donează', url: '/doneaza', order: 1, open_in_new_tab: false },
@@ -530,10 +541,10 @@ async function seedData(strapi: Core.Strapi) {
         { label: 'Donează', url: '/doneaza' },
       ],
       social_links: [
-        { platform: 'facebook', label: 'Facebook', url: 'https://facebook.com/cusens' },
-        { platform: 'instagram', label: 'Instagram', url: 'https://instagram.com/cusens' },
-        { platform: 'twitter', label: 'X / Twitter', url: 'https://twitter.com/cusens' },
-        { platform: 'tiktok', label: 'TikTok', url: 'https://tiktok.com/@cusens' },
+        { platform: 'facebook', label: 'Facebook', url: 'https://www.facebook.com/miscarea.sens' },
+        { platform: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/miscarea.sens/' },
+        { platform: 'twitter', label: 'X / Twitter', url: 'https://twitter.com/miscarea_sens' },
+        { platform: 'tiktok', label: 'TikTok', url: 'https://www.tiktok.com/@miscarea.sens' },
       ],
       legal_text: 'Partidul SENS · Mandatar financiar CMF nr. 11240065',
       privacy_link_text: 'Politica de confidențialitate',
@@ -762,14 +773,14 @@ async function seedData(strapi: Core.Strapi) {
           columns: '2',
           cards: [
             {
-              icon: '🇪🇺',
+              icon: 'globe',
               title: 'European Greens',
               description: 'SENS este membru al European Green Party — partidul ecologist european care reunește peste 40 de partide verzi din întreaga Europă. Împreună promovăm politici climatice ambițioase, justiție socială și democrație participativă.',
               link_text: 'europeangreens.eu',
               link_url: 'https://europeangreens.eu',
             },
             {
-              icon: '🏛️',
+              icon: 'landmark',
               title: 'Grupul Verzi/ALE',
               description: 'În Parlamentul European, suntem parte a grupului Greens/European Free Alliance — una dintre cele mai influente forțe politice pentru politici climatice ambițioase, drepturile omului și transparență instituțională.',
               link_text: 'greens-efa.eu',
@@ -1066,6 +1077,15 @@ async function configureAdminLabels(strapi: Core.Strapi) {
     },
     'blocks.spacer': {
       height: 'Înălțime',
+    },
+    'blocks.social-feed': {
+      title: 'Titlu',
+      subtitle: 'Subtitlu',
+      facebook_url: 'URL Facebook',
+      instagram_url: 'URL Instagram',
+      show_facebook: 'Afișează Facebook',
+      show_instagram: 'Afișează Instagram',
+      variant: 'Variantă (full/compact)',
     },
   };
 

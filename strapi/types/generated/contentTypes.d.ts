@@ -705,6 +705,7 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
         'blocks.upcoming-events',
         'blocks.contact-form',
         'blocks.spacer',
+        'blocks.social-feed',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;

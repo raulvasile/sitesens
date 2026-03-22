@@ -15,6 +15,7 @@
 	import UpcomingEvents from './blocks/UpcomingEvents.svelte';
 	import ContactForm from './blocks/ContactForm.svelte';
 	import Spacer from './blocks/Spacer.svelte';
+	import SocialFeed from './blocks/SocialFeed.svelte';
 
 	interface Props {
 		content: Array<{ __component: string; [key: string]: unknown }>;
@@ -38,7 +39,8 @@
 		'blocks.latest-articles': LatestArticles,
 		'blocks.upcoming-events': UpcomingEvents,
 		'blocks.contact-form': ContactForm,
-		'blocks.spacer': Spacer
+		'blocks.spacer': Spacer,
+		'blocks.social-feed': SocialFeed
 	};
 </script>
 

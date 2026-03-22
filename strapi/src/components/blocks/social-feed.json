@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_blocks_social_feeds",
+  "info": {
+    "displayName": "Social Feed",
+    "icon": "globe",
+    "description": "Embed-uri Facebook și Instagram"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Urmărește-ne"
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "facebook_url": {
+      "type": "string",
+      "default": "https://www.facebook.com/miscarea.sens"
+    },
+    "instagram_url": {
+      "type": "string",
+      "default": "https://www.instagram.com/miscarea.sens/"
+    },
+    "show_facebook": {
+      "type": "boolean",
+      "default": true
+    },
+    "show_instagram": {
+      "type": "boolean",
+      "default": true
+    },
+    "variant": {
+      "type": "enumeration",
+      "enum": ["full", "compact"],
+      "default": "full"
+    }
+  }
+}

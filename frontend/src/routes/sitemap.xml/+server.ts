@@ -26,6 +26,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
 		{ loc: '/contact', priority: '0.6', changefreq: 'monthly' },
 		{ loc: '/doneaza', priority: '0.7', changefreq: 'monthly' },
 		{ loc: '/inscrie-te', priority: '0.7', changefreq: 'monthly' },
+		{ loc: '/comunitate', priority: '0.5', changefreq: 'weekly' },
 		{ loc: '/newsletter', priority: '0.5', changefreq: 'monthly' },
 		{ loc: '/politica-confidentialitate', priority: '0.3', changefreq: 'yearly' },
 	];

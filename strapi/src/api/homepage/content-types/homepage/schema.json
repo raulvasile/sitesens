@@ -29,7 +29,8 @@
         "blocks.latest-articles",
         "blocks.upcoming-events",
         "blocks.contact-form",
-        "blocks.spacer"
+        "blocks.spacer",
+        "blocks.social-feed"
       ]
     },
     "seo": {

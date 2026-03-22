@@ -201,6 +201,28 @@ export interface BlocksQuote extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksSocialFeed extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_social_feeds';
+  info: {
+    description: 'Embed-uri Facebook \u0219i Instagram';
+    displayName: 'Social Feed';
+    icon: 'globe';
+  };
+  attributes: {
+    facebook_url: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'https://www.facebook.com/miscarea.sens'>;
+    instagram_url: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'https://www.instagram.com/miscarea.sens/'>;
+    show_facebook: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    show_instagram: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    subtitle: Schema.Attribute.Text;
+    title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Urm\u0103re\u0219te-ne'>;
+    variant: Schema.Attribute.Enumeration<['full', 'compact']> &
+      Schema.Attribute.DefaultTo<'full'>;
+  };
+}
+
 export interface BlocksSpacer extends Struct.ComponentSchema {
   collectionName: 'components_blocks_spacers';
   info: {
@@ -434,6 +456,7 @@ declare module '@strapi/strapi' {
       'blocks.program-item': BlocksProgramItem;
       'blocks.program-points': BlocksProgramPoints;
       'blocks.quote': BlocksQuote;
+      'blocks.social-feed': BlocksSocialFeed;
       'blocks.spacer': BlocksSpacer;
       'blocks.stat-item': BlocksStatItem;
       'blocks.stats-counter': BlocksStatsCounter;
