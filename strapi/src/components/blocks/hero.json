@@ -33,6 +33,16 @@
       "type": "enumeration",
       "enum": ["default", "compact"],
       "default": "default"
+    },
+    "rotating_words": {
+      "type": "component",
+      "repeatable": false,
+      "component": "blocks.word-rotation"
+    },
+    "featured_link": {
+      "type": "component",
+      "repeatable": false,
+      "component": "blocks.featured-link"
     }
   }
 }

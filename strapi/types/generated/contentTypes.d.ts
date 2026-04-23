@@ -494,10 +494,15 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
   attributes: {
     articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
+    children: Schema.Attribute.Relation<'oneToMany', 'api::category.category'>;
     color: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#003827'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -507,6 +512,7 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+    parent: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -706,6 +712,7 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
         'blocks.contact-form',
         'blocks.spacer',
         'blocks.social-feed',
+        'blocks.word-carousel',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;

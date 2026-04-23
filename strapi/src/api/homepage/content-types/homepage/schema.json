@@ -30,7 +30,8 @@
         "blocks.upcoming-events",
         "blocks.contact-form",
         "blocks.spacer",
-        "blocks.social-feed"
+        "blocks.social-feed",
+        "blocks.word-carousel"
       ]
     },
     "seo": {

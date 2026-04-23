@@ -839,6 +839,9 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       slug: 'URL (slug)',
       color: 'Culoare',
       articles: 'Articole',
+      parent: 'Categorie părinte',
+      children: 'Subcategorii',
+      description: 'Descriere',
     },
     'api::tag.tag': {
       name: 'Nume',
@@ -941,13 +944,39 @@ async function configureAdminLabels(strapi: Core.Strapi) {
 
   const componentLabels: Record<string, Record<string, string>> = {
     'blocks.hero': {
-      title: 'Titlu',
+      title: 'Titlu (folosește {{rotating}} ca placeholder pentru cuvintele ce se rotesc)',
       subtitle: 'Subtitlu',
       cta_text: 'Text buton',
       cta_link: 'Link buton',
       cta_secondary_text: 'Text buton secundar',
       cta_secondary_link: 'Link buton secundar',
       background_image: 'Imagine fundal',
+      variant: 'Variantă',
+      rotating_words: 'Cuvinte rotative',
+      featured_link: 'Link evidențiat',
+    },
+    'blocks.word-rotation': {
+      words: 'Cuvinte (array JSON, ex: ["Sănătate", "Educație"])',
+      interval_ms: 'Interval schimbare (ms)',
+      highlight: 'Evidențiere culoare',
+    },
+    'blocks.featured-link': {
+      label: 'Etichetă mică',
+      title: 'Titlu',
+      url: 'Link',
+      icon: 'Iconiță (emoji)',
+      auto_next_event: 'Auto: următorul eveniment',
+    },
+    'blocks.word-carousel': {
+      items: 'Elemente',
+      speed_seconds: 'Viteză (secunde pentru un ciclu complet)',
+      background_color: 'Culoare fundal',
+      separator: 'Separator între cuvinte',
+    },
+    'blocks.word-carousel-item': {
+      text: 'Text',
+      url: 'Link (opțional)',
+      highlight: 'Evidențiat',
     },
     'blocks.text-block': {
       body: 'Conținut',

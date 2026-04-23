@@ -88,6 +88,31 @@ export interface BlocksCtaBanner extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksFeaturedLink extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_featured_links';
+  info: {
+    description: 'Card mic cu o info important\u0103 (ex: urm\u0103torul eveniment, anun\u021B)';
+    displayName: 'Link eviden\u021Biat';
+    icon: 'link';
+  };
+  attributes: {
+    auto_next_event: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    icon: Schema.Attribute.String;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface BlocksHero extends Struct.ComponentSchema {
   collectionName: 'components_blocks_heroes';
   info: {
@@ -100,6 +125,8 @@ export interface BlocksHero extends Struct.ComponentSchema {
     cta_secondary_link: Schema.Attribute.String;
     cta_secondary_text: Schema.Attribute.String;
     cta_text: Schema.Attribute.String;
+    featured_link: Schema.Attribute.Component<'blocks.featured-link', false>;
+    rotating_words: Schema.Attribute.Component<'blocks.word-rotation', false>;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     variant: Schema.Attribute.Enumeration<['default', 'compact']> &
@@ -308,6 +335,81 @@ export interface BlocksVideoEmbed extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksWordCarousel extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_word_carousels';
+  info: {
+    description: 'Band\u0103 full-width cu cuvinte care se deruleaz\u0103 orizontal (marquee continuu)';
+    displayName: 'Carusel de cuvinte';
+    icon: 'arrowRight';
+  };
+  attributes: {
+    background_color: Schema.Attribute.Enumeration<
+      ['green', 'dark', 'white', 'lime']
+    > &
+      Schema.Attribute.DefaultTo<'green'>;
+    items: Schema.Attribute.Component<'blocks.word-carousel-item', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 2;
+        },
+        number
+      >;
+    separator: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 4;
+      }> &
+      Schema.Attribute.DefaultTo<'\u2022'>;
+    speed_seconds: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 120;
+          min: 10;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<30>;
+  };
+}
+
+export interface BlocksWordCarouselItem extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_word_carousel_items';
+  info: {
+    displayName: 'Element carusel cuvinte';
+    icon: 'cursor';
+  };
+  attributes: {
+    highlight: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    text: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    url: Schema.Attribute.String;
+  };
+}
+
+export interface BlocksWordRotation extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_word_rotations';
+  info: {
+    description: 'Cuvinte care se rotesc \u00EEntr-o pozi\u021Bie din titlu (folose\u0219te {{rotating}} \u00EEn titlu)';
+    displayName: 'Rota\u021Bie cuvinte';
+    icon: 'refresh';
+  };
+  attributes: {
+    highlight: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    interval_ms: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10000;
+          min: 800;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<2500>;
+    words: Schema.Attribute.JSON & Schema.Attribute.Required;
+  };
+}
+
 export interface EventSocialPost extends Struct.ComponentSchema {
   collectionName: 'components_event_social_posts';
   info: {
@@ -449,6 +551,7 @@ declare module '@strapi/strapi' {
       'blocks.card-grid-item': BlocksCardGridItem;
       'blocks.contact-form': BlocksContactForm;
       'blocks.cta-banner': BlocksCtaBanner;
+      'blocks.featured-link': BlocksFeaturedLink;
       'blocks.hero': BlocksHero;
       'blocks.image-gallery': BlocksImageGallery;
       'blocks.latest-articles': BlocksLatestArticles;
@@ -463,6 +566,9 @@ declare module '@strapi/strapi' {
       'blocks.text-block': BlocksTextBlock;
       'blocks.upcoming-events': BlocksUpcomingEvents;
       'blocks.video-embed': BlocksVideoEmbed;
+      'blocks.word-carousel': BlocksWordCarousel;
+      'blocks.word-carousel-item': BlocksWordCarouselItem;
+      'blocks.word-rotation': BlocksWordRotation;
       'event.social-post': EventSocialPost;
       'footer.social-link': FooterSocialLink;
       'homepage.value-card': HomepageValueCard;

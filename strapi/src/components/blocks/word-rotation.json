@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_blocks_word_rotations",
+  "info": {
+    "displayName": "Rotație cuvinte",
+    "icon": "refresh",
+    "description": "Cuvinte care se rotesc într-o poziție din titlu (folosește {{rotating}} în titlu)"
+  },
+  "attributes": {
+    "words": {
+      "type": "json",
+      "required": true
+    },
+    "interval_ms": {
+      "type": "integer",
+      "default": 2500,
+      "min": 800,
+      "max": 10000
+    },
+    "highlight": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

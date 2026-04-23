@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_blocks_word_carousel_items",
+  "info": {
+    "displayName": "Element carusel cuvinte",
+    "icon": "cursor"
+  },
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "url": {
+      "type": "string"
+    },
+    "highlight": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

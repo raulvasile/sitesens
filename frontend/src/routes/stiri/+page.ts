@@ -9,7 +9,7 @@ export const load: PageLoad = async ({ url, fetch }) => {
 
 	const params: Record<string, string> = {
 		'populate[cover_image]': 'true',
-		'populate[category]': 'true',
+		'populate[category][populate][parent]': 'true',
 		'populate[author]': 'true',
 		'populate[tags]': 'true',
 		'sort[0]': 'createdAt:desc',
@@ -18,7 +18,9 @@ export const load: PageLoad = async ({ url, fetch }) => {
 	};
 
 	if (category) {
-		params['filters[category][slug][$eq]'] = category;
+		// Match both direct category OR any article whose category has this parent slug
+		params['filters[$or][0][category][slug][$eq]'] = category;
+		params['filters[$or][1][category][parent][slug][$eq]'] = category;
 	}
 
 	if (search) {
@@ -28,7 +30,11 @@ export const load: PageLoad = async ({ url, fetch }) => {
 	try {
 		const [articlesRes, categoriesRes] = await Promise.all([
 			fetchStrapi('/articles', params, undefined, fetch),
-			fetchStrapi('/categories', { 'sort[0]': 'name:asc' }, undefined, fetch).catch(() => ({ data: [], meta: {} })),
+			fetchStrapi('/categories', {
+				'sort[0]': 'name:asc',
+				'populate[parent]': 'true',
+				'populate[children]': 'true',
+			}, undefined, fetch).catch(() => ({ data: [], meta: {} })),
 		]);
 
 		return {

@@ -7,6 +7,7 @@
 	import AccessibilityWidget from '$components/ui/AccessibilityWidget.svelte';
 	import NavigationProgress from '$components/ui/NavigationProgress.svelte';
 	import PreviewBanner from '$lib/components/PreviewBanner.svelte';
+	import Analytics from '$lib/components/Analytics.svelte';
 	import { page } from '$app/stores';
 	import type { Snippet } from 'svelte';
 
@@ -33,6 +34,7 @@
 <PreviewBanner visible={isPreview} />
 <Toast />
 <AccessibilityWidget />
+<Analytics />
 
 <style>
 	.page-wrapper {

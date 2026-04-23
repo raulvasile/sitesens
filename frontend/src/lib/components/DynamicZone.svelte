@@ -16,6 +16,7 @@
 	import ContactForm from './blocks/ContactForm.svelte';
 	import Spacer from './blocks/Spacer.svelte';
 	import SocialFeed from './blocks/SocialFeed.svelte';
+	import WordCarousel from './blocks/WordCarousel.svelte';
 
 	interface Props {
 		content: Array<{ __component: string; [key: string]: unknown }>;
@@ -40,7 +41,8 @@
 		'blocks.upcoming-events': UpcomingEvents,
 		'blocks.contact-form': ContactForm,
 		'blocks.spacer': Spacer,
-		'blocks.social-feed': SocialFeed
+		'blocks.social-feed': SocialFeed,
+		'blocks.word-carousel': WordCarousel
 	};
 </script>
 

@@ -8,6 +8,11 @@
 	let { data } = $props();
 	let searchValue = $state(data.currentSearch);
 
+	const topCategories = $derived(data.categories.filter((c: any) => !c.parent));
+	const activeCat = $derived(data.categories.find((c: any) => c.slug === data.currentCategory));
+	const activeParentSlug = $derived(activeCat?.parent?.slug ?? activeCat?.slug);
+	const subCategories = $derived(data.categories.filter((c: any) => c.parent?.slug === activeParentSlug));
+
 	function formatDate(dateStr: string) {
 		return new Date(dateStr).toLocaleDateString('ro-RO', {
 			day: 'numeric', month: 'long', year: 'numeric'
@@ -66,7 +71,7 @@
 		</form>
 	</header>
 
-	<!-- Filtre categorii -->
+	<!-- Filtre categorii principale (fără parent = top-level) -->
 	<div class="category-filters" role="tablist" aria-label="Filtre categorii">
 		<button
 			class="category-pill"
@@ -75,16 +80,29 @@
 			role="tab"
 			aria-selected={!data.currentCategory}
 		>Toate</button>
-		{#each data.categories as cat}
+		{#each topCategories as cat}
 			<button
 				class="category-pill"
-				class:active={data.currentCategory === cat.slug}
+				class:active={data.currentCategory === cat.slug || activeCat?.parent?.slug === cat.slug}
 				onclick={() => setCategory(cat.slug)}
 				role="tab"
 				aria-selected={data.currentCategory === cat.slug}
 			>{cat.name}</button>
 		{/each}
 	</div>
+	{#if subCategories.length > 0}
+		<div class="subcategory-filters" role="tablist" aria-label="Filtre subcategorii">
+			{#each subCategories as sub}
+				<button
+					class="subcategory-pill"
+					class:active={data.currentCategory === sub.slug}
+					onclick={() => setCategory(sub.slug)}
+					role="tab"
+					aria-selected={data.currentCategory === sub.slug}
+				>{sub.name}</button>
+			{/each}
+		</div>
+	{/if}
 
 	{#if data.currentSearch}
 		<p class="search-info">
@@ -191,6 +209,27 @@
 	}
 	.category-pill:hover { border-color: var(--color-green-dark); color: var(--color-green-dark); }
 	.category-pill.active { background-color: var(--color-green-dark); color: var(--color-white); border-color: var(--color-green-dark); }
+	.subcategory-filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin-bottom: var(--space-6);
+		padding-left: var(--space-4);
+		border-left: 2px solid var(--color-green-leaf);
+	}
+	.subcategory-pill {
+		padding: 0.25rem 0.75rem;
+		border-radius: var(--radius-xl);
+		border: 1px solid transparent;
+		background: transparent;
+		font-size: var(--text-xs);
+		font-family: var(--font-body);
+		cursor: pointer;
+		transition: all var(--transition-fast);
+		color: var(--color-text-muted);
+	}
+	.subcategory-pill:hover { background-color: var(--color-white); color: var(--color-green-dark); }
+	.subcategory-pill.active { background-color: var(--color-green-leaf); color: var(--color-green-dark); font-weight: 600; }
 	.search-info { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-6); display: flex; align-items: center; gap: var(--space-3); }
 	.search-clear { background: none; border: none; color: var(--color-error); cursor: pointer; font-size: var(--text-sm); font-family: var(--font-body); }
 	.articles-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); margin-bottom: var(--space-8); }

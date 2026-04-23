@@ -11,11 +11,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// Content Security Policy
 	const csp = [
 		`default-src 'self'`,
-		`script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.instagram.com`,
-		`style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
-		`img-src 'self' ${strapiUrl} data: https:`,
+		`script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.instagram.com https://www.googletagmanager.com https://www.google-analytics.com`,
+		`style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.googletagmanager.com`,
+		`img-src 'self' ${strapiUrl} data: https: https://www.googletagmanager.com https://www.google-analytics.com`,
 		`font-src 'self' data: https://fonts.gstatic.com`,
-		`connect-src 'self' ${strapiUrl}`,
+		`connect-src 'self' ${strapiUrl} https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com`,
 		`frame-src https://www.facebook.com https://www.instagram.com`,
 		`object-src 'none'`,
 		`base-uri 'self'`,

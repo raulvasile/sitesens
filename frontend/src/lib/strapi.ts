@@ -1,4 +1,20 @@
-const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
+/**
+ * STRAPI_URL — uses VITE_STRAPI_URL (inlined at build time).
+ * For Docker SSR, set STRAPI_URL_INTERNAL env var at runtime (e.g. http://strapi:1337).
+ * The internal URL is only used server-side; client always uses the public URL.
+ */
+const PUBLIC_STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
+
+function getStrapiBaseUrl(): string {
+	if (typeof window === 'undefined') {
+		// Server-side: prefer internal URL for Docker networking
+		// @ts-ignore — process.env is available at runtime in Node
+		return process.env.STRAPI_URL_INTERNAL || PUBLIC_STRAPI_URL;
+	}
+	return PUBLIC_STRAPI_URL;
+}
+
+const STRAPI_URL = getStrapiBaseUrl();
 
 export interface StrapiResponse<T> {
 	data: T;
@@ -126,5 +142,6 @@ export function getPreviewStatus(url: URL): { isPreview: boolean; params: Record
 export function getStrapiMediaUrl(url: string | null | undefined): string {
 	if (!url) return '';
 	if (url.startsWith('http')) return url;
-	return `${STRAPI_URL}${url}`;
+	// Always use public URL for media (rendered in browser)
+	return `${PUBLIC_STRAPI_URL}${url}`;
 }

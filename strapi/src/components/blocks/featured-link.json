@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_blocks_featured_links",
+  "info": {
+    "displayName": "Link evidențiat",
+    "icon": "link",
+    "description": "Card mic cu o info importantă (ex: următorul eveniment, anunț)"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "maxLength": 80
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 160
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "icon": {
+      "type": "string"
+    },
+    "auto_next_event": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

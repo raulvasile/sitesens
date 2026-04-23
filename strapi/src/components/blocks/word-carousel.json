@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_blocks_word_carousels",
+  "info": {
+    "displayName": "Carusel de cuvinte",
+    "icon": "arrowRight",
+    "description": "Bandă full-width cu cuvinte care se derulează orizontal (marquee continuu)"
+  },
+  "attributes": {
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blocks.word-carousel-item",
+      "min": 2
+    },
+    "speed_seconds": {
+      "type": "integer",
+      "default": 30,
+      "min": 10,
+      "max": 120
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": ["green", "dark", "white", "lime"],
+      "default": "green"
+    },
+    "separator": {
+      "type": "string",
+      "default": "•",
+      "maxLength": 4
+    }
+  }
+}

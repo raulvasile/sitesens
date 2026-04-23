@@ -1,0 +1,83 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: strapi
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-strapi_secret}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U strapi"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  strapi:
+    build:
+      context: ./strapi
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "1337:1337"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 1337
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: strapi
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: ${DB_PASSWORD:-strapi_secret}
+      DATABASE_SSL: "false"
+      APP_KEYS: ${APP_KEYS:-key1,key2,key3,key4}
+      API_TOKEN_SALT: ${API_TOKEN_SALT:-api-token-salt-change-me}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET:-admin-jwt-secret-change-me}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT:-transfer-salt-change-me}
+      JWT_SECRET: ${JWT_SECRET:-jwt-secret-change-me}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-encryption-key-change-me}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+    volumes:
+      - strapi_uploads:/app/public/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_STRAPI_URL=${VITE_STRAPI_URL:-http://localhost:1337}
+        - VITE_SITE_URL=${VITE_SITE_URL:-http://localhost:3000}
+        - VITE_GTM_ID=${VITE_GTM_ID:-}
+    restart: unless-stopped
+    depends_on:
+      - strapi
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      ORIGIN: ${VITE_SITE_URL:-http://localhost:3000}
+      STRAPI_URL_INTERNAL: http://strapi:1337
+      VITE_SITE_URL: ${VITE_SITE_URL:-http://localhost:3000}
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - strapi
+    ports:
+      - "3001:3001"
+    volumes:
+      - uptime_kuma:/app/data
+
+volumes:
+  pgdata:
+  strapi_uploads:
+  uptime_kuma:

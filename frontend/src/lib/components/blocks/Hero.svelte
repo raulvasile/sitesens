@@ -1,6 +1,20 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
+	import { onMount } from 'svelte';
+
+	interface RotatingWords {
+		words: string[] | string;
+		interval_ms?: number;
+		highlight?: boolean;
+	}
+	interface FeaturedLink {
+		label: string;
+		title: string;
+		url: string;
+		icon?: string;
+		auto_next_event?: boolean;
+	}
 
 	interface Props {
 		data: {
@@ -13,11 +27,55 @@
 			background_image?: { url: string; alternativeText?: string } | null;
 			variant?: 'default' | 'compact';
 			breadcrumb?: { label: string; href?: string }[];
+			rotating_words?: RotatingWords | null;
+			featured_link?: FeaturedLink | null;
 		};
 	}
 
 	let { data }: Props = $props();
 	const isCompact = $derived(data.variant === 'compact');
+
+	// Parse words (can arrive as array or JSON-stringified array)
+	const words = $derived.by(() => {
+		const raw = data.rotating_words?.words;
+		if (!raw) return [] as string[];
+		if (Array.isArray(raw)) return raw.filter((w) => typeof w === 'string' && w.trim().length > 0);
+		if (typeof raw === 'string') {
+			try {
+				const parsed = JSON.parse(raw);
+				return Array.isArray(parsed) ? parsed : [];
+			} catch {
+				// comma-separated fallback
+				return raw.split(',').map((s) => s.trim()).filter(Boolean);
+			}
+		}
+		return [];
+	});
+
+	const interval = $derived(data.rotating_words?.interval_ms ?? 2500);
+	const highlight = $derived(data.rotating_words?.highlight ?? true);
+
+	// Split the title around {{rotating}} placeholder
+	const titleParts = $derived.by(() => {
+		const title = data.title ?? '';
+		if (words.length === 0 || !title.includes('{{rotating}}')) {
+			return { before: title, after: '', hasPlaceholder: false };
+		}
+		const [before, after] = title.split('{{rotating}}');
+		return { before, after: after ?? '', hasPlaceholder: true };
+	});
+
+	let currentIndex = $state(0);
+	let prevIndex = $state(0);
+
+	onMount(() => {
+		if (words.length < 2) return;
+		const id = setInterval(() => {
+			prevIndex = currentIndex;
+			currentIndex = (currentIndex + 1) % words.length;
+		}, interval);
+		return () => clearInterval(id);
+	});
 </script>
 
 <section
@@ -32,7 +90,24 @@
 		{#if data.breadcrumb?.length}
 			<Breadcrumb light items={data.breadcrumb} />
 		{/if}
-		<h1 class="hero__title">{data.title}</h1>
+		<h1 class="hero__title">
+			{#if titleParts.hasPlaceholder}
+				{titleParts.before}<span
+					class="hero__rotating"
+					class:hero__rotating--highlight={highlight}
+					aria-live="polite"
+					style={`--hero-rotation-duration: ${Math.min(interval, 600)}ms`}
+				>
+					{#key currentIndex}
+						<span class="hero__rotating-word">{words[currentIndex]}</span>
+					{/key}
+					<!-- sr-only fallback listing all words for SEO/accessibility -->
+					<span class="sr-only">{words.join(', ')}</span>
+				</span>{titleParts.after}
+			{:else}
+				{data.title}
+			{/if}
+		</h1>
 		{#if data.subtitle}
 			<p class="hero__subtitle">{data.subtitle}</p>
 		{/if}
@@ -47,6 +122,16 @@
 					</a>
 				{/if}
 			</div>
+		{/if}
+		{#if data.featured_link}
+			<a href={data.featured_link.url} class="hero__featured">
+				<span class="hero__featured-label">
+					{#if data.featured_link.icon}<span class="hero__featured-icon">{data.featured_link.icon}</span>{/if}
+					{data.featured_link.label}
+				</span>
+				<span class="hero__featured-title">{data.featured_link.title}</span>
+				<span class="hero__featured-arrow" aria-hidden="true">→</span>
+			</a>
 		{/if}
 	</div>
 </section>
@@ -65,7 +150,6 @@
 		padding-top: calc(var(--navbar-height) + var(--space-16));
 	}
 
-	/* ── Compact variant: ~40vh instead of 80vh ── */
 	.hero--compact {
 		min-height: 40vh;
 		padding-block: var(--space-12);
@@ -137,5 +221,102 @@
 		background-color: rgba(255, 255, 255, 0.15);
 		border-color: var(--color-white);
 		color: var(--color-white);
+	}
+
+	/* ── Rotating words ── */
+	.hero__rotating {
+		display: inline-block;
+		position: relative;
+		overflow: hidden;
+		vertical-align: bottom;
+		line-height: 1.1;
+		min-height: 1.1em;
+	}
+
+	.hero__rotating--highlight {
+		color: var(--color-brand-neon);
+	}
+
+	.hero__rotating-word {
+		display: inline-block;
+		animation: heroWordFlip var(--hero-rotation-duration, 450ms) cubic-bezier(0.2, 0.7, 0.3, 1);
+	}
+
+	@keyframes heroWordFlip {
+		0% {
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		60% {
+			opacity: 1;
+		}
+		100% {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero__rotating-word { animation: none; }
+	}
+
+	/* ── Featured link card ── */
+	.hero__featured {
+		display: inline-grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto auto;
+		column-gap: var(--space-4);
+		row-gap: 2px;
+		align-items: center;
+		margin-top: var(--space-8);
+		padding: var(--space-4) var(--space-6);
+		background-color: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: var(--radius-lg);
+		color: var(--color-white);
+		text-decoration: none;
+		transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+		backdrop-filter: blur(8px);
+	}
+
+	.hero__featured:hover {
+		background-color: rgba(255, 255, 255, 0.15);
+		border-color: rgba(145, 255, 0, 0.5);
+		transform: translateY(-2px);
+	}
+
+	.hero__featured-label {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		font-size: var(--text-xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-brand-neon);
+		grid-column: 1;
+	}
+
+	.hero__featured-icon {
+		font-size: var(--text-sm);
+	}
+
+	.hero__featured-title {
+		font-size: var(--text-base);
+		font-weight: 600;
+		line-height: 1.4;
+		grid-column: 1;
+	}
+
+	.hero__featured-arrow {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		font-size: var(--text-xl);
+		color: var(--color-brand-neon);
+		transition: transform var(--transition-fast);
+	}
+
+	.hero__featured:hover .hero__featured-arrow {
+		transform: translateX(4px);
 	}
 </style>
