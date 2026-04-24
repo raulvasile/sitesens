@@ -7,11 +7,55 @@
 
 	let { data } = $props();
 	let searchValue = $state(data.currentSearch);
+	let openDropdown = $state<string | null>(null);
 
 	const topCategories = $derived(data.categories.filter((c: any) => !c.parent));
 	const activeCat = $derived(data.categories.find((c: any) => c.slug === data.currentCategory));
 	const activeParentSlug = $derived(activeCat?.parent?.slug ?? activeCat?.slug);
-	const subCategories = $derived(data.categories.filter((c: any) => c.parent?.slug === activeParentSlug));
+	const activeParent = $derived(
+		activeCat?.parent ?? (activeCat && !activeCat.parent ? activeCat : null)
+	);
+	const activeSub = $derived(activeCat?.parent ? activeCat : null);
+
+	// Map: parent slug → subcategories[]
+	const subsByParent = $derived.by(() => {
+		const map: Record<string, any[]> = {};
+		for (const cat of data.categories) {
+			if (cat.parent?.slug) {
+				if (!map[cat.parent.slug]) map[cat.parent.slug] = [];
+				map[cat.parent.slug].push(cat);
+			}
+		}
+		return map;
+	});
+
+	function toggleDropdown(slug: string) {
+		openDropdown = openDropdown === slug ? null : slug;
+	}
+
+	function handleDocumentClick(e: MouseEvent) {
+		if (!openDropdown) return;
+		const target = e.target as HTMLElement;
+		if (!target.closest('.category-group')) {
+			openDropdown = null;
+		}
+	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape' && openDropdown) {
+			openDropdown = null;
+		}
+	}
+
+	$effect(() => {
+		if (typeof document === 'undefined') return;
+		document.addEventListener('click', handleDocumentClick);
+		document.addEventListener('keydown', handleKeydown);
+		return () => {
+			document.removeEventListener('click', handleDocumentClick);
+			document.removeEventListener('keydown', handleKeydown);
+		};
+	});
 
 	function formatDate(dateStr: string) {
 		return new Date(dateStr).toLocaleDateString('ro-RO', {
@@ -27,6 +71,7 @@
 			params.delete('categorie');
 		}
 		params.delete('page');
+		openDropdown = null;
 		goto(`/stiri?${params.toString()}`, { replaceState: true });
 	}
 
@@ -71,37 +116,90 @@
 		</form>
 	</header>
 
-	<!-- Filtre categorii principale (fără parent = top-level) -->
-	<div class="category-filters" role="tablist" aria-label="Filtre categorii">
+	<!-- Filtre categorii cu dropdown pentru subcategorii -->
+	<div class="category-filters" aria-label="Filtre categorii">
 		<button
 			class="category-pill"
 			class:active={!data.currentCategory}
 			onclick={() => setCategory('')}
-			role="tab"
-			aria-selected={!data.currentCategory}
 		>Toate</button>
 		{#each topCategories as cat}
-			<button
-				class="category-pill"
-				class:active={data.currentCategory === cat.slug || activeCat?.parent?.slug === cat.slug}
-				onclick={() => setCategory(cat.slug)}
-				role="tab"
-				aria-selected={data.currentCategory === cat.slug}
-			>{cat.name}</button>
+			{@const subs = subsByParent[cat.slug] ?? []}
+			{@const hasSubs = subs.length > 0}
+			{@const isActive = data.currentCategory === cat.slug || activeCat?.parent?.slug === cat.slug}
+			{@const isOpen = openDropdown === cat.slug}
+			<div class="category-group" class:category-group--open={isOpen}>
+				<div class="category-pill-wrapper">
+					<button
+						class="category-pill"
+						class:active={isActive}
+						onclick={() => setCategory(cat.slug)}
+						aria-pressed={isActive}
+					>{cat.name}</button>
+					{#if hasSubs}
+						<button
+							class="category-chevron"
+							class:category-chevron--active={isActive}
+							onclick={() => toggleDropdown(cat.slug)}
+							aria-expanded={isOpen}
+							aria-label={`${isOpen ? 'Închide' : 'Deschide'} subcategoriile pentru ${cat.name}`}
+						>
+							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+								<polyline points="6 9 12 15 18 9" />
+							</svg>
+						</button>
+					{/if}
+				</div>
+				{#if hasSubs && isOpen}
+					<div class="category-dropdown" role="menu">
+						<button
+							class="category-dropdown__item"
+							class:active={data.currentCategory === cat.slug}
+							onclick={() => setCategory(cat.slug)}
+							role="menuitem"
+						>
+							<span class="category-dropdown__label">Toate din {cat.name}</span>
+						</button>
+						{#each subs as sub}
+							<button
+								class="category-dropdown__item"
+								class:active={data.currentCategory === sub.slug}
+								onclick={() => setCategory(sub.slug)}
+								role="menuitem"
+							>
+								<span class="category-dropdown__label">{sub.name}</span>
+								{#if sub.description}
+									<span class="category-dropdown__desc">{sub.description}</span>
+								{/if}
+							</button>
+						{/each}
+					</div>
+				{/if}
+			</div>
 		{/each}
 	</div>
-	{#if subCategories.length > 0}
-		<div class="subcategory-filters" role="tablist" aria-label="Filtre subcategorii">
-			{#each subCategories as sub}
-				<button
-					class="subcategory-pill"
-					class:active={data.currentCategory === sub.slug}
-					onclick={() => setCategory(sub.slug)}
-					role="tab"
-					aria-selected={data.currentCategory === sub.slug}
-				>{sub.name}</button>
-			{/each}
-		</div>
+
+	<!-- Breadcrumb activ pentru ierarhia selectată -->
+	{#if activeParent}
+		<nav class="category-breadcrumb" aria-label="Cale curentă">
+			<button class="category-breadcrumb__item" onclick={() => setCategory('')}>
+				Toate
+			</button>
+			<span class="category-breadcrumb__sep" aria-hidden="true">›</span>
+			<button
+				class="category-breadcrumb__item"
+				class:category-breadcrumb__item--current={!activeSub}
+				onclick={() => setCategory(activeParent.slug)}
+			>
+				{activeParent.name}
+			</button>
+			{#if activeSub}
+				<span class="category-breadcrumb__sep" aria-hidden="true">›</span>
+				<span class="category-breadcrumb__item category-breadcrumb__item--current">
+					{activeSub.name}
+				</span>
+			{/if}
+		</nav>
 	{/if}
 
 	{#if data.currentSearch}
@@ -129,7 +227,13 @@
 					<div class="article-card__body">
 						<div class="article-card__meta">
 							{#if article.category}
-								<span class="badge badge-green">{article.category.name}</span>
+								<span class="article-card__badge" style="background-color: {article.category.color ?? '#003827'}">
+									{#if article.category.parent}
+										<span class="article-card__badge-parent">{article.category.parent.name}</span>
+										<span class="article-card__badge-sep" aria-hidden="true">›</span>
+									{/if}
+									<span>{article.category.name}</span>
+								</span>
 							{/if}
 							<time class="article-card__date">{formatDate(article.createdAt)}</time>
 						</div>
@@ -195,41 +299,163 @@
 		min-width: 180px;
 	}
 	.stiri-search__input:focus { outline: none; border-color: var(--color-green-dark); }
-	.category-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-6); }
-	.category-pill {
-		padding: 0.375rem 0.875rem;
+	.category-filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin-bottom: var(--space-4);
+	}
+
+	.category-group { position: relative; }
+
+	.category-pill-wrapper {
+		display: inline-flex;
+		align-items: stretch;
 		border-radius: var(--radius-xl);
+		overflow: hidden;
 		border: 1px solid var(--color-border);
 		background: var(--color-white);
+		transition: border-color var(--transition-fast);
+	}
+
+	.category-pill-wrapper:hover { border-color: var(--color-green-dark); }
+
+	.category-pill {
+		padding: 0.375rem 0.875rem;
+		border: none;
+		background: transparent;
 		font-size: var(--text-sm);
 		font-family: var(--font-body);
 		cursor: pointer;
 		transition: all var(--transition-fast);
 		color: var(--color-text-muted);
 	}
-	.category-pill:hover { border-color: var(--color-green-dark); color: var(--color-green-dark); }
-	.category-pill.active { background-color: var(--color-green-dark); color: var(--color-white); border-color: var(--color-green-dark); }
-	.subcategory-filters {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2);
-		margin-bottom: var(--space-6);
-		padding-left: var(--space-4);
-		border-left: 2px solid var(--color-green-leaf);
+
+	.category-pill-wrapper:hover .category-pill { color: var(--color-green-dark); }
+
+	.category-pill.active {
+		background-color: var(--color-green-dark);
+		color: var(--color-white);
 	}
-	.subcategory-pill {
-		padding: 0.25rem 0.75rem;
-		border-radius: var(--radius-xl);
-		border: 1px solid transparent;
+
+	.category-chevron {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 28px;
+		border: none;
+		border-left: 1px solid var(--color-border);
 		background: transparent;
-		font-size: var(--text-xs);
-		font-family: var(--font-body);
+		color: var(--color-text-muted);
 		cursor: pointer;
 		transition: all var(--transition-fast);
-		color: var(--color-text-muted);
 	}
-	.subcategory-pill:hover { background-color: var(--color-white); color: var(--color-green-dark); }
-	.subcategory-pill.active { background-color: var(--color-green-leaf); color: var(--color-green-dark); font-weight: 600; }
+
+	.category-chevron:hover { color: var(--color-green-dark); background-color: rgba(0, 56, 39, 0.04); }
+	.category-chevron--active { color: var(--color-white); background-color: var(--color-green-dark); border-left-color: rgba(255, 255, 255, 0.2); }
+	.category-chevron svg { transition: transform 0.2s ease; }
+	.category-group--open .category-chevron svg { transform: rotate(180deg); }
+
+	.category-dropdown {
+		position: absolute;
+		top: calc(100% + 4px);
+		left: 0;
+		min-width: 220px;
+		background: var(--color-white);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-lg);
+		padding: var(--space-2);
+		z-index: 10;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.category-dropdown__item {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2px;
+		padding: var(--space-2) var(--space-3);
+		border: none;
+		border-radius: var(--radius-sm);
+		background: transparent;
+		font-family: var(--font-body);
+		text-align: left;
+		cursor: pointer;
+		transition: background-color var(--transition-fast);
+	}
+
+	.category-dropdown__item:hover { background-color: var(--color-bg); }
+	.category-dropdown__item.active { background-color: var(--color-green-leaf); }
+
+	.category-dropdown__label {
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--color-green-dark);
+	}
+
+	.category-dropdown__desc {
+		font-size: var(--text-xs);
+		color: var(--color-text-muted);
+		font-weight: 400;
+	}
+
+	/* ── Breadcrumb activ ── */
+	.category-breadcrumb {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: var(--space-1);
+		margin-bottom: var(--space-6);
+		font-size: var(--text-sm);
+	}
+
+	.category-breadcrumb__item {
+		border: none;
+		background: transparent;
+		padding: 2px 6px;
+		color: var(--color-text-muted);
+		font-family: var(--font-body);
+		cursor: pointer;
+		border-radius: var(--radius-sm);
+		transition: all var(--transition-fast);
+	}
+
+	.category-breadcrumb__item:hover { color: var(--color-green-dark); background-color: var(--color-bg); }
+
+	.category-breadcrumb__item--current {
+		color: var(--color-green-dark);
+		font-weight: 600;
+		cursor: default;
+	}
+
+	.category-breadcrumb__sep {
+		color: var(--color-text-muted);
+		opacity: 0.6;
+	}
+
+	/* ── Badge cu Parent › Sub ── */
+	.article-card__badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font-size: var(--text-xs);
+		font-weight: 700;
+		color: var(--color-white);
+		padding: 3px 10px;
+		border-radius: var(--radius-full);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.article-card__badge-parent {
+		opacity: 0.7;
+		font-weight: 500;
+	}
+
+	.article-card__badge-sep { opacity: 0.6; }
 	.search-info { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-6); display: flex; align-items: center; gap: var(--space-3); }
 	.search-clear { background: none; border: none; color: var(--color-error); cursor: pointer; font-size: var(--text-sm); font-family: var(--font-body); }
 	.articles-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); margin-bottom: var(--space-8); }

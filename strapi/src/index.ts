@@ -10,10 +10,119 @@ export default {
     // ── Seed: date demo (doar dacă nu există deja) ──
     await seedData(strapi);
 
+    // ── Top-up: evenimente noi (idempotent — adaugă doar cele lipsă) ──
+    await topUpEvents(strapi);
+
     // ── Admin: etichete câmpuri în română ──
     await configureAdminLabels(strapi);
   },
 };
+
+/**
+ * Top-up idempotent pentru evenimente noi. Verifică fiecare slug înainte de a crea,
+ * astfel încât restart-urile ulterioare ale Strapi adaugă doar evenimentele lipsă.
+ */
+async function topUpEvents(strapi: Core.Strapi) {
+  const now = new Date();
+  const daysFromNow = (d: number, hour = 18) => {
+    const date = new Date(now.getTime() + d * 24 * 60 * 60 * 1000);
+    date.setHours(hour, 0, 0, 0);
+    return date;
+  };
+
+  const newEvents = [
+    {
+      slug: 'intalnire-buget-participativ',
+      data: {
+        title: 'Întâlnire Comunitară: Bugetul Participativ',
+        slug: 'intalnire-buget-participativ',
+        description: [{ type: 'paragraph', children: [{ type: 'text', text: 'Ce proiecte locale ar trebui să finanțăm? Vino să discutăm și să votăm împreună prioritățile comunității.' }] }],
+        start_date: daysFromNow(5, 19).toISOString(),
+        end_date: daysFromNow(5, 21).toISOString(),
+        location_name: 'Casa Civică, Cluj-Napoca',
+        max_participants: 80,
+        registration_open: true,
+        event_type: 'dezbatere',
+      },
+    },
+    {
+      slug: 'mars-clima-bucuresti',
+      data: {
+        title: 'Marș pentru Clima: București, Piața Victoriei',
+        slug: 'mars-clima-bucuresti',
+        description: [{ type: 'paragraph', children: [{ type: 'text', text: 'Organizăm un marș pașnic pentru politici climatice mai ambițioase. Aducem familia, prietenii și mesajele pe pancarte!' }] }],
+        start_date: daysFromNow(10, 17).toISOString(),
+        end_date: daysFromNow(10, 20).toISOString(),
+        location_name: 'Piața Victoriei, București',
+        max_participants: 5000,
+        registration_open: true,
+        event_type: 'mars',
+      },
+    },
+    {
+      slug: 'workshop-tineri-candidati',
+      data: {
+        title: 'Workshop: Cum să candidezi ca tânăr independent',
+        slug: 'workshop-tineri-candidati',
+        description: [{ type: 'paragraph', children: [{ type: 'text', text: 'Sesiune practică pentru tineri sub 30 de ani care vor să intre în politica locală. Aspecte legale, strategie, campanie și bugetare.' }] }],
+        start_date: daysFromNow(21, 11).toISOString(),
+        end_date: daysFromNow(21, 15).toISOString(),
+        location_name: 'Hub Timișoara, Str. Mercy',
+        max_participants: 40,
+        registration_open: true,
+        event_type: 'actiune',
+      },
+    },
+    {
+      slug: 'dezbatere-educatie-ecologica',
+      data: {
+        title: 'Dezbatere online: Educația Ecologică în Școli',
+        slug: 'dezbatere-educatie-ecologica',
+        description: [{ type: 'paragraph', children: [{ type: 'text', text: 'Cum integrăm educația ecologică în curriculum? Invităm profesori, elevi, părinți și experți în educație.' }] }],
+        start_date: daysFromNow(45, 18).toISOString(),
+        end_date: daysFromNow(45, 20).toISOString(),
+        location_name: 'Online — YouTube Live',
+        max_participants: 1000,
+        registration_open: true,
+        event_type: 'online',
+      },
+    },
+    {
+      slug: 'plantare-nationala-arbori',
+      data: {
+        title: 'Plantare Națională: 10.000 de Arbori într-o Zi',
+        slug: 'plantare-nationala-arbori',
+        description: [{ type: 'paragraph', children: [{ type: 'text', text: 'Acțiune coordonată în 15 orașe. Înscrie-te în orașul tău — puieții și uneltele sunt asigurate. Aduce mănuși și apă!' }] }],
+        start_date: daysFromNow(60, 9).toISOString(),
+        end_date: daysFromNow(60, 15).toISOString(),
+        location_name: 'Multi-oraș (15 locații)',
+        max_participants: 3000,
+        registration_open: true,
+        event_type: 'actiune',
+      },
+    },
+  ];
+
+  let added = 0;
+  for (const event of newEvents) {
+    const existing = await strapi.documents('api::event.event').findMany({
+      filters: { slug: event.slug },
+      limit: 1,
+    });
+    if (existing.length === 0) {
+      await strapi.documents('api::event.event').create({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data: event.data as any,
+        status: 'published',
+      });
+      added++;
+    }
+  }
+
+  if (added > 0) {
+    strapi.log.info(`📅 Evenimente noi adăugate: ${added}`);
+  }
+}
 
 /**
  * Configurare permisiuni publice — permite find/findOne pe content types publice.
@@ -377,6 +486,7 @@ async function seedData(strapi: Core.Strapi) {
       },
       status: 'published',
     }),
+    // Evenimentele viitoare suplimentare sunt gestionate de topUpEvents (idempotent).
   ]);
 
   // ── Homepage Single Type (Dynamic Zone) ──

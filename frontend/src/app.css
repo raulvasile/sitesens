@@ -3,7 +3,7 @@
    ============================================================ */
 
 /* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 /* --- Design Tokens --- */
 :root {
@@ -27,7 +27,7 @@
 	--color-skeleton: #e9ede8;
 
 	/* Tipografie */
-	--font-display: 'Manrope', system-ui, sans-serif;
+	--font-display: 'Fraunces', Georgia, serif;
 	--font-body: 'Manrope', system-ui, sans-serif;
 
 	/* Font sizes — mobile first */

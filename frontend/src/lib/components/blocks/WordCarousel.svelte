@@ -85,7 +85,7 @@
 	.word-carousel__track {
 		display: inline-flex;
 		align-items: center;
-		gap: var(--space-6);
+		gap: var(--space-12);
 		white-space: nowrap;
 		animation: wordCarouselScroll var(--carousel-duration, 30s) linear infinite;
 		will-change: transform;
@@ -97,12 +97,13 @@
 
 	.word-carousel__item {
 		font-family: var(--font-display);
-		font-size: var(--text-lg);
+		font-size: var(--text-sm);
 		font-style: italic;
 		font-weight: 400;
+		letter-spacing: 0.02em;
 		color: var(--color-white);
 		text-decoration: none;
-		padding-inline: var(--space-2);
+		padding-inline: var(--space-4);
 		transition: color var(--transition-fast);
 	}
 
@@ -131,8 +132,8 @@
 
 	.word-carousel__sep {
 		color: var(--color-brand-neon);
-		font-size: var(--text-lg);
-		opacity: 0.7;
+		font-size: var(--text-sm);
+		opacity: 0.6;
 	}
 
 	.word-carousel--white .word-carousel__sep,
@@ -147,7 +148,7 @@
 
 	@media (min-width: 768px) {
 		.word-carousel__item {
-			font-size: var(--text-xl);
+			font-size: var(--text-base);
 		}
 	}
 
