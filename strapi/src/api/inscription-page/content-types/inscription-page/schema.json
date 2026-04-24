@@ -1,0 +1,87 @@
+{
+  "kind": "singleType",
+  "collectionName": "inscription_pages",
+  "info": {
+    "singularName": "inscription-page",
+    "pluralName": "inscription-pages",
+    "displayName": "⚙️ Pagină Înscriere",
+    "description": "Conținut pentru pagina /inscrie-te"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Înscrie-te în SENS",
+      "maxLength": 150
+    },
+    "subtitle": {
+      "type": "text",
+      "default": "Completează formularul de mai jos pentru a iniția procesul de aderare.",
+      "maxLength": 500
+    },
+    "steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "form.step"
+    },
+    "personal_section_heading": {
+      "type": "string",
+      "default": "Informații personale",
+      "maxLength": 100
+    },
+    "address_section_heading": {
+      "type": "string",
+      "default": "Adresă",
+      "maxLength": 100
+    },
+    "labels": {
+      "type": "component",
+      "repeatable": false,
+      "component": "form.membership-labels"
+    },
+    "validation": {
+      "type": "component",
+      "repeatable": false,
+      "component": "form.validation-messages"
+    },
+    "consents": {
+      "type": "component",
+      "repeatable": true,
+      "component": "form.consent-item"
+    },
+    "submit_text": {
+      "type": "string",
+      "default": "Trimite cererea",
+      "maxLength": 60
+    },
+    "submitting_text": {
+      "type": "string",
+      "default": "Se trimite...",
+      "maxLength": 60
+    },
+    "prev_step_text": {
+      "type": "string",
+      "default": "Pasul anterior",
+      "maxLength": 60
+    },
+    "next_step_text": {
+      "type": "string",
+      "default": "Pasul următor",
+      "maxLength": 60
+    },
+    "success": {
+      "type": "component",
+      "repeatable": false,
+      "component": "form.success-section"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

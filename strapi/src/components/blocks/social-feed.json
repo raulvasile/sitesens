@@ -3,37 +3,58 @@
   "info": {
     "displayName": "Social Feed",
     "icon": "globe",
-    "description": "Embed-uri Facebook și Instagram"
+    "description": "Secțiune urmărește-ne cu link-uri către rețele sociale"
   },
   "options": {},
   "attributes": {
     "title": {
       "type": "string",
-      "default": "Urmărește-ne"
+      "default": "Urmărește-ne",
+      "maxLength": 150
     },
     "subtitle": {
-      "type": "text"
+      "type": "text",
+      "maxLength": 400
     },
-    "facebook_url": {
-      "type": "string",
-      "default": "https://www.facebook.com/miscarea.sens"
+    "platforms": {
+      "type": "component",
+      "repeatable": true,
+      "component": "social.platform"
     },
-    "instagram_url": {
-      "type": "string",
-      "default": "https://www.instagram.com/miscarea.sens/"
-    },
-    "show_facebook": {
+    "show_embeds": {
       "type": "boolean",
-      "default": true
+      "default": false
     },
-    "show_instagram": {
-      "type": "boolean",
-      "default": true
+    "posts_heading": {
+      "type": "string",
+      "default": "Ultimele postări",
+      "maxLength": 120
+    },
+    "embed_fallback_text": {
+      "type": "string",
+      "default": "Deschide pe {platform}",
+      "maxLength": 100
     },
     "variant": {
       "type": "enumeration",
       "enum": ["full", "compact"],
       "default": "full"
+    },
+    "facebook_url": {
+      "type": "string",
+      "private": true
+    },
+    "instagram_url": {
+      "type": "string",
+      "private": true
+    },
+    "show_facebook": {
+      "type": "boolean",
+      "private": true
+    },
+    "show_instagram": {
+      "type": "boolean",
+      "private": true
     }
   }
 }

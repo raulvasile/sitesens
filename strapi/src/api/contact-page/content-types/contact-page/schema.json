@@ -36,6 +36,31 @@
     "newsletter_description": {
       "type": "text"
     },
+    "form_title": {
+      "type": "string",
+      "default": "Trimite-ne un mesaj",
+      "maxLength": 120
+    },
+    "info_heading": {
+      "type": "string",
+      "default": "Date de contact",
+      "maxLength": 120
+    },
+    "social_heading": {
+      "type": "string",
+      "default": "Urmărește-ne",
+      "maxLength": 80
+    },
+    "form": {
+      "type": "component",
+      "repeatable": false,
+      "component": "form.contact-form-config"
+    },
+    "validation": {
+      "type": "component",
+      "repeatable": false,
+      "component": "form.validation-messages"
+    },
     "seo": {
       "type": "component",
       "repeatable": false,

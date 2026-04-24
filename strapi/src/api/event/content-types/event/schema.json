@@ -34,6 +34,14 @@
     "location_name": {
       "type": "string"
     },
+    "venue": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "city": {
+      "type": "string",
+      "maxLength": 120
+    },
     "location_coords": {
       "type": "json"
     },
@@ -44,6 +52,22 @@
     },
     "max_participants": {
       "type": "integer"
+    },
+    "spots_taken": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "registration_url": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "ical_url_event": {
+      "type": "string",
+      "private": true
     },
     "registration_open": {
       "type": "boolean",

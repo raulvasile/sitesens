@@ -17,8 +17,8 @@
 	let { data }: Props = $props();
 
 	const speed = $derived(data.speed_seconds ?? 30);
-	const bg = $derived(data.background_color ?? 'green');
-	const separator = $derived(data.separator ?? '•');
+	const bg = $derived(data.background_color ?? 'lime');
+	const separator = $derived(data.separator ?? '✦');
 	const items = $derived(data.items ?? []);
 
 	// Seamless infinite marquee: build a "base copy" that's long enough to span a wide
@@ -74,20 +74,32 @@
 		position: relative;
 		overflow: hidden;
 		width: 100%;
-		padding-block: var(--space-4);
+		padding-block: var(--space-5);
+		border-block: 1px solid rgba(12, 81, 24, 0.15);
 	}
 
-	.word-carousel--green { background-color: var(--color-green-dark); }
-	.word-carousel--dark { background-color: #0A221C; }
-	.word-carousel--white { background-color: var(--color-white); border-block: 1px solid var(--color-border); }
-	.word-carousel--lime { background-color: var(--color-brand-neon); }
+	.word-carousel--green {
+		background-color: var(--color-green-deep);
+		border-color: rgba(145, 255, 0, 0.15);
+	}
+	.word-carousel--dark {
+		background-color: var(--color-ink);
+		border-color: rgba(145, 255, 0, 0.15);
+	}
+	.word-carousel--white {
+		background-color: var(--color-cream);
+	}
+	.word-carousel--lime {
+		background-color: var(--color-lime);
+		border-block: 1px solid rgba(12, 81, 24, 0.1);
+	}
 
 	.word-carousel__track {
 		display: inline-flex;
 		align-items: center;
-		gap: var(--space-12);
+		gap: var(--space-10);
 		white-space: nowrap;
-		animation: wordCarouselScroll var(--carousel-duration, 30s) linear infinite;
+		animation: wordCarouselScroll var(--carousel-duration, 40s) linear infinite;
 		will-change: transform;
 	}
 
@@ -97,48 +109,47 @@
 
 	.word-carousel__item {
 		font-family: var(--font-display);
-		font-size: var(--text-sm);
-		font-style: italic;
+		font-size: 1.125rem;
 		font-weight: 400;
-		letter-spacing: 0.02em;
-		color: var(--color-white);
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-cream);
 		text-decoration: none;
-		padding-inline: var(--space-4);
+		padding-inline: var(--space-2);
 		transition: color var(--transition-fast);
 	}
 
 	.word-carousel--white .word-carousel__item {
-		color: var(--color-green-dark);
+		color: var(--color-ink);
 	}
 
 	.word-carousel--lime .word-carousel__item {
-		color: var(--color-green-dark);
+		color: var(--color-ink);
 	}
 
 	a.word-carousel__item:hover {
-		color: var(--color-brand-neon);
-		text-decoration: underline;
-		text-underline-offset: 4px;
+		color: var(--color-lime);
 	}
 
 	.word-carousel--white a.word-carousel__item:hover,
 	.word-carousel--lime a.word-carousel__item:hover {
-		color: var(--color-green-mid);
+		color: var(--color-green-deep);
 	}
 
 	.word-carousel__item--highlight {
-		color: var(--color-brand-neon);
+		color: var(--color-lime);
 	}
 
 	.word-carousel__sep {
-		color: var(--color-brand-neon);
-		font-size: var(--text-sm);
-		opacity: 0.6;
+		color: var(--color-lime);
+		font-size: 0.875rem;
+		opacity: 0.7;
 	}
 
 	.word-carousel--white .word-carousel__sep,
 	.word-carousel--lime .word-carousel__sep {
-		color: var(--color-green-mid);
+		color: var(--color-green-deep);
+		opacity: 0.5;
 	}
 
 	@keyframes wordCarouselScroll {
@@ -148,7 +159,7 @@
 
 	@media (min-width: 768px) {
 		.word-carousel__item {
-			font-size: var(--text-base);
+			font-size: 1.375rem;
 		}
 	}
 

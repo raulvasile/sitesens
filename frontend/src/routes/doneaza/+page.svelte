@@ -6,15 +6,22 @@
 	let { data }: { data: PageData } = $props();
 	const dp = $derived(data.donatePage);
 
-	const presetAmounts = $derived(dp?.preset_amounts ?? [25, 50, 100, 200]);
-	const transparencyItems = $derived(dp?.transparency_items ?? []);
+	// Prefer new `amounts` component array, fallback to `preset_amounts_json`, then legacy `preset_amounts`, then defaults
+	const presetAmounts = $derived.by<number[]>(() => {
+		if (dp?.amounts?.length) return dp.amounts.map((a) => a.amount);
+		if (dp?.preset_amounts_json?.length) return dp.preset_amounts_json;
+		if (dp?.preset_amounts?.length) return dp.preset_amounts;
+		return [25, 50, 100, 200];
+	});
+	// Prefer new `transparency` component array, fallback to legacy `transparency_items`
+	const transparencyItems = $derived(dp?.transparency ?? dp?.transparency_items ?? []);
 
 	let selectedAmount = $state(100);
 	let customAmount = $state('');
 	let isCustom = $state(false);
 	let copied = $state(false);
 
-	const IBAN = 'RO49 AAAA 1B31 0075 9384 0000';
+	const IBAN = $derived(dp?.iban ?? 'RO49 AAAA 1B31 0075 9384 0000');
 
 	function selectPreset(amount: number) {
 		selectedAmount = amount;
@@ -69,7 +76,7 @@
 	<div class="donate-main">
 		<!-- Sume predefinite -->
 		<section class="amount-section">
-			<h2>Alege suma donației</h2>
+			<h2>{dp?.amounts_heading ?? 'Alege suma donației'}</h2>
 			<div class="amount-grid">
 				{#each presetAmounts as amount}
 					<button
@@ -85,7 +92,7 @@
 					class:active={isCustom}
 					onclick={activateCustom}
 				>
-					Altă sumă
+					{dp?.custom_amount_label ?? 'Altă sumă'}
 				</button>
 			</div>
 
@@ -115,10 +122,10 @@
 
 		<!-- IBAN -->
 		<section class="iban-section">
-			<h2>Transfer bancar</h2>
+			<h2>{dp?.transfer_heading ?? 'Transfer bancar'}</h2>
 			<div class="iban-card">
 				<div class="iban-card__header">
-					<span class="iban-card__label">IBAN Partidul SENS</span>
+					<span class="iban-card__label">IBAN {dp?.bank_name ?? 'Partidul SENS'}</span>
 				</div>
 				<div class="iban-card__body">
 					<code class="iban-card__code">{IBAN}</code>
@@ -137,9 +144,9 @@
 						{/if}
 					</button>
 				</div>
-				<p class="iban-card__note">
-					Menționează <strong>„Donație SENS"</strong> în detaliile transferului.
-				</p>
+				{#if dp?.transfer_notes}
+					<p class="iban-card__note">{dp.transfer_notes}</p>
+				{/if}
 			</div>
 		</section>
 	</div>
@@ -148,7 +155,7 @@
 	<aside class="donate-sidebar">
 		{#if transparencyItems.length > 0}
 			<section class="transparency-section">
-				<h2>Unde merg banii tăi</h2>
+				<h2>{dp?.transparency_heading ?? 'Unde merg banii tăi'}</h2>
 				<div class="transparency-list">
 					{#each transparencyItems as item}
 						<div class="transparency-item">

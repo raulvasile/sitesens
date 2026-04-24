@@ -15,21 +15,71 @@
     "title": {
       "type": "string",
       "required": true,
-      "default": "Donează pentru SENS"
+      "default": "Donează pentru SENS",
+      "maxLength": 150
     },
     "description": {
-      "type": "text"
+      "type": "text",
+      "default": "Fiecare leu contează. Donația ta ne ajută să construim o Românie verde, echitabilă și modernă.",
+      "maxLength": 500
     },
-    "preset_amounts": {
+    "amounts_heading": {
+      "type": "string",
+      "default": "Alege suma donației",
+      "maxLength": 120
+    },
+    "preset_amounts_json": {
       "type": "json",
       "default": [25, 50, 100, 200]
     },
+    "amounts": {
+      "type": "component",
+      "repeatable": true,
+      "component": "donate.preset-amount"
+    },
+    "custom_amount_label": {
+      "type": "string",
+      "default": "Sau introdu altă sumă",
+      "maxLength": 120
+    },
+    "donate_button_text": {
+      "type": "string",
+      "default": "Donează acum",
+      "maxLength": 60
+    },
+    "iban": {
+      "type": "string",
+      "default": "RO49 AAAA 1B31 0075 9384 0000",
+      "maxLength": 60
+    },
+    "bank_name": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "transfer_heading": {
+      "type": "string",
+      "default": "Transfer bancar",
+      "maxLength": 120
+    },
+    "transfer_notes": {
+      "type": "text",
+      "default": "Menționează \"Donație SENS\" în detaliile transferului.",
+      "maxLength": 500
+    },
+    "transparency_heading": {
+      "type": "string",
+      "default": "Unde merg banii tăi",
+      "maxLength": 120
+    },
+    "transparency": {
+      "type": "component",
+      "repeatable": true,
+      "component": "donate.transparency-item"
+    },
     "cmf_text": {
       "type": "text",
-      "default": "Mandatar financiar CMF nr. 11240065"
-    },
-    "transparency_items": {
-      "type": "json"
+      "default": "Mandatar financiar CMF nr. 11240065. Donațiile sunt reglementate de Legea 334/2006.",
+      "maxLength": 500
     },
     "seo": {
       "type": "component",

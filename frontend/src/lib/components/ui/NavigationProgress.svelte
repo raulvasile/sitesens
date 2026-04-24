@@ -61,7 +61,7 @@
 
 	.nav-progress__bar {
 		height: 100%;
-		background: linear-gradient(90deg, var(--color-brand-neon), var(--color-brand-vibrant));
+		background: linear-gradient(90deg, var(--color-lime), var(--color-green-bright));
 		animation: nav-progress 2s ease-in-out infinite;
 		transform-origin: left;
 	}
@@ -80,7 +80,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: var(--color-green-dark);
+		background-color: var(--color-green-deep);
 		animation: nav-overlay-fade-in 0.25s ease-out forwards;
 	}
 
@@ -107,7 +107,7 @@
 		width: 10px;
 		height: 10px;
 		border-radius: 50%;
-		background-color: var(--color-brand-neon);
+		background-color: var(--color-lime);
 		animation: nav-overlay-dot 1.2s ease-in-out infinite both;
 	}
 

@@ -4,15 +4,32 @@ import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
 export interface TransparencyItem {
 	label: string;
 	percentage: number;
+	description?: string;
+}
+
+export interface PresetAmount {
+	amount: number;
+	label?: string;
 }
 
 export interface DonatePageData {
 	id: number;
 	title: string;
 	description: string | null;
-	preset_amounts: number[];
+	amounts_heading?: string;
+	preset_amounts_json?: number[];
+	amounts?: PresetAmount[];
+	custom_amount_label?: string;
+	donate_button_text?: string;
+	iban?: string;
+	bank_name?: string;
+	transfer_heading?: string;
+	transfer_notes?: string;
+	transparency_heading?: string;
+	transparency?: TransparencyItem[];
 	cmf_text: string | null;
-	transparency_items: TransparencyItem[] | null;
+	transparency_items?: TransparencyItem[] | null;
+	preset_amounts?: number[];
 	seo: {
 		meta_title: string | null;
 		meta_description: string | null;
@@ -27,7 +44,9 @@ export const load: PageLoad = async ({ url, fetch }) => {
 
 	try {
 		const res = await fetchStrapi<DonatePageData>('/donate-page', {
-			populate: 'seo',
+			'populate[seo]': 'true',
+			'populate[amounts]': 'true',
+			'populate[transparency]': 'true',
 			...previewParams,
 		}, undefined, fetch);
 		return { donatePage: res.data };

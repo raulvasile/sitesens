@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_social_features",
+  "info": {
+    "displayName": "Feature social",
+    "icon": "star"
+  },
+  "attributes": {
+    "emoji": { "type": "string", "maxLength": 10 },
+    "title": { "type": "string", "required": true, "maxLength": 100 },
+    "description": { "type": "text", "required": true, "maxLength": 400 }
+  }
+}

@@ -1,5 +1,4 @@
 import type { LayoutLoad } from './$types';
-import { fetchStrapi } from '$lib/strapi';
 
 export interface MenuItem {
 	label: string;
@@ -14,6 +13,8 @@ export interface NavigationData {
 	secondary_menu: MenuItem[];
 	logo?: { url: string; alternativeText?: string } | null;
 	mobile_extra_links?: { label: string; url: string }[];
+	mobile_home_label?: string;
+	mobile_language_text?: string;
 }
 
 export interface SocialLink {
@@ -33,30 +34,17 @@ export interface FooterData {
 	privacy_link_url: string;
 }
 
-export const load: LayoutLoad = async ({ fetch }) => {
-	const [navResult, footerResult] = await Promise.all([
-		fetchStrapi<NavigationData>('/navigation', {
-			'populate[main_menu][populate]': 'children',
-			'populate[secondary_menu][populate]': 'children',
-			'populate[logo]': 'true',
-			'populate[mobile_extra_links]': 'true',
-		}, undefined, fetch).catch(() => null),
-
-		fetchStrapi<FooterData>('/footer', {
-			'populate[logo]': 'true',
-			'populate[footer_links]': 'true',
-			'populate[social_links]': 'true',
-		}, undefined, fetch).catch(() => null),
-	]);
-
-	// Navigation
-	const nav = navResult?.data ?? null;
-	if (nav?.main_menu) {
-		nav.main_menu.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-	}
-	if (nav?.secondary_menu) {
-		nav.secondary_menu.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-	}
+/**
+ * Universal layout load — consumes server data from +layout.server.ts.
+ *
+ * The actual Strapi fetches run once on the server (+layout.server.ts) and
+ * are serialized into the HTML. SvelteKit reuses this payload across
+ * client-side navigation unless invalidated, so we DON'T re-fetch on every
+ * page change.
+ */
+export const load: LayoutLoad = async ({ data }) => {
+	const nav = (data as { _serverNav?: NavigationData | null })?._serverNav ?? null;
+	const footerRaw = (data as { _serverFooter?: FooterData | null })?._serverFooter ?? null;
 
 	const navigation: NavigationData = nav ?? {
 		main_menu: [
@@ -71,7 +59,7 @@ export const load: LayoutLoad = async ({ fetch }) => {
 	};
 
 	// Footer
-	const footer: FooterData = footerResult?.data ?? {
+	const footer: FooterData = footerRaw ?? {
 		tagline: 'Sănătate · Educație · Natură · Sustenabilitate',
 		eu_text: 'Membru al European Greens și al grupului Verzi/ALE din Parlamentul European',
 		footer_links: [

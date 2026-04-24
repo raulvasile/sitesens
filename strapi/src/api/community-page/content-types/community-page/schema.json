@@ -1,0 +1,57 @@
+{
+  "kind": "singleType",
+  "collectionName": "community_pages",
+  "info": {
+    "singularName": "community-page",
+    "pluralName": "community-pages",
+    "displayName": "⚙️ Pagină Comunitate",
+    "description": "Conținut pentru pagina /comunitate"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Comunitate",
+      "maxLength": 150
+    },
+    "subtitle": {
+      "type": "text",
+      "default": "Urmărește-ne pe rețelele sociale și fii la curent cu activitatea noastră.",
+      "maxLength": 500
+    },
+    "platforms": {
+      "type": "component",
+      "repeatable": true,
+      "component": "social.platform"
+    },
+    "posts_heading": {
+      "type": "string",
+      "default": "Ultimele postări",
+      "maxLength": 100
+    },
+    "features_heading": {
+      "type": "string",
+      "default": "De ce să ne urmărești?",
+      "maxLength": 100
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "social.feature"
+    },
+    "embed_fallback_text": {
+      "type": "string",
+      "default": "Deschide pe {platform}",
+      "maxLength": 100
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

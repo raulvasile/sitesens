@@ -150,25 +150,26 @@
 		right: 0;
 		z-index: 100;
 		height: var(--navbar-height);
-		background-color: var(--color-green-dark);
-		transition: box-shadow var(--transition-base), backdrop-filter var(--transition-base);
+		background-color: var(--color-green-deep);
+		border-bottom: 1px solid rgba(145, 255, 0, 0.15);
+		transition: border-color var(--transition-base), backdrop-filter var(--transition-base);
 	}
 
 	.navbar.scrolled {
 		backdrop-filter: blur(12px);
-		background-color: rgba(16, 50, 41, 0.95);
-		box-shadow: var(--shadow-md);
+		background-color: rgba(12, 81, 24, 0.95);
+		border-bottom-color: rgba(145, 255, 0, 0.28);
 	}
 
 	.navbar__inner {
 		height: 100%;
 		display: flex;
 		align-items: center;
-		gap: var(--space-4);
+		gap: var(--space-6);
 	}
 
 	.navbar__logo img {
-		height: 32px;
+		height: 36px;
 		width: auto;
 	}
 
@@ -189,8 +190,7 @@
 		display: block;
 		width: 22px;
 		height: 2px;
-		background-color: var(--color-white);
-		border-radius: 2px;
+		background-color: var(--color-cream);
 		transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
 			opacity 0.2s ease;
 		transform-origin: center;
@@ -212,20 +212,24 @@
 	.navbar__links {
 		display: none;
 		list-style: none;
-		gap: var(--space-6);
+		gap: var(--space-8);
 	}
 
 	.navbar__item { position: relative; }
 
 	.navbar__link {
-		color: rgba(255, 255, 255, 0.85);
-		font-size: var(--text-sm);
-		font-weight: 500;
+		color: var(--color-cream);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		font-weight: 400;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
 		transition: color var(--transition-fast);
 		background: none;
 		border: none;
 		cursor: pointer;
-		font-family: var(--font-body);
+		padding-bottom: 4px;
+		border-bottom: 1.5px solid transparent;
 	}
 
 	.navbar__dropdown-trigger {
@@ -242,26 +246,25 @@
 		transform: rotate(180deg);
 	}
 
-	.navbar__link:hover,
-	.navbar__link.active {
-		color: var(--color-white);
+	.navbar__link:hover {
+		color: var(--color-lime);
+		border-bottom-color: var(--color-lime);
 	}
 
 	.navbar__link.active {
-		border-bottom: 2px solid var(--color-brand-neon);
-		padding-bottom: 2px;
+		color: var(--color-lime);
+		border-bottom-color: var(--color-lime);
 	}
 
 	.navbar__dropdown {
 		position: absolute;
-		top: calc(100% + 8px);
+		top: calc(100% + 12px);
 		left: 50%;
 		transform: translateX(-50%);
-		background-color: var(--color-white);
-		border-radius: var(--radius-md);
-		box-shadow: var(--shadow-lg);
+		background-color: var(--color-paper);
+		border: 1px solid var(--color-ink);
 		list-style: none;
-		min-width: 200px;
+		min-width: 220px;
 		padding: var(--space-2);
 		z-index: 110;
 		animation: dropdown-in 0.15s ease;
@@ -275,41 +278,49 @@
 	.navbar__dropdown-link {
 		display: block;
 		padding: var(--space-2) var(--space-3);
-		font-size: var(--text-sm);
-		color: var(--color-text);
-		border-radius: var(--radius-sm);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--color-ink);
 		transition: background-color var(--transition-fast);
 		white-space: nowrap;
 	}
 
 	.navbar__dropdown-link:hover {
-		background-color: var(--color-bg);
-		color: var(--color-green-dark);
+		background-color: var(--color-lime);
+		color: var(--color-ink);
 	}
 
 	.navbar__actions {
 		display: flex;
 		align-items: center;
-		gap: var(--space-3);
+		gap: var(--space-4);
 		margin-left: auto;
 	}
 
 	.navbar__secondary-link {
 		display: none;
-		color: rgba(255, 255, 255, 0.85);
-		font-size: var(--text-sm);
-		font-weight: 500;
-		transition: color var(--transition-fast);
+		color: var(--color-cream);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		font-weight: 400;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		padding-bottom: 4px;
+		border-bottom: 1.5px solid transparent;
+		transition: color var(--transition-fast), border-color var(--transition-fast);
 	}
 
 	.navbar__secondary-link:hover {
-		color: var(--color-white);
+		color: var(--color-lime);
+		border-bottom-color: var(--color-lime);
 	}
 
 	.navbar__cta {
 		display: none;
-		font-size: var(--text-sm);
-		padding: 0.5rem 1.25rem;
+		font-size: 0.75rem;
+		padding: 0.5rem 1.125rem;
 	}
 
 	@media (min-width: 768px) {

@@ -521,6 +521,63 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCommunityPageCommunityPage extends Struct.SingleTypeSchema {
+  collectionName: 'community_pages';
+  info: {
+    description: 'Con\u021Binut pentru pagina /comunitate';
+    displayName: '\u2699\uFE0F Pagin\u0103 Comunitate';
+    pluralName: 'community-pages';
+    singularName: 'community-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    embed_fallback_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'Deschide pe {platform}'>;
+    features: Schema.Attribute.Component<'social.feature', true>;
+    features_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'De ce s\u0103 ne urm\u0103re\u0219ti?'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::community-page.community-page'
+    > &
+      Schema.Attribute.Private;
+    platforms: Schema.Attribute.Component<'social.platform', true>;
+    posts_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'Ultimele post\u0103ri'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    subtitle: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }> &
+      Schema.Attribute.DefaultTo<'Urm\u0103re\u0219te-ne pe re\u021Belele sociale \u0219i fii la curent cu activitatea noastr\u0103.'>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }> &
+      Schema.Attribute.DefaultTo<'Comunitate'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
   collectionName: 'contact_pages';
   info: {
@@ -539,6 +596,17 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     email: Schema.Attribute.Email &
       Schema.Attribute.DefaultTo<'contact@partidulsens.ro'>;
+    form: Schema.Attribute.Component<'form.contact-form-config', false>;
+    form_title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }> &
+      Schema.Attribute.DefaultTo<'Trimite-ne un mesaj'>;
+    info_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }> &
+      Schema.Attribute.DefaultTo<'Date de contact'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -550,10 +618,52 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     schedule: Schema.Attribute.String;
     seo: Schema.Attribute.Component<'shared.seo', false>;
+    social_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Urm\u0103re\u0219te-ne'>;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Contact'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    validation: Schema.Attribute.Component<'form.validation-messages', false>;
+  };
+}
+
+export interface ApiCountyCounty extends Struct.CollectionTypeSchema {
+  collectionName: 'counties';
+  info: {
+    description: 'Jude\u021Bele Rom\u00E2niei pentru formularul de \u00EEnscriere';
+    displayName: '\uD83D\uDDFA\uFE0F Jude\u021Be';
+    pluralName: 'counties';
+    singularName: 'county';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::county.county'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -572,26 +682,76 @@ export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    amounts: Schema.Attribute.Component<'donate.preset-amount', true>;
+    amounts_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }> &
+      Schema.Attribute.DefaultTo<'Alege suma dona\u021Biei'>;
+    bank_name: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
     cmf_text: Schema.Attribute.Text &
-      Schema.Attribute.DefaultTo<'Mandatar financiar CMF nr. 11240065'>;
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }> &
+      Schema.Attribute.DefaultTo<'Mandatar financiar CMF nr. 11240065. Dona\u021Biile sunt reglementate de Legea 334/2006.'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.Text;
+    custom_amount_label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }> &
+      Schema.Attribute.DefaultTo<'Sau introdu alt\u0103 sum\u0103'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }> &
+      Schema.Attribute.DefaultTo<'Fiecare leu conteaz\u0103. Dona\u021Bia ta ne ajut\u0103 s\u0103 construim o Rom\u00E2nie verde, echitabil\u0103 \u0219i modern\u0103.'>;
+    donate_button_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Doneaz\u0103 acum'>;
+    iban: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'RO49 AAAA 1B31 0075 9384 0000'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::donate-page.donate-page'
     > &
       Schema.Attribute.Private;
-    preset_amounts: Schema.Attribute.JSON &
+    preset_amounts_json: Schema.Attribute.JSON &
       Schema.Attribute.DefaultTo<[25, 50, 100, 200]>;
     publishedAt: Schema.Attribute.DateTime;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }> &
       Schema.Attribute.DefaultTo<'Doneaz\u0103 pentru SENS'>;
-    transparency_items: Schema.Attribute.JSON;
+    transfer_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }> &
+      Schema.Attribute.DefaultTo<'Transfer bancar'>;
+    transfer_notes: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }> &
+      Schema.Attribute.DefaultTo<'Men\u021Bioneaz\u0103 "Dona\u021Bie SENS" \u00EEn detaliile transferului.'>;
+    transparency: Schema.Attribute.Component<'donate.transparency-item', true>;
+    transparency_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }> &
+      Schema.Attribute.DefaultTo<'Unde merg banii t\u0103i'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -610,6 +770,10 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    city: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
     cover_image: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -621,6 +785,8 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Required;
     ical_url: Schema.Attribute.String;
+    ical_url_event: Schema.Attribute.String & Schema.Attribute.Private;
+    is_featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::event.event'> &
       Schema.Attribute.Private;
@@ -630,11 +796,142 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     registration_open: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<true>;
+    registration_url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     social_posts: Schema.Attribute.Component<'event.social-post', true>;
+    spots_taken: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     start_date: Schema.Attribute.DateTime & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    venue: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+  };
+}
+
+export interface ApiEventsPageEventsPage extends Struct.SingleTypeSchema {
+  collectionName: 'events_pages';
+  info: {
+    description: 'Con\u021Binut pentru pagina /evenimente';
+    displayName: '\u2699\uFE0F Pagin\u0103 Evenimente';
+    pluralName: 'events-pages';
+    singularName: 'events-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    empty_state: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'Nu sunt evenimente programate momentan.'>;
+    eyebrow: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }> &
+      Schema.Attribute.DefaultTo<'EVENIMENTE \u00B7 CALENDAR 2026'>;
+    featured_cta_primary: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }> &
+      Schema.Attribute.DefaultTo<'Rezerv\u0103 loc'>;
+    featured_cta_secondary: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'+ Adaug\u0103 \u00EEn calendar'>;
+    featured_label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }> &
+      Schema.Attribute.DefaultTo<'FEATURED'>;
+    filter_all_label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }> &
+      Schema.Attribute.DefaultTo<'Toate'>;
+    host_section_body: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }> &
+      Schema.Attribute.DefaultTo<'Filialele locale primesc sprijin logistic \u0219i financiar pentru dezbateri, workshop-uri \u0219i ac\u021Biuni publice.'>;
+    host_section_cta: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Trimite propunerea'>;
+    host_section_kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Filiale'>;
+    host_section_title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'Vrei s\u0103 organizezi un eveniment \u00EEn ora\u0219ul t\u0103u?'>;
+    host_section_url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'/contact'>;
+    host_section_visible: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    interval_label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }> &
+      Schema.Attribute.DefaultTo<'Interval'>;
+    lead: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }> &
+      Schema.Attribute.DefaultTo<'Dezbateri, mar\u0219uri, workshop-uri, \u00EEnt\u00E2lniri de filial\u0103. Politica se face \u00EEn oameni, nu \u00EEn comunicate de pres\u0103.'>;
+    list_reserve_cta: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }> &
+      Schema.Attribute.DefaultTo<'Rezerv\u0103'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::events-page.events-page'
+    > &
+      Schema.Attribute.Private;
+    location_label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }> &
+      Schema.Attribute.DefaultTo<'Loca\u021Bie'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    spots_template: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'{taken} / {max} locuri'>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }> &
+      Schema.Attribute.DefaultTo<'Ne vedem'>;
+    title_italic: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'pe teren.'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -726,6 +1023,127 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     seo: Schema.Attribute.Component<'shared.seo', false>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiInscriptionPageInscriptionPage
+  extends Struct.SingleTypeSchema {
+  collectionName: 'inscription_pages';
+  info: {
+    description: 'Con\u021Binut pentru pagina /inscrie-te';
+    displayName: '\u2699\uFE0F Pagin\u0103 \u00CEnscriere';
+    pluralName: 'inscription-pages';
+    singularName: 'inscription-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    address_section_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'Adres\u0103'>;
+    consents: Schema.Attribute.Component<'form.consent-item', true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    labels: Schema.Attribute.Component<'form.membership-labels', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::inscription-page.inscription-page'
+    > &
+      Schema.Attribute.Private;
+    next_step_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Pasul urm\u0103tor'>;
+    personal_section_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'Informa\u021Bii personale'>;
+    prev_step_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Pasul anterior'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    steps: Schema.Attribute.Component<'form.step', true>;
+    submit_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Trimite cererea'>;
+    submitting_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Se trimite...'>;
+    subtitle: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }> &
+      Schema.Attribute.DefaultTo<'Completeaz\u0103 formularul de mai jos pentru a ini\u021Bia procesul de aderare.'>;
+    success: Schema.Attribute.Component<'form.success-section', false>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }> &
+      Schema.Attribute.DefaultTo<'\u00CEnscrie-te \u00EEn SENS'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    validation: Schema.Attribute.Component<'form.validation-messages', false>;
+  };
+}
+
+export interface ApiInterestAreaInterestArea
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'interest_areas';
+  info: {
+    description: 'Domenii de interes pentru formularul de \u00EEnscriere';
+    displayName: '\uD83C\uDFAF Domenii de interes';
+    pluralName: 'interest-areas';
+    singularName: 'interest-area';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    icon: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::interest-area.interest-area'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -851,8 +1269,66 @@ export interface ApiNavigationNavigation extends Struct.SingleTypeSchema {
       'navigation.menu-sub-item',
       true
     >;
+    mobile_home_label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }> &
+      Schema.Attribute.DefaultTo<'Acas\u0103'>;
+    mobile_language_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'RO / EN (\u00EEn cur\u00E2nd)'>;
     publishedAt: Schema.Attribute.DateTime;
     secondary_menu: Schema.Attribute.Component<'navigation.menu-item', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiNewsletterPageNewsletterPage
+  extends Struct.SingleTypeSchema {
+  collectionName: 'newsletter_pages';
+  info: {
+    description: 'Con\u021Binut pentru pagina /newsletter';
+    displayName: '\u2699\uFE0F Pagin\u0103 Newsletter';
+    pluralName: 'newsletter-pages';
+    singularName: 'newsletter-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    benefits: Schema.Attribute.Component<'social.feature', true>;
+    benefits_heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }> &
+      Schema.Attribute.DefaultTo<'Ce vei primi'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }> &
+      Schema.Attribute.DefaultTo<'Aboneaz\u0103-te la newsletter pentru \u0219tiri, comunicate \u0219i actualiz\u0103ri din partid. Prime\u0219ti maxim 2 emailuri pe s\u0103pt\u0103m\u00E2n\u0103.'>;
+    form: Schema.Attribute.Component<'form.newsletter-form', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::newsletter-page.newsletter-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }> &
+      Schema.Attribute.DefaultTo<'R\u0103m\u00E2i la curent cu SENS'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -956,6 +1432,53 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPrivacyPolicyPagePrivacyPolicyPage
+  extends Struct.SingleTypeSchema {
+  collectionName: 'privacy_policy_pages';
+  info: {
+    description: 'Con\u021Binut pentru pagina /politica-confidentialitate';
+    displayName: '\u2699\uFE0F Politica de Confiden\u021Bialitate';
+    pluralName: 'privacy-policy-pages';
+    singularName: 'privacy-policy-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    cmf_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'Partidul SENS \u2014 CMF nr. 11240065'>;
+    content: Schema.Attribute.Blocks;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    last_updated: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::privacy-policy-page.privacy-policy-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    subtitle: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }> &
+      Schema.Attribute.DefaultTo<'Politica de Confiden\u021Bialitate'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1591,15 +2114,22 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::article.article': ApiArticleArticle;
       'api::category.category': ApiCategoryCategory;
+      'api::community-page.community-page': ApiCommunityPageCommunityPage;
       'api::contact-page.contact-page': ApiContactPageContactPage;
+      'api::county.county': ApiCountyCounty;
       'api::donate-page.donate-page': ApiDonatePageDonatePage;
       'api::event.event': ApiEventEvent;
+      'api::events-page.events-page': ApiEventsPageEventsPage;
       'api::footer.footer': ApiFooterFooter;
       'api::homepage.homepage': ApiHomepageHomepage;
+      'api::inscription-page.inscription-page': ApiInscriptionPageInscriptionPage;
+      'api::interest-area.interest-area': ApiInterestAreaInterestArea;
       'api::membership-request.membership-request': ApiMembershipRequestMembershipRequest;
       'api::navigation.navigation': ApiNavigationNavigation;
+      'api::newsletter-page.newsletter-page': ApiNewsletterPageNewsletterPage;
       'api::newsletter-subscriber.newsletter-subscriber': ApiNewsletterSubscriberNewsletterSubscriber;
       'api::page.page': ApiPagePage;
+      'api::privacy-policy-page.privacy-policy-page': ApiPrivacyPolicyPagePrivacyPolicyPage;
       'api::section.section': ApiSectionSection;
       'api::tag.tag': ApiTagTag;
       'api::team-member.team-member': ApiTeamMemberTeamMember;

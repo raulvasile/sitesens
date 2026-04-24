@@ -39,8 +39,11 @@
 
 <style>
 	.breadcrumb {
-		font-size: var(--text-sm);
-		color: var(--color-text-muted);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
 		margin-bottom: var(--space-6);
 		display: flex;
 		align-items: center;
@@ -49,23 +52,23 @@
 	}
 
 	.breadcrumb__link {
-		color: var(--color-text-muted);
+		color: var(--color-ink-soft);
 		text-decoration: none;
 		transition: color var(--transition-fast);
 	}
 
 	.breadcrumb__link:hover {
-		color: var(--color-green-dark);
+		color: var(--color-ink);
 	}
 
 	.breadcrumb__sep {
-		color: var(--color-text-muted);
+		color: var(--color-ink-soft);
 		opacity: 0.5;
 		user-select: none;
 	}
 
 	.breadcrumb__current {
-		color: var(--color-text);
+		color: var(--color-ink);
 		font-weight: 500;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -75,22 +78,22 @@
 
 	/* Light variant — for dark backgrounds (hero sections) */
 	.breadcrumb--light {
-		color: rgba(255, 255, 255, 0.7);
+		color: rgba(245, 241, 232, 0.7);
 	}
 
 	.breadcrumb--light .breadcrumb__link {
-		color: rgba(255, 255, 255, 0.7);
+		color: rgba(245, 241, 232, 0.7);
 	}
 
 	.breadcrumb--light .breadcrumb__link:hover {
-		color: var(--color-white);
+		color: var(--color-lime);
 	}
 
 	.breadcrumb--light .breadcrumb__sep {
-		color: rgba(255, 255, 255, 0.4);
+		color: rgba(245, 241, 232, 0.4);
 	}
 
 	.breadcrumb--light .breadcrumb__current {
-		color: var(--color-white);
+		color: var(--color-cream);
 	}
 </style>

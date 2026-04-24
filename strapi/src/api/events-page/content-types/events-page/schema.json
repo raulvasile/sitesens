@@ -1,0 +1,116 @@
+{
+  "kind": "singleType",
+  "collectionName": "events_pages",
+  "info": {
+    "singularName": "events-page",
+    "pluralName": "events-pages",
+    "displayName": "⚙️ Pagină Evenimente",
+    "description": "Conținut pentru pagina /evenimente"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string",
+      "default": "EVENIMENTE · CALENDAR 2026",
+      "maxLength": 120
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Ne vedem",
+      "maxLength": 150
+    },
+    "title_italic": {
+      "type": "string",
+      "default": "pe teren.",
+      "maxLength": 100
+    },
+    "lead": {
+      "type": "text",
+      "default": "Dezbateri, marșuri, workshop-uri, întâlniri de filială. Politica se face în oameni, nu în comunicate de presă.",
+      "maxLength": 500
+    },
+    "featured_label": {
+      "type": "string",
+      "default": "FEATURED",
+      "maxLength": 40
+    },
+    "featured_cta_primary": {
+      "type": "string",
+      "default": "Rezervă loc",
+      "maxLength": 40
+    },
+    "featured_cta_secondary": {
+      "type": "string",
+      "default": "+ Adaugă în calendar",
+      "maxLength": 60
+    },
+    "location_label": {
+      "type": "string",
+      "default": "Locație",
+      "maxLength": 40
+    },
+    "interval_label": {
+      "type": "string",
+      "default": "Interval",
+      "maxLength": 40
+    },
+    "spots_template": {
+      "type": "string",
+      "default": "{taken} / {max} locuri",
+      "maxLength": 80
+    },
+    "list_reserve_cta": {
+      "type": "string",
+      "default": "Rezervă",
+      "maxLength": 40
+    },
+    "filter_all_label": {
+      "type": "string",
+      "default": "Toate",
+      "maxLength": 40
+    },
+    "host_section_kicker": {
+      "type": "string",
+      "default": "Filiale",
+      "maxLength": 60
+    },
+    "host_section_title": {
+      "type": "string",
+      "default": "Vrei să organizezi un eveniment în orașul tău?",
+      "maxLength": 200
+    },
+    "host_section_body": {
+      "type": "text",
+      "default": "Filialele locale primesc sprijin logistic și financiar pentru dezbateri, workshop-uri și acțiuni publice.",
+      "maxLength": 500
+    },
+    "host_section_cta": {
+      "type": "string",
+      "default": "Trimite propunerea",
+      "maxLength": 60
+    },
+    "host_section_url": {
+      "type": "string",
+      "default": "/contact",
+      "maxLength": 200
+    },
+    "host_section_visible": {
+      "type": "boolean",
+      "default": true
+    },
+    "empty_state": {
+      "type": "string",
+      "default": "Nu sunt evenimente programate momentan.",
+      "maxLength": 200
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

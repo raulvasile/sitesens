@@ -30,5 +30,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 	response.headers.set('X-XSS-Protection', '0'); // Disabled per modern best practice (CSP is preferred)
 
+	// Cache-Control pentru HTML — dacă endpoint-ul nu a setat deja prin setHeaders()
+	// 30s fresh, 60s stale-while-revalidate — reduce fetch-urile repetate din SSR
+	const contentType = response.headers.get('content-type') ?? '';
+	if (contentType.includes('text/html') && !response.headers.has('cache-control')) {
+		response.headers.set('cache-control', 'public, max-age=30, stale-while-revalidate=60');
+	}
+
 	return response;
 };

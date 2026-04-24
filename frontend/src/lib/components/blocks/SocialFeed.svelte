@@ -1,13 +1,32 @@
 <script lang="ts">
+	import { sanitizeSvg } from '$lib/sanitize';
+
+	interface SocialPlatform {
+		name: string;
+		handle?: string;
+		url: string;
+		description?: string;
+		color?: string;
+		embed_url?: string;
+		icon_svg?: string;
+		follow_cta?: string;
+		order?: number;
+	}
+
 	interface Props {
 		data: {
 			title?: string;
 			subtitle?: string;
+			platforms?: SocialPlatform[];
+			show_embeds?: boolean;
+			posts_heading?: string;
+			embed_fallback_text?: string;
+			variant?: 'full' | 'compact';
+			// legacy fallback
 			facebook_url?: string;
 			instagram_url?: string;
 			show_facebook?: boolean;
 			show_instagram?: boolean;
-			variant?: 'full' | 'compact';
 			[key: string]: unknown;
 		};
 	}
@@ -16,9 +35,15 @@
 
 	const title = $derived(data.title || 'Urmărește-ne');
 	const isCompact = $derived(data.variant === 'compact');
+	const showEmbeds = $derived(data.show_embeds === true);
 
-	const platforms = $derived(() => {
-		const list: { name: string; handle: string; url: string; description: string; color: string; gradient?: string; icon: string }[] = [];
+	// Prefer nou `platforms` din CMS; fallback la legacy facebook_url/instagram_url
+	const platforms = $derived.by<SocialPlatform[]>(() => {
+		if (data.platforms?.length) {
+			return [...data.platforms].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+		}
+		// Legacy fallback
+		const list: SocialPlatform[] = [];
 		if (data.show_facebook !== false && data.facebook_url) {
 			list.push({
 				name: 'Facebook',
@@ -26,7 +51,7 @@
 				url: data.facebook_url,
 				description: 'Știri, comunicate și discuții.',
 				color: '#1877f2',
-				icon: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z',
+				follow_cta: 'Urmărește',
 			});
 		}
 		if (data.show_instagram !== false && data.instagram_url) {
@@ -36,49 +61,56 @@
 				handle: match ? `@${match[1]}` : '@miscarea.sens',
 				url: data.instagram_url,
 				description: 'Imagini și povești din comunitate.',
-				color: '#e1306c',
-				gradient: 'linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
-				icon: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z',
+				color: '#E1306C',
+				follow_cta: 'Urmărește',
 			});
 		}
 		return list;
 	});
+
+	const embedPlatforms = $derived(platforms.filter((p) => p.embed_url));
+
+	function embedFallback(platformName: string): string {
+		const tpl = data.embed_fallback_text ?? 'Deschide pe {platform}';
+		return tpl.replace('{platform}', platformName);
+	}
 </script>
 
+{#if platforms.length > 0}
 <section class="social-feed" class:social-feed--compact={isCompact}>
 	<div class="container">
-		{#if title}
-			<div class="social-feed__header">
-				<h2>{title}</h2>
-				{#if data.subtitle}
-					<p>{data.subtitle}</p>
-				{/if}
-			</div>
-		{/if}
+		<div class="social-feed__header">
+			<h2>{title}</h2>
+			{#if data.subtitle}
+				<p>{data.subtitle}</p>
+			{/if}
+		</div>
 
 		<div class="social-feed__cards">
-			{#each platforms() as platform}
+			{#each platforms as platform}
 				<a
 					href={platform.url}
 					target="_blank"
 					rel="noopener noreferrer"
 					class="social-feed__card"
-					style="--card-color: {platform.color}; --card-bg: {platform.gradient || platform.color}"
+					style="--card-color: {platform.color ?? 'var(--color-green-deep)'}"
 				>
-					<div class="social-feed__card-icon">
-						<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-							<path d={platform.icon} />
-						</svg>
-					</div>
+					{#if platform.icon_svg}
+						<div class="social-feed__card-icon">
+							{@html sanitizeSvg(platform.icon_svg)}
+						</div>
+					{/if}
 					<div class="social-feed__card-info">
 						<strong>{platform.name}</strong>
-						<span class="social-feed__card-handle">{platform.handle}</span>
-						{#if !isCompact}
+						{#if platform.handle}
+							<span class="social-feed__card-handle">{platform.handle}</span>
+						{/if}
+						{#if platform.description && !isCompact}
 							<p>{platform.description}</p>
 						{/if}
 					</div>
 					<span class="social-feed__card-cta">
-						Urmărește
+						{platform.follow_cta ?? 'Urmărește'}
 						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<path d="M7 17L17 7M17 7H7M17 7V17" />
 						</svg>
@@ -86,108 +118,159 @@
 				</a>
 			{/each}
 		</div>
+
+		{#if showEmbeds && embedPlatforms.length > 0}
+			<div class="social-feed__embeds">
+				<h3>{data.posts_heading ?? 'Ultimele postări'}</h3>
+				<div class="social-feed__embeds-grid">
+					{#each embedPlatforms as platform}
+						<div class="social-feed__embed">
+							<h4 style="--card-color: {platform.color ?? 'var(--color-green-deep)'}">
+								{platform.name}
+							</h4>
+							<iframe
+								src={platform.embed_url}
+								width="500"
+								height="600"
+								style="border:none;overflow:hidden"
+								scrolling="no"
+								frameborder="0"
+								title={`Feed ${platform.name}`}
+								loading="lazy"
+							></iframe>
+							<p class="social-feed__embed-fallback">
+								Nu se încarcă? <a href={platform.url} target="_blank" rel="noopener noreferrer">{embedFallback(platform.name)}</a>
+							</p>
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/if}
 	</div>
 </section>
+{/if}
 
 <style>
 	.social-feed {
-		padding: var(--space-12) 0;
+		padding: var(--space-16) 0;
+		background-color: var(--color-paper);
+		color: var(--color-ink);
 	}
 	.social-feed--compact {
-		padding: var(--space-8) 0;
+		padding: var(--space-10) 0;
 	}
 
 	.social-feed__header {
-		text-align: center;
-		margin-bottom: var(--space-6);
+		margin-bottom: var(--space-10);
 	}
 	.social-feed__header h2 {
-		font-size: var(--text-2xl);
-		font-weight: 800;
-		color: var(--color-green-dark);
-		margin-bottom: var(--space-2);
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 4vw, 3.5rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		line-height: 1;
+		color: var(--color-ink);
+		margin-bottom: var(--space-3);
 	}
 	.social-feed__header p {
-		color: var(--color-text-muted);
-		font-size: var(--text-lg);
-		max-width: 600px;
-		margin: 0 auto;
+		color: var(--color-ink-soft);
+		font-size: var(--text-base);
+		max-width: 640px;
 	}
 
 	.social-feed__cards {
-		display: flex;
-		justify-content: center;
-		gap: var(--space-4);
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0;
+		border-top: 1px solid rgba(12, 81, 24, 0.15);
+	}
+
+	@media (min-width: 768px) {
+		.social-feed__cards {
+			grid-template-columns: repeat(3, 1fr);
+		}
 	}
 
 	.social-feed__card {
 		display: flex;
-		align-items: center;
+		flex-direction: column;
 		gap: var(--space-4);
-		padding: var(--space-5) var(--space-6);
-		background: white;
-		border: 2px solid var(--color-border);
-		border-radius: var(--radius-xl);
+		padding: var(--space-8) var(--space-6);
+		background: transparent;
+		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
 		text-decoration: none;
-		color: var(--color-text);
-		transition: var(--transition-base);
-		min-width: 280px;
+		color: var(--color-ink);
+		transition: padding-left var(--transition-fast), background-color var(--transition-fast);
 		position: relative;
-		overflow: hidden;
 	}
-	.social-feed__card::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 3px;
-		background: var(--card-bg);
+
+	@media (min-width: 768px) {
+		.social-feed__card:not(:last-child) {
+			border-right: 1px solid rgba(12, 81, 24, 0.15);
+		}
 	}
+
 	.social-feed__card:hover {
-		border-color: var(--card-color);
-		transform: translateY(-3px);
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+		background-color: var(--color-cream);
+		padding-left: calc(var(--space-6) + 6px);
 	}
 
 	.social-feed__card-icon {
 		width: 48px;
 		height: 48px;
-		border-radius: var(--radius-lg);
-		background: var(--card-bg);
+		background: var(--card-color);
 		color: white;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-shrink: 0;
 	}
+	.social-feed__card-icon :global(svg) {
+		width: 24px;
+		height: 24px;
+	}
 
 	.social-feed__card-info {
-		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 	.social-feed__card-info strong {
 		display: block;
-		font-size: var(--text-base);
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 500;
+		letter-spacing: -0.005em;
+		text-transform: uppercase;
+		color: var(--color-ink);
 	}
 	.social-feed__card-handle {
-		font-size: var(--text-sm);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
 		color: var(--card-color);
-		font-weight: 600;
 	}
 	.social-feed__card-info p {
-		font-size: var(--text-xs);
-		color: var(--color-text-muted);
-		margin: var(--space-1) 0 0;
+		font-size: 0.9375rem;
+		color: var(--color-ink-soft);
+		margin: var(--space-2) 0 0;
+		line-height: 1.5;
 	}
 
 	.social-feed__card-cta {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
-		gap: 4px;
-		font-size: var(--text-sm);
-		font-weight: 600;
-		color: var(--card-color);
+		gap: var(--space-2);
+		font-family: var(--font-display);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		margin-top: auto;
+		padding-top: var(--space-4);
+		border-top: 1px solid rgba(12, 81, 24, 0.08);
 		white-space: nowrap;
 	}
 	.social-feed__card:hover .social-feed__card-cta svg {
@@ -197,12 +280,50 @@
 		transition: var(--transition-fast);
 	}
 
-	@media (max-width: 600px) {
-		.social-feed__cards {
-			flex-direction: column;
-		}
-		.social-feed__card {
-			min-width: 0;
-		}
+	/* ── Embeds (optional) ── */
+	.social-feed__embeds {
+		margin-top: var(--space-12);
+	}
+	.social-feed__embeds h3 {
+		font-family: var(--font-display);
+		font-size: clamp(1.5rem, 2.5vw, 2rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		margin-bottom: var(--space-6);
+	}
+	.social-feed__embeds-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-6);
+	}
+	@media (min-width: 768px) {
+		.social-feed__embeds-grid { grid-template-columns: repeat(2, 1fr); }
+	}
+	.social-feed__embed h4 {
+		font-family: var(--font-display);
+		font-size: 1.125rem;
+		text-transform: uppercase;
+		color: var(--card-color);
+		margin-bottom: var(--space-3);
+	}
+	.social-feed__embed iframe {
+		max-width: 100%;
+		width: 100%;
+		background: white;
+		border: 1.5px solid var(--color-ink);
+	}
+	.social-feed__embed-fallback {
+		margin-top: var(--space-3);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+	}
+	.social-feed__embed-fallback a {
+		color: var(--color-green-deep);
+		text-decoration: underline;
 	}
 </style>

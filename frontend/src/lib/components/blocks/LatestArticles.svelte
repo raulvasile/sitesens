@@ -33,8 +33,21 @@
 
 <section class="latest-articles">
 	<div class="container">
-		{#if data.heading}
-			<h2 class="latest-articles__heading">{data.heading}</h2>
+		{#if data.heading || (data.cta_text && data.cta_link)}
+			<div class="latest-articles__header">
+				{#if data.heading}
+					<h2 class="latest-articles__heading">{data.heading}</h2>
+				{/if}
+				{#if data.cta_text && data.cta_link}
+					<a href={data.cta_link} class="latest-articles__header-cta">
+						{data.cta_text}
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+							<line x1="5" y1="12" x2="19" y2="12" />
+							<polyline points="12 5 19 12 12 19" />
+						</svg>
+					</a>
+				{/if}
+			</div>
 		{/if}
 
 		{#if !loaded}
@@ -84,32 +97,60 @@
 			</div>
 		{/if}
 
-		{#if data.cta_text && data.cta_link}
-			<div class="latest-articles__cta">
-				<a href={data.cta_link} class="btn btn-outline">{data.cta_text} &rarr;</a>
-			</div>
-		{/if}
 	</div>
 </section>
 
 <style>
-	.latest-articles { padding-block: var(--space-16); background-color: var(--color-bg); }
-
-	.latest-articles__heading {
-		font-size: var(--text-2xl);
-		text-align: center;
-		margin-bottom: var(--space-10);
-		color: var(--color-green-dark);
+	.latest-articles {
+		padding-block: var(--space-20);
+		background-color: var(--color-paper);
 	}
 
-	@media (min-width: 768px) {
-		.latest-articles__heading { font-size: var(--text-3xl); }
+	.latest-articles__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: var(--space-6);
+		margin-bottom: var(--space-10);
+		flex-wrap: wrap;
+	}
+
+	.latest-articles__heading {
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 4vw, 3.5rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		line-height: 1;
+		color: var(--color-ink);
+		margin: 0;
+	}
+
+	.latest-articles__header-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		padding-bottom: 6px;
+		border-bottom: 1.5px solid var(--color-ink);
+		text-decoration: none;
+		transition: gap var(--transition-fast), color var(--transition-fast);
+	}
+
+	.latest-articles__header-cta:hover {
+		gap: var(--space-3);
+		color: var(--color-green-deep);
 	}
 
 	.latest-articles__grid {
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: var(--space-6);
+		gap: var(--space-8);
 	}
 
 	@media (min-width: 640px) {
@@ -124,80 +165,93 @@
 		display: flex;
 		flex-direction: column;
 		background-color: var(--color-white);
-		border-radius: var(--radius-lg);
+		border: 1px solid rgba(12, 81, 24, 0.12);
 		overflow: hidden;
-		border: 1px solid var(--color-border);
 		text-decoration: none;
 		color: inherit;
-		transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+		transition: transform var(--transition-base), box-shadow var(--transition-base);
 	}
 
 	.latest-articles__card:hover {
-		box-shadow: 0 8px 24px rgba(0, 56, 39, 0.08);
-		transform: translateY(-2px);
+		transform: translateY(-4px);
+		box-shadow: 0 8px 24px rgba(10, 31, 16, 0.08);
 	}
 
 	.latest-articles__card:hover .latest-articles__read-more {
-		color: var(--color-brand-vibrant);
+		color: var(--color-green-deep);
+		gap: var(--space-3);
 	}
 
 	.latest-articles__image {
 		width: 100%;
-		height: 180px;
+		aspect-ratio: 4 / 3;
 		object-fit: cover;
 	}
 
 	.latest-articles__image-placeholder {
 		width: 100%;
-		height: 180px;
-		background: linear-gradient(135deg, var(--color-green-dark) 0%, var(--color-green-mid) 100%);
+		aspect-ratio: 4 / 3;
+		background:
+			repeating-linear-gradient(
+				135deg,
+				rgba(12, 81, 24, 0.08) 0,
+				rgba(12, 81, 24, 0.08) 1px,
+				transparent 1px,
+				transparent 12px
+			),
+			var(--color-cream);
 	}
 
 	.latest-articles__body {
-		padding: 18px 20px 20px;
 		display: flex;
 		flex-direction: column;
 		flex: 1;
+		gap: var(--space-3);
+		padding: var(--space-5);
 	}
 
 	.latest-articles__meta {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 		gap: var(--space-3);
-		margin-bottom: var(--space-3);
 	}
 
 	.latest-articles__date {
-		font-size: var(--text-xs);
-		color: var(--color-text-muted);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
 	}
 
 	.latest-articles__category {
 		display: inline-block;
-		font-size: 0.65rem;
-		font-weight: 700;
-		color: var(--color-white);
-		padding: 3px 10px;
-		border-radius: var(--radius-full);
+		font-family: var(--font-display);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
-		letter-spacing: 0.06em;
+		background-color: var(--color-lime) !important;
+		color: var(--color-ink) !important;
+		padding: 3px 10px;
 		white-space: nowrap;
 	}
 
 	.latest-articles__title {
-		font-size: var(--text-base);
-		font-weight: 700;
-		color: var(--color-green-dark);
-		margin-bottom: var(--space-2);
-		line-height: 1.4;
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		line-height: 1.05;
 	}
 
 	.latest-articles__excerpt {
-		font-size: var(--text-sm);
-		color: var(--color-text-muted);
-		line-height: 1.6;
-		margin-bottom: var(--space-4);
+		font-family: var(--font-body);
+		font-size: 0.9375rem;
+		color: var(--color-ink-soft);
+		line-height: 1.5;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
@@ -208,12 +262,15 @@
 	.latest-articles__read-more {
 		display: inline-flex;
 		align-items: center;
-		gap: var(--space-1);
-		font-size: var(--text-sm);
-		font-weight: 600;
-		color: var(--color-green-dark);
-		margin-top: auto;
-		transition: color var(--transition-fast);
+		gap: var(--space-2);
+		font-family: var(--font-display);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		margin-top: var(--space-2);
+		transition: gap var(--transition-fast), color var(--transition-fast);
 	}
 
 	.latest-articles__read-more .arrow-animate {
@@ -232,20 +289,18 @@
 
 	/* Skeleton loading */
 	.latest-articles__skeleton {
-		background-color: var(--color-white);
-		border-radius: var(--radius-lg);
+		background-color: transparent;
 		overflow: hidden;
-		padding: var(--space-5);
+		padding: 0;
 	}
 
 	.skeleton {
-		background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg) 50%, var(--color-border) 75%);
+		background: linear-gradient(90deg, var(--color-cream) 25%, var(--color-skeleton) 50%, var(--color-cream) 75%);
 		background-size: 200% 100%;
 		animation: shimmer 1.5s infinite;
-		border-radius: var(--radius-sm);
 	}
 
-	.skeleton--image { height: 200px; margin-bottom: var(--space-4); border-radius: var(--radius-md); }
+	.skeleton--image { aspect-ratio: 4 / 3; margin-bottom: var(--space-4); }
 	.skeleton--text { height: 14px; margin-bottom: var(--space-2); }
 
 	@keyframes shimmer {

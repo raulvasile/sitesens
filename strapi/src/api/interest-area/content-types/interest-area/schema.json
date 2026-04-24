@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "interest_areas",
+  "info": {
+    "singularName": "interest-area",
+    "pluralName": "interest-areas",
+    "displayName": "🎯 Domenii de interes",
+    "description": "Domenii de interes pentru formularul de înscriere"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 100
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "icon": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 300
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

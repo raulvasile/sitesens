@@ -46,8 +46,21 @@
 
 <section class="upcoming-events">
 	<div class="container">
-		{#if data.heading}
-			<h2 class="upcoming-events__heading">{data.heading}</h2>
+		{#if data.heading || (data.cta_text && data.cta_link)}
+			<div class="upcoming-events__header">
+				{#if data.heading}
+					<h2 class="upcoming-events__heading">{data.heading}</h2>
+				{/if}
+				{#if data.cta_text && data.cta_link}
+					<a href={data.cta_link} class="upcoming-events__header-cta">
+						{data.cta_text}
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+							<line x1="5" y1="12" x2="19" y2="12" />
+							<polyline points="12 5 19 12 12 19" />
+						</svg>
+					</a>
+				{/if}
+			</div>
 		{/if}
 
 		{#if !loaded}
@@ -114,26 +127,54 @@
 			<p class="upcoming-events__empty">Nu sunt evenimente programate momentan.</p>
 		{/if}
 
-		{#if data.cta_text && data.cta_link}
-			<div class="upcoming-events__cta">
-				<a href={data.cta_link} class="btn btn-outline">{data.cta_text} &rarr;</a>
-			</div>
-		{/if}
 	</div>
 </section>
 
 <style>
-	.upcoming-events { padding-block: var(--space-16); }
-
-	.upcoming-events__heading {
-		font-size: var(--text-2xl);
-		text-align: center;
-		margin-bottom: var(--space-10);
-		color: var(--color-green-dark);
+	.upcoming-events {
+		padding-block: var(--space-20);
+		background-color: var(--color-paper);
 	}
 
-	@media (min-width: 768px) {
-		.upcoming-events__heading { font-size: var(--text-3xl); }
+	.upcoming-events__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: var(--space-6);
+		margin-bottom: var(--space-10);
+		flex-wrap: wrap;
+	}
+
+	.upcoming-events__heading {
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 4vw, 3.5rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		line-height: 1;
+		color: var(--color-ink);
+		margin: 0;
+	}
+
+	.upcoming-events__header-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		padding-bottom: 6px;
+		border-bottom: 1.5px solid var(--color-ink);
+		text-decoration: none;
+		transition: gap var(--transition-fast), color var(--transition-fast);
+	}
+
+	.upcoming-events__header-cta:hover {
+		gap: var(--space-3);
+		color: var(--color-green-deep);
 	}
 
 	.upcoming-events__list {
@@ -142,100 +183,105 @@
 		margin: 0;
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-3);
+		gap: 0;
+		border-top: 1px solid rgba(12, 81, 24, 0.15);
+	}
+
+	.upcoming-events__list li {
+		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
 	}
 
 	.upcoming-events__row {
 		display: grid;
-		grid-template-columns: 90px 1fr 52px;
+		grid-template-columns: 100px 1fr auto;
 		gap: var(--space-6);
 		align-items: center;
 		width: 100%;
-		padding: var(--space-5) var(--space-6);
-		background-color: var(--color-white);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-lg);
+		padding: var(--space-5) var(--space-4);
+		background-color: transparent;
 		text-decoration: none;
 		color: inherit;
-		transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+		transition: padding-left var(--transition-fast), background-color var(--transition-fast);
 	}
 
 	.upcoming-events__row:hover {
-		border-color: var(--color-brand-neon);
-		box-shadow: 0 4px 16px rgba(16, 50, 41, 0.06);
+		background-color: var(--color-cream);
+		padding-left: var(--space-6);
 	}
 
 	.upcoming-events__row:hover .upcoming-events__cta-circle {
-		background-color: var(--color-green-dark);
-		color: var(--color-brand-neon);
+		background-color: var(--color-ink);
+		color: var(--color-lime);
 		transform: translateX(2px);
 	}
 
-	/* ── Date (left column) ── */
+	/* ── Date (first column) ── */
 	.upcoming-events__date {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: center;
-		padding-left: var(--space-4);
-		border-left: 3px solid var(--color-brand-neon);
 	}
 
 	.upcoming-events__day {
 		font-family: var(--font-display);
-		font-size: 2.5rem;
-		font-weight: 700;
+		font-size: 2rem;
+		font-weight: 500;
 		line-height: 1;
-		color: var(--color-green-dark);
+		color: var(--color-ink);
+		letter-spacing: -0.01em;
 	}
 
 	.upcoming-events__month {
-		font-size: var(--text-xs);
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		color: var(--color-text-muted);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		color: var(--color-ink-soft);
 		margin-top: 4px;
 	}
 
-	/* ── Body (middle column) ── */
+	/* ── Body (title + location) ── */
 	.upcoming-events__body {
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-2);
+		gap: var(--space-1);
 	}
 
 	.upcoming-events__tag {
 		display: inline-flex;
 		align-self: flex-start;
 		align-items: center;
-		font-size: 0.65rem;
-		font-weight: 700;
-		color: var(--color-green-mid);
-		background-color: #D9F2CB;
+		font-family: var(--font-display);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		color: var(--color-ink);
+		background-color: var(--color-lime);
 		padding: 3px 10px;
-		border-radius: var(--radius-full);
 		text-transform: uppercase;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.14em;
 	}
 
 	.upcoming-events__title {
-		font-size: var(--text-lg);
-		font-weight: 700;
-		color: var(--color-green-dark);
-		line-height: 1.3;
-	}
-
-	@media (min-width: 768px) {
-		.upcoming-events__title { font-size: var(--text-xl); }
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		font-weight: 500;
+		color: var(--color-ink);
+		line-height: 1.1;
+		letter-spacing: -0.005em;
+		text-transform: uppercase;
 	}
 
 	.upcoming-events__meta {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-4);
-		font-size: var(--text-sm);
-		color: var(--color-text-muted);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+		color: var(--color-ink-soft);
+		text-transform: uppercase;
 	}
 
 	.upcoming-events__location,
@@ -245,7 +291,7 @@
 		gap: 6px;
 	}
 
-	/* ── Circle CTA (right column) ── */
+	/* ── Circle CTA ── */
 	.upcoming-events__cta-circle {
 		display: inline-flex;
 		align-items: center;
@@ -253,9 +299,9 @@
 		width: 44px;
 		height: 44px;
 		border-radius: 50%;
-		background-color: var(--color-bg);
-		color: var(--color-green-dark);
-		border: 1px solid var(--color-border);
+		background-color: transparent;
+		color: var(--color-ink);
+		border: 1.5px solid var(--color-ink);
 		transition: all var(--transition-fast);
 		flex-shrink: 0;
 	}
@@ -303,13 +349,11 @@
 	/* ── Skeleton ── */
 	.upcoming-events__skeleton {
 		display: grid;
-		grid-template-columns: 90px 1fr 52px;
+		grid-template-columns: 100px 1fr 44px;
 		gap: var(--space-6);
 		align-items: center;
-		padding: var(--space-5) var(--space-6);
-		background-color: var(--color-white);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-lg);
+		padding: var(--space-5) var(--space-4);
+		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
 	}
 
 	.skeleton-body {
@@ -319,13 +363,12 @@
 	}
 
 	.skeleton {
-		background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg) 50%, var(--color-border) 75%);
+		background: linear-gradient(90deg, var(--color-cream) 25%, var(--color-skeleton) 50%, var(--color-cream) 75%);
 		background-size: 200% 100%;
 		animation: shimmer 1.5s infinite;
-		border-radius: var(--radius-sm);
 	}
 
-	.skeleton--date { width: 70px; height: 60px; border-radius: var(--radius-sm); flex-shrink: 0; }
+	.skeleton--date { width: 80px; height: 44px; flex-shrink: 0; }
 	.skeleton--tag { height: 18px; }
 	.skeleton--text { height: 14px; }
 	.skeleton--cta { width: 44px; height: 44px; border-radius: 50%; }

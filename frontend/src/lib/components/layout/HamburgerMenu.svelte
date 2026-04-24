@@ -77,7 +77,7 @@
 
 		<nav class="hamburger-menu__nav">
 			<a href="/" class="hamburger-menu__link stagger-item" style="--stagger: 0" onclick={handleLinkClick}>
-				Acasă
+				{navigation?.mobile_home_label ?? 'Acasă'}
 			</a>
 
 			{#each menuItems as item, i}
@@ -169,7 +169,9 @@
 					</a>
 				{/if}
 			{/each}
-			<span class="hamburger-menu__lang">RO / EN (în curând)</span>
+			{#if navigation?.mobile_language_text}
+				<span class="hamburger-menu__lang">{navigation.mobile_language_text}</span>
+			{/if}
 		</div>
 	</div>
 {/if}
@@ -202,8 +204,8 @@
 		top: 0;
 		left: 0;
 		bottom: 0;
-		width: min(360px, 100vw);
-		background-color: var(--color-green-dark);
+		width: min(420px, 100vw);
+		background-color: var(--color-green-deep);
 		z-index: 201;
 		display: flex;
 		flex-direction: column;
@@ -248,27 +250,27 @@
 		justify-content: space-between;
 		padding: var(--space-4) var(--space-6);
 		height: var(--navbar-height);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		border-bottom: 1px solid rgba(145, 255, 0, 0.15);
 	}
 
 	.hamburger-menu__close {
 		background: none;
 		border: none;
-		color: var(--color-white);
+		color: var(--color-cream);
 		cursor: pointer;
 		padding: var(--space-2);
-		border-radius: var(--radius-md);
-		transition: background-color var(--transition-fast), transform var(--transition-fast);
+		transition: background-color var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
 	}
 
 	.hamburger-menu__close:hover {
-		background-color: rgba(255, 255, 255, 0.1);
+		background-color: rgba(145, 255, 0, 0.1);
+		color: var(--color-lime);
 		transform: rotate(90deg);
 	}
 
 	.hamburger-menu__nav {
 		flex: 1;
-		padding: var(--space-4) var(--space-6);
+		padding: var(--space-6) var(--space-8);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-1);
@@ -276,17 +278,21 @@
 
 	.hamburger-menu__link {
 		display: block;
-		color: rgba(255, 255, 255, 0.85);
-		font-size: var(--text-lg);
-		font-weight: 500;
+		color: var(--color-cream);
+		font-family: var(--font-display);
+		font-size: 2rem;
+		font-weight: 400;
+		letter-spacing: -0.01em;
+		line-height: 1.1;
 		padding: var(--space-3) 0;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		border-bottom: 1px solid rgba(145, 255, 0, 0.12);
+		text-transform: uppercase;
 		transition: color var(--transition-fast), padding-left var(--transition-fast);
 	}
 
 	.hamburger-menu__link:hover {
-		color: var(--color-white);
-		padding-left: var(--space-2);
+		color: var(--color-lime);
+		padding-left: var(--space-3);
 	}
 
 	.hamburger-menu__group-toggle {
@@ -296,10 +302,14 @@
 		justify-content: space-between;
 		background: none;
 		border: none;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-		color: rgba(255, 255, 255, 0.85);
-		font-size: var(--text-lg);
-		font-weight: 500;
+		border-bottom: 1px solid rgba(145, 255, 0, 0.12);
+		color: var(--color-cream);
+		font-family: var(--font-display);
+		font-size: 2rem;
+		font-weight: 400;
+		letter-spacing: -0.01em;
+		line-height: 1.1;
+		text-transform: uppercase;
 		padding: var(--space-3) 0;
 		cursor: pointer;
 		text-align: left;
@@ -307,8 +317,8 @@
 	}
 
 	.hamburger-menu__group-toggle:hover {
-		color: var(--color-white);
-		padding-left: var(--space-2);
+		color: var(--color-lime);
+		padding-left: var(--space-3);
 	}
 
 	.hamburger-menu__group-toggle svg {
@@ -339,20 +349,21 @@
 
 	.hamburger-menu__sub-link {
 		display: block;
-		color: rgba(255, 255, 255, 0.65);
+		color: rgba(245, 241, 232, 0.7);
+		font-family: var(--font-body);
 		font-size: var(--text-base);
 		padding: var(--space-2) 0;
 		transition: color var(--transition-fast), padding-left var(--transition-fast);
 	}
 
 	.hamburger-menu__sub-link:hover {
-		color: var(--color-white);
+		color: var(--color-lime);
 		padding-left: var(--space-2);
 	}
 
 	.hamburger-menu__footer {
-		padding: var(--space-6);
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		padding: var(--space-8);
+		border-top: 1px solid rgba(145, 255, 0, 0.15);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
@@ -365,18 +376,23 @@
 	}
 
 	.hamburger-menu__secondary-link {
-		color: rgba(255, 255, 255, 0.75);
-		font-size: var(--text-sm);
-		font-weight: 500;
+		color: var(--color-cream);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
 		transition: color var(--transition-fast);
 	}
 
 	.hamburger-menu__secondary-link:hover {
-		color: var(--color-white);
+		color: var(--color-lime);
 	}
 
 	.hamburger-menu__lang {
-		color: rgba(255, 255, 255, 0.4);
-		font-size: var(--text-xs);
+		color: rgba(245, 241, 232, 0.5);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
 	}
 </style>

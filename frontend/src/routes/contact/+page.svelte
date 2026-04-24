@@ -82,57 +82,57 @@
 <div class="container contact-layout">
 	<!-- ═══════ FORMULAR ═══════ -->
 	<section class="contact-form-section">
-		<h2>Trimite-ne un mesaj</h2>
+		<h2>{cp.form_title ?? 'Trimite-ne un mesaj'}</h2>
 		{#if sent}
 			<div class="success-message">
 				<span class="success-icon">✓</span>
-				<p>Clientul de email a fost deschis. Dacă nu s-a deschis automat, ne poți contacta direct la <a href="mailto:{cp.email}">{cp.email}</a>.</p>
+				<p>{cp.form?.success_message ?? `Clientul de email a fost deschis. Dacă nu s-a deschis automat, ne poți contacta direct la`} <a href="mailto:{cp.email}">{cp.email}</a>.</p>
 			</div>
 		{:else}
 			<form onsubmit={handleContactSubmit} class="contact-form">
 				<div class="form-row">
 					<div class="form-group">
-						<label for="contact-name">Nume *</label>
+						<label for="contact-name">{cp.form?.name_label ?? 'Nume'} *</label>
 						<input
 							id="contact-name"
 							type="text"
 							bind:value={formName}
 							required
-							placeholder="Numele tău"
+							placeholder={cp.form?.name_placeholder ?? 'Numele tău'}
 						/>
 					</div>
 					<div class="form-group">
-						<label for="contact-email">Email *</label>
+						<label for="contact-email">{cp.form?.email_label ?? 'Email'} *</label>
 						<input
 							id="contact-email"
 							type="email"
 							bind:value={formEmail}
 							required
-							placeholder="email@exemplu.ro"
+							placeholder={cp.form?.email_placeholder ?? 'email@exemplu.ro'}
 						/>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="contact-subject">Subiect</label>
+					<label for="contact-subject">{cp.form?.subject_label ?? 'Subiect'}</label>
 					<input
 						id="contact-subject"
 						type="text"
 						bind:value={formSubject}
-						placeholder="Despre ce vrei să discuți?"
+						placeholder={cp.form?.subject_placeholder ?? 'Despre ce vrei să discuți?'}
 					/>
 				</div>
 				<div class="form-group">
-					<label for="contact-message">Mesaj *</label>
+					<label for="contact-message">{cp.form?.message_label ?? 'Mesaj'} *</label>
 					<textarea
 						id="contact-message"
 						bind:value={formMessage}
 						required
 						rows="6"
-						placeholder="Scrie-ne mesajul tău..."
+						placeholder={cp.form?.message_placeholder ?? 'Scrie-ne mesajul tău...'}
 					></textarea>
 				</div>
 				<button type="submit" class="btn btn-primary" disabled={sending}>
-					{sending ? 'Se trimite...' : 'Trimite mesajul'}
+					{sending ? (cp.form?.submitting_text ?? 'Se trimite...') : (cp.form?.submit_text ?? 'Trimite mesajul')}
 				</button>
 			</form>
 		{/if}
@@ -140,7 +140,7 @@
 
 	<!-- ═══════ DATE CONTACT ═══════ -->
 	<aside class="contact-info">
-		<h2>Date de contact</h2>
+		<h2>{cp.info_heading ?? 'Date de contact'}</h2>
 		<div class="info-card">
 			<div class="info-item">
 				<span class="info-icon">📧</span>
@@ -170,7 +170,7 @@
 		</div>
 
 		<div class="social-links-box">
-			<h3>Urmărește-ne</h3>
+			<h3>{cp.social_heading ?? 'Urmărește-ne'}</h3>
 			<div class="social-icons">
 				<a href="https://facebook.com/partidulsens" target="_blank" rel="noopener" aria-label="Facebook">
 					<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -214,18 +214,36 @@
 </section>
 
 <style>
+	.page-header {
+		padding-top: var(--space-10);
+		padding-bottom: var(--space-4);
+	}
+
+	.page-header h1 {
+		font-family: var(--font-display);
+		font-size: clamp(2.5rem, 6vw, 5rem);
+		font-weight: 500;
+		letter-spacing: -0.015em;
+		text-transform: uppercase;
+		line-height: 1;
+		color: var(--color-ink);
+		margin-top: var(--space-5);
+	}
+
 	.page-subtitle {
+		font-family: var(--font-body);
 		font-size: var(--text-lg);
-		color: var(--color-text-muted);
-		margin-top: var(--space-2);
+		color: var(--color-ink-soft);
+		margin-top: var(--space-4);
+		max-width: 600px;
 	}
 
 	/* ── Layout ── */
 	.contact-layout {
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: var(--space-10);
-		padding-block: var(--space-10);
+		gap: var(--space-12);
+		padding-block: var(--space-12);
 	}
 	@media (min-width: 768px) {
 		.contact-layout {
@@ -235,14 +253,18 @@
 
 	/* ── Form section ── */
 	.contact-form-section h2 {
-		font-size: var(--text-xl);
+		font-family: var(--font-display);
+		font-size: 1.75rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
 		margin-bottom: var(--space-6);
-		color: var(--color-green-dark);
+		color: var(--color-ink);
 	}
 	.contact-form {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-4);
+		gap: var(--space-5);
 	}
 	.form-row {
 		display: grid;
@@ -255,31 +277,34 @@
 	.form-group {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-1);
+		gap: var(--space-2);
 	}
 	.form-group label {
-		font-size: var(--text-sm);
-		font-weight: 600;
-		color: var(--color-text);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
 	}
 	.form-group input,
 	.form-group textarea {
-		padding: 0.75rem 1rem;
-		border: 2px solid var(--color-border);
-		border-radius: var(--radius-md);
+		padding: 0.875rem 1rem;
+		border: 1.5px solid var(--color-ink);
 		font-family: var(--font-body);
 		font-size: var(--text-base);
-		background-color: var(--color-white);
-		transition: border-color var(--transition-fast);
+		background-color: var(--color-paper);
+		color: var(--color-ink);
+		transition: background-color var(--transition-fast);
 	}
 	.form-group input:focus,
 	.form-group textarea:focus {
 		outline: none;
-		border-color: var(--color-green-dark);
+		background-color: var(--color-cream);
 	}
 	.form-group textarea {
 		resize: vertical;
-		min-height: 120px;
+		min-height: 140px;
 	}
 
 	.success-message {
@@ -287,16 +312,15 @@
 		align-items: flex-start;
 		gap: var(--space-4);
 		padding: var(--space-6);
-		background-color: var(--color-bg);
-		border-radius: var(--radius-md);
-		border-left: 4px solid var(--color-green-leaf);
+		background-color: var(--color-lime);
+		border: 1.5px solid var(--color-ink);
 	}
 	.success-icon {
 		flex-shrink: 0;
 		width: 32px;
 		height: 32px;
-		background-color: var(--color-green-leaf);
-		color: white;
+		background-color: var(--color-ink);
+		color: var(--color-lime);
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -304,23 +328,27 @@
 		font-weight: 700;
 	}
 	.success-message p {
-		color: var(--color-text-muted);
-		line-height: 1.6;
+		color: var(--color-ink);
+		line-height: 1.5;
 	}
 	.success-message a {
-		color: var(--color-green-dark);
+		color: var(--color-green-deep);
 		font-weight: 600;
+		text-decoration: underline;
 	}
 
 	/* ── Contact info sidebar ── */
 	.contact-info h2 {
-		font-size: var(--text-xl);
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
 		margin-bottom: var(--space-6);
-		color: var(--color-green-dark);
+		color: var(--color-ink);
 	}
 	.info-card {
-		background-color: var(--color-bg);
-		border-radius: var(--radius-md);
+		background-color: var(--color-cream);
 		padding: var(--space-6);
 		display: flex;
 		flex-direction: column;
@@ -339,46 +367,57 @@
 	}
 	.info-item strong {
 		display: block;
-		font-size: var(--text-sm);
-		color: var(--color-text);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
 		margin-bottom: var(--space-1);
 	}
 	.info-item a,
 	.info-item p {
-		font-size: var(--text-sm);
-		color: var(--color-text-muted);
+		font-family: var(--font-body);
+		font-size: 0.9375rem;
+		color: var(--color-ink);
 		line-height: 1.5;
 	}
 	.info-item a:hover {
-		color: var(--color-green-dark);
+		color: var(--color-green-deep);
+		text-decoration: underline;
 	}
 
 	.social-links-box {
-		background-color: var(--color-bg);
-		border-radius: var(--radius-md);
+		background-color: var(--color-green-deep);
+		color: var(--color-cream);
 		padding: var(--space-6);
 	}
 	.social-links-box h3 {
-		font-size: var(--text-base);
+		font-family: var(--font-display);
+		font-size: 1rem;
+		font-weight: 500;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
 		margin-bottom: var(--space-4);
-		color: var(--color-green-dark);
+		color: var(--color-cream);
 	}
 	.social-icons {
 		display: flex;
 		gap: var(--space-4);
 	}
 	.social-icons a {
-		color: var(--color-text-muted);
+		color: var(--color-cream);
 		transition: color var(--transition-fast);
 	}
 	.social-icons a:hover {
-		color: var(--color-green-dark);
+		color: var(--color-lime);
 	}
 
 	/* ── Newsletter section ── */
 	.newsletter-contact {
-		background-color: var(--color-orange-light);
+		background-color: var(--color-lime);
 		padding-block: var(--space-12);
+		border-block: 2px solid var(--color-ink);
 	}
 	.newsletter-contact__inner {
 		display: flex;
@@ -388,31 +427,47 @@
 		gap: var(--space-8);
 	}
 	.newsletter-contact h2 {
-		font-size: var(--text-2xl);
-		color: var(--color-green-dark);
+		font-family: var(--font-display);
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		color: var(--color-ink);
 		margin-bottom: var(--space-2);
+		line-height: 1;
 	}
 	.newsletter-contact p {
-		color: var(--color-text-muted);
+		color: var(--color-ink);
+		opacity: 0.8;
 	}
 	.newsletter-contact__form {
 		display: flex;
-		gap: var(--space-3);
+		gap: var(--space-2);
 		flex-wrap: wrap;
 		min-width: 280px;
 	}
 	.newsletter-contact__input {
 		flex: 1;
 		min-width: 200px;
-		padding: 0.75rem 1rem;
-		border: 2px solid var(--color-border);
-		border-radius: var(--radius-lg);
+		padding: 0.875rem 1rem;
+		border: 1.5px solid var(--color-ink);
 		font-family: var(--font-body);
 		font-size: var(--text-base);
-		background-color: var(--color-white);
+		background-color: var(--color-cream);
+		color: var(--color-ink);
 	}
 	.newsletter-contact__input:focus {
 		outline: none;
-		border-color: var(--color-green-dark);
+		background-color: var(--color-paper);
+	}
+	.newsletter-contact :global(.btn-primary) {
+		background-color: var(--color-ink);
+		color: var(--color-lime);
+		border-color: var(--color-ink);
+	}
+	.newsletter-contact :global(.btn-primary:hover) {
+		background-color: var(--color-green-deep);
+		color: var(--color-lime);
+		border-color: var(--color-green-deep);
 	}
 </style>

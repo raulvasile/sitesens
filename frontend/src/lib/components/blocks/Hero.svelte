@@ -16,6 +16,22 @@
 		auto_next_event?: boolean;
 	}
 
+	interface NextEventBlock {
+		label?: string;
+		cta_text?: string;
+		icon?: string;
+		empty_label?: string;
+		empty_url?: string;
+		hide_when_empty?: boolean;
+		_event?: {
+			title: string;
+			slug: string;
+			start_date: string;
+			location_name?: string;
+			event_type?: string;
+		} | null;
+	}
+
 	interface Props {
 		data: {
 			title: string;
@@ -29,13 +45,18 @@
 			breadcrumb?: { label: string; href?: string }[];
 			rotating_words?: RotatingWords | null;
 			featured_link?: FeaturedLink | null;
+			next_event?: NextEventBlock | null;
+			meta_text?: string;
+			chip_text?: string;
+			chip_visible?: boolean;
 		};
 	}
 
 	let { data }: Props = $props();
 	const isCompact = $derived(data.variant === 'compact');
+	const photoUrl = $derived(data.background_image ? getStrapiMediaUrl(data.background_image.url) : '');
 
-	// Parse words (can arrive as array or JSON-stringified array)
+	// Parse words
 	const words = $derived.by(() => {
 		const raw = data.rotating_words?.words;
 		if (!raw) return [] as string[];
@@ -45,7 +66,6 @@
 				const parsed = JSON.parse(raw);
 				return Array.isArray(parsed) ? parsed : [];
 			} catch {
-				// comma-separated fallback
 				return raw.split(',').map((s) => s.trim()).filter(Boolean);
 			}
 		}
@@ -53,7 +73,6 @@
 	});
 
 	const interval = $derived(data.rotating_words?.interval_ms ?? 2500);
-	const highlight = $derived(data.rotating_words?.highlight ?? true);
 
 	// Split the title around {{rotating}} placeholder
 	const titleParts = $derived.by(() => {
@@ -66,257 +85,437 @@
 	});
 
 	let currentIndex = $state(0);
-	let prevIndex = $state(0);
 
 	onMount(() => {
 		if (words.length < 2) return;
 		const id = setInterval(() => {
-			prevIndex = currentIndex;
 			currentIndex = (currentIndex + 1) % words.length;
 		}, interval);
 		return () => clearInterval(id);
 	});
 </script>
 
-<section
-	class="hero"
-	class:hero--compact={isCompact}
-	style={data.background_image
-		? `--hero-bg: url('${getStrapiMediaUrl(data.background_image.url)}')`
-		: ''}
->
-	<div class="hero__overlay"></div>
-	<div class="container hero__content">
+<section class="hero" class:hero--compact={isCompact}>
+	<div class="container hero__inner">
 		{#if data.breadcrumb?.length}
-			<Breadcrumb light items={data.breadcrumb} />
+			<Breadcrumb items={data.breadcrumb} />
 		{/if}
-		<h1 class="hero__title">
-			{#if titleParts.hasPlaceholder}
-				{titleParts.before}<span
-					class="hero__rotating"
-					class:hero__rotating--highlight={highlight}
-					aria-live="polite"
-					style={`--hero-rotation-duration: ${Math.min(interval, 600)}ms`}
-				>
-					{#key currentIndex}
-						<span class="hero__rotating-word">{words[currentIndex]}</span>
-					{/key}
-					<!-- sr-only fallback listing all words for SEO/accessibility -->
-					<span class="sr-only">{words.join(', ')}</span>
-				</span>{titleParts.after}
-			{:else}
-				{data.title}
-			{/if}
-		</h1>
-		{#if data.subtitle}
-			<p class="hero__subtitle">{data.subtitle}</p>
-		{/if}
-		{#if data.cta_text || data.cta_secondary_text}
-			<div class="hero__ctas">
-				{#if data.cta_text && data.cta_link}
-					<a href={data.cta_link} class="btn btn-primary btn-lg">{data.cta_text}</a>
+
+		<div class="hero__grid">
+			<!-- LEFT: text -->
+			<div class="hero__left">
+				{#if data.meta_text}
+					<div class="hero__meta">
+						<span class="hero__live">
+							<span class="hero__live-dot" aria-hidden="true"></span>
+							<span>{data.meta_text}</span>
+						</span>
+					</div>
 				{/if}
-				{#if data.cta_secondary_text && data.cta_secondary_link}
-					<a href={data.cta_secondary_link} class="btn btn-secondary btn-lg hero__cta-secondary">
-						{data.cta_secondary_text}
-					</a>
+
+				<h1 class="hero__title">
+					{#if titleParts.hasPlaceholder}
+						{titleParts.before}<span
+							class="hero__rotating"
+							aria-live="polite"
+						>
+							<!-- Sizer: cuvântul cel mai lung — vizibil doar pentru a ține lățimea stabilă -->
+							<span class="hero__rotating-sizer" aria-hidden="true">
+								{#each words as w}
+									<span class="hero__rotating-sizer-item">{w}</span>
+								{/each}
+							</span>
+							<!-- Cuvinte absolute cu fade crossover — una e activă la un moment dat -->
+							{#each words as w, i}
+								<span
+									class="hero__rotating-word"
+									class:hero__rotating-word--active={i === currentIndex}
+									aria-hidden={i !== currentIndex}
+								>{w}</span>
+							{/each}
+							<span class="sr-only">{words.join(', ')}</span>
+						</span>{titleParts.after}
+					{:else}
+						{data.title}
+					{/if}
+				</h1>
+
+				{#if data.subtitle}
+					<p class="hero__subtitle">{data.subtitle}</p>
+				{/if}
+
+				{#if data.cta_text || data.cta_secondary_text}
+					<div class="hero__ctas">
+						{#if data.cta_text && data.cta_link}
+							<a href={data.cta_link} class="btn btn-primary btn-lg">{data.cta_text}</a>
+						{/if}
+						{#if data.cta_secondary_text && data.cta_secondary_link}
+							<a href={data.cta_secondary_link} class="btn btn-outline-ink btn-lg">
+								{data.cta_secondary_text}
+							</a>
+						{/if}
+					</div>
 				{/if}
 			</div>
-		{/if}
-		{#if data.featured_link}
-			<a href={data.featured_link.url} class="hero__featured">
-				<span class="hero__featured-label">
-					{#if data.featured_link.icon}<span class="hero__featured-icon">{data.featured_link.icon}</span>{/if}
-					{data.featured_link.label}
-				</span>
-				<span class="hero__featured-title">{data.featured_link.title}</span>
-				<span class="hero__featured-arrow" aria-hidden="true">→</span>
-			</a>
-		{/if}
+
+			<!-- RIGHT: photo cu floating callout card -->
+			{#if !isCompact}
+				<div class="hero__right">
+					<div class="hero__photo">
+						{#if photoUrl}
+							<img src={photoUrl} alt={data.background_image?.alternativeText ?? ''} />
+							<div class="hero__photo-wash" aria-hidden="true"></div>
+						{:else}
+							<div class="hero__photo-placeholder photo-placeholder photo-placeholder--dark">
+								· foto echipă SENS ·
+							</div>
+						{/if}
+						{#if data.chip_visible && data.chip_text}
+							<span class="hero__chip">{data.chip_text}</span>
+						{/if}
+					</div>
+
+					{#if data.next_event?._event}
+						{@const ev = data.next_event._event}
+						{@const evDate = new Date(ev.start_date)}
+						{@const dateLabel = new Intl.DateTimeFormat('ro-RO', { day: 'numeric', month: 'long' }).format(evDate)}
+						<a href="/evenimente/{ev.slug}" class="hero__floating">
+							<span class="hero__floating-label">
+								{#if data.next_event.icon}
+									<span class="hero__floating-icon" aria-hidden="true">{data.next_event.icon}</span>
+								{/if}
+								{data.next_event.label ?? 'Următorul eveniment'} · {dateLabel}
+							</span>
+							<span class="hero__floating-title">{ev.title}</span>
+							{#if ev.location_name}
+								<span class="hero__floating-meta">{ev.location_name}</span>
+							{/if}
+							<span class="hero__floating-arrow" aria-hidden="true">→</span>
+						</a>
+					{:else if data.next_event && !data.next_event.hide_when_empty && data.next_event.empty_label}
+						<a href={data.next_event.empty_url ?? '/evenimente'} class="hero__floating">
+							<span class="hero__floating-label">
+								{#if data.next_event.icon}
+									<span class="hero__floating-icon" aria-hidden="true">{data.next_event.icon}</span>
+								{/if}
+								{data.next_event.empty_label}
+							</span>
+							<span class="hero__floating-arrow" aria-hidden="true">→</span>
+						</a>
+					{:else if data.featured_link}
+						<a href={data.featured_link.url} class="hero__floating">
+							<span class="hero__floating-label">
+								{#if data.featured_link.icon}
+									<span class="hero__floating-icon" aria-hidden="true">{data.featured_link.icon}</span>
+								{/if}
+								{data.featured_link.label}
+							</span>
+							<span class="hero__floating-title">{data.featured_link.title}</span>
+							<span class="hero__floating-arrow" aria-hidden="true">→</span>
+						</a>
+					{/if}
+				</div>
+			{/if}
+		</div>
 	</div>
 </section>
 
 <style>
 	.hero {
 		position: relative;
-		min-height: 80vh;
-		display: flex;
-		align-items: center;
-		background-color: var(--color-green-dark);
-		background-image: var(--hero-bg);
-		background-size: cover;
-		background-position: center;
-		padding-block: var(--space-24);
-		padding-top: calc(var(--navbar-height) + var(--space-16));
+		background-color: var(--color-paper);
+		padding-block: calc(var(--navbar-height) + var(--space-2)) var(--space-12);
+		overflow: hidden;
 	}
 
 	.hero--compact {
-		min-height: 40vh;
-		padding-block: var(--space-12);
-		padding-top: calc(var(--navbar-height) + var(--space-10));
+		padding-block: calc(var(--navbar-height) + var(--space-2)) var(--space-8);
 	}
 
-	.hero--compact .hero__title {
-		font-size: var(--text-2xl);
-		margin-bottom: var(--space-3);
-	}
-
-	.hero--compact .hero__subtitle {
-		font-size: var(--text-base);
-		margin-bottom: var(--space-4);
-	}
-
-	@media (min-width: 768px) {
-		.hero--compact .hero__title { font-size: var(--text-3xl); }
-	}
-
-	.hero__overlay {
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			135deg,
-			rgba(16, 50, 41, 0.90) 0%,
-			rgba(12, 81, 24, 0.75) 100%
-		);
-	}
-
-	.hero__content {
+	.hero__inner {
 		position: relative;
-		z-index: 1;
-		color: var(--color-white);
-		max-width: 720px;
+	}
+
+	.hero__grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-10);
+		align-items: center;
+	}
+
+	@media (min-width: 960px) {
+		.hero__grid {
+			grid-template-columns: 1.15fr 1fr;
+			gap: var(--space-16);
+		}
+	}
+
+	/* ── LEFT column ── */
+	.hero__left {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+
+	.hero__meta {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.hero__live {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+	}
+
+	.hero__live-dot {
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background-color: var(--color-lime);
+		box-shadow: 0 0 0 0 rgba(145, 255, 0, 0.6);
+		animation: hero-pulse 2s infinite;
+	}
+
+	@keyframes hero-pulse {
+		0%, 100% { box-shadow: 0 0 0 0 rgba(145, 255, 0, 0.6); }
+		50% { box-shadow: 0 0 0 8px rgba(145, 255, 0, 0); }
 	}
 
 	.hero__title {
-		font-size: var(--text-3xl);
-		font-weight: 700;
-		line-height: 1.15;
-		margin-bottom: var(--space-6);
+		font-family: var(--font-display);
+		font-weight: 500;
+		letter-spacing: -0.015em;
+		line-height: 1.05;
+		color: var(--color-ink);
+		font-size: clamp(2.75rem, 7vw + 1rem, 7.25rem);
+		text-transform: uppercase;
 	}
 
-	@media (min-width: 768px) {
-		.hero__title { font-size: var(--text-5xl); }
+	.hero--compact .hero__title {
+		font-size: clamp(2rem, 5vw + 0.5rem, 4rem);
 	}
 
 	.hero__subtitle {
-		font-size: var(--text-lg);
-		line-height: 1.6;
-		color: rgba(255, 255, 255, 0.85);
-		margin-bottom: var(--space-8);
-		max-width: 560px;
+		font-family: var(--font-body);
+		font-size: clamp(1rem, 1vw + 0.75rem, 1.1875rem);
+		line-height: 1.5;
+		color: var(--color-ink-soft);
+		max-width: 500px;
 	}
 
 	.hero__ctas {
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--space-4);
+		gap: var(--space-3);
+		margin-top: var(--space-2);
 	}
 
-	.hero__cta-secondary {
-		border-color: rgba(255, 255, 255, 0.6);
-		color: var(--color-white);
-	}
-
-	.hero__cta-secondary:hover {
-		background-color: rgba(255, 255, 255, 0.15);
-		border-color: var(--color-white);
-		color: var(--color-white);
-	}
-
-	/* ── Rotating words ── */
+	/* ── Rotating words as lime accent box with stable layout ── */
 	.hero__rotating {
 		display: inline-block;
 		position: relative;
-		overflow: hidden;
-		vertical-align: bottom;
-		line-height: 1.1;
-		min-height: 1.1em;
+		vertical-align: baseline;
+		line-height: inherit;
+		background-color: var(--color-lime);
+		padding: 0 0.15em;
+		transform: rotate(-1deg);
+		/* Reserve vertical space to fit a single word without cropping italic descenders */
 	}
 
-	.hero__rotating--highlight {
-		color: var(--color-brand-neon);
+	/* Sizer: renderează toate cuvintele stacked, invizibil, pentru a ține lățimea
+	   egală cu cel mai lung cuvânt și înălțimea cu un rând. */
+	.hero__rotating-sizer {
+		display: inline-grid;
+		grid-template-columns: 1fr;
+		visibility: hidden;
+		pointer-events: none;
+		font-style: italic;
 	}
 
+	.hero__rotating-sizer-item {
+		grid-column: 1;
+		grid-row: 1;
+		white-space: nowrap;
+	}
+
+	/* Cuvintele reale — absolut poziționate peste sizer. Doar cel activ e vizibil.
+	   Fade cross-over continuu cu slide-up subtil. */
 	.hero__rotating-word {
-		display: inline-block;
-		animation: heroWordFlip var(--hero-rotation-duration, 450ms) cubic-bezier(0.2, 0.7, 0.3, 1);
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		padding-inline: 0.15em;
+		color: var(--color-ink);
+		font-style: italic;
+		opacity: 0;
+		transform: translateY(0.35em);
+		transition: opacity 600ms cubic-bezier(0.3, 0, 0.3, 1),
+			transform 700ms cubic-bezier(0.3, 0, 0.3, 1);
+		white-space: nowrap;
+		will-change: transform, opacity;
 	}
 
-	@keyframes heroWordFlip {
-		0% {
-			transform: translateY(100%);
-			opacity: 0;
-		}
-		60% {
-			opacity: 1;
-		}
-		100% {
-			transform: translateY(0);
-			opacity: 1;
-		}
+	.hero__rotating-word--active {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.hero__rotating-word { animation: none; }
+		.hero__rotating-word {
+			transition: opacity 150ms ease;
+			transform: none;
+		}
 	}
 
-	/* ── Featured link card ── */
-	.hero__featured {
-		display: inline-grid;
+	/* ── RIGHT: photo + floating card ── */
+	.hero__right {
+		position: relative;
+		min-height: 400px;
+	}
+
+	.hero__photo {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 4 / 5;
+		background-color: var(--color-green-deep);
+		overflow: hidden;
+	}
+
+	.hero__photo img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.hero__photo-wash {
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(
+				180deg,
+				rgba(10, 31, 16, 0.0) 40%,
+				rgba(10, 31, 16, 0.55) 100%
+			);
+		pointer-events: none;
+	}
+
+	.hero__photo-placeholder {
+		width: 100%;
+		height: 100%;
+		min-height: 400px;
+	}
+
+	.hero__chip {
+		position: absolute;
+		top: var(--space-4);
+		right: var(--space-4);
+		background-color: var(--color-lime);
+		color: var(--color-ink);
+		font-family: var(--font-display);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		padding: 0.375rem 0.75rem;
+		transform: rotate(2deg);
+	}
+
+	.hero__floating {
+		position: absolute;
+		left: -20px;
+		bottom: 32px;
+		width: 260px;
+		max-width: 80%;
+		display: grid;
 		grid-template-columns: 1fr auto;
 		grid-template-rows: auto auto;
-		column-gap: var(--space-4);
-		row-gap: 2px;
-		align-items: center;
-		margin-top: var(--space-8);
-		padding: var(--space-4) var(--space-6);
-		background-color: rgba(255, 255, 255, 0.08);
-		border: 1px solid rgba(255, 255, 255, 0.18);
-		border-radius: var(--radius-lg);
-		color: var(--color-white);
+		column-gap: var(--space-3);
+		row-gap: var(--space-1);
+		padding: var(--space-4) var(--space-5);
+		background-color: var(--color-cream);
+		color: var(--color-ink);
+		border: 1.5px solid var(--color-ink);
+		box-shadow: 8px 8px 0 var(--color-lime);
+		transform: rotate(-1.5deg);
 		text-decoration: none;
-		transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
-		backdrop-filter: blur(8px);
+		transition: transform var(--transition-base), box-shadow var(--transition-base);
 	}
 
-	.hero__featured:hover {
-		background-color: rgba(255, 255, 255, 0.15);
-		border-color: rgba(145, 255, 0, 0.5);
-		transform: translateY(-2px);
+	.hero__floating:hover {
+		transform: rotate(0deg) translateY(-2px);
+		box-shadow: 10px 10px 0 var(--color-lime);
 	}
 
-	.hero__featured-label {
+	.hero__floating-label {
+		grid-column: 1;
 		display: inline-flex;
 		align-items: center;
-		gap: var(--space-2);
-		font-size: var(--text-xs);
-		font-weight: 700;
+		gap: 6px;
+		font-family: var(--font-mono);
+		font-size: 0.625rem;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: var(--color-brand-neon);
+		color: var(--color-ink-soft);
+	}
+
+	.hero__floating-title {
 		grid-column: 1;
+		font-family: var(--font-display);
+		font-size: 1.125rem;
+		font-weight: 500;
+		line-height: 1.15;
+		letter-spacing: -0.005em;
+		color: var(--color-ink);
 	}
 
-	.hero__featured-icon {
-		font-size: var(--text-sm);
-	}
-
-	.hero__featured-title {
-		font-size: var(--text-base);
-		font-weight: 600;
-		line-height: 1.4;
+	.hero__floating-meta {
 		grid-column: 1;
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		color: var(--color-ink-soft);
+		opacity: 0.8;
+		margin-top: 4px;
 	}
 
-	.hero__featured-arrow {
+	.hero__floating-arrow {
 		grid-column: 2;
-		grid-row: 1 / span 2;
-		font-size: var(--text-xl);
-		color: var(--color-brand-neon);
+		grid-row: 1 / -1;
+		font-size: 1.25rem;
+		color: var(--color-green-deep);
 		transition: transform var(--transition-fast);
+		align-self: center;
 	}
 
-	.hero__featured:hover .hero__featured-arrow {
+	.hero__floating:hover .hero__floating-arrow {
 		transform: translateX(4px);
+	}
+
+	@media (max-width: 959px) {
+		.hero__right {
+			min-height: 360px;
+		}
+
+		.hero__photo {
+			aspect-ratio: 4 / 3;
+		}
+
+		.hero__floating {
+			left: 0;
+			bottom: -24px;
+			width: auto;
+			max-width: calc(100% - 48px);
+			margin-inline: auto;
+			right: 0;
+		}
 	}
 </style>

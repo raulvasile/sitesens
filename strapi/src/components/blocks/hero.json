@@ -43,6 +43,23 @@
       "type": "component",
       "repeatable": false,
       "component": "blocks.featured-link"
+    },
+    "next_event": {
+      "type": "component",
+      "repeatable": false,
+      "component": "blocks.next-event"
+    },
+    "meta_text": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "chip_text": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "chip_visible": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

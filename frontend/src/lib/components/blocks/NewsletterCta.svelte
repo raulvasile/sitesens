@@ -66,8 +66,10 @@
 
 <style>
 	.newsletter-cta {
-		background-color: var(--color-orange-light);
+		background-color: var(--color-lime);
 		padding-block: var(--space-12);
+		position: relative;
+		border-block: 2px solid var(--color-ink);
 	}
 
 	.newsletter-cta__inner {
@@ -75,41 +77,66 @@
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: var(--space-8);
+		gap: var(--space-10);
 	}
 
 	.newsletter-cta__title {
-		font-size: var(--text-2xl);
-		color: var(--color-green-dark);
+		font-family: var(--font-display);
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		line-height: 1;
+		color: var(--color-ink);
 		margin-bottom: var(--space-2);
 	}
 
 	.newsletter-cta__desc {
-		color: var(--color-text-muted);
+		color: var(--color-ink);
 		font-size: var(--text-base);
+		opacity: 0.8;
+		max-width: 420px;
 	}
 
 	.newsletter-cta__form {
 		display: flex;
-		gap: var(--space-3);
+		gap: var(--space-2);
 		flex-wrap: wrap;
 		min-width: 280px;
+		flex: 1;
+		max-width: 480px;
 	}
 
 	.newsletter-cta__input {
 		flex: 1;
 		min-width: 200px;
-		padding: 0.75rem 1rem;
-		border: 2px solid var(--color-border);
-		border-radius: var(--radius-lg);
+		padding: 0.875rem 1rem;
+		border: 1.5px solid var(--color-ink);
 		font-family: var(--font-body);
 		font-size: var(--text-base);
-		background-color: var(--color-white);
-		transition: border-color var(--transition-fast);
+		background-color: var(--color-cream);
+		color: var(--color-ink);
+		transition: background-color var(--transition-fast);
 	}
 
 	.newsletter-cta__input:focus {
 		outline: none;
-		border-color: var(--color-green-dark);
+		background-color: var(--color-paper);
+	}
+
+	.newsletter-cta__input::placeholder {
+		color: rgba(10, 31, 16, 0.5);
+	}
+
+	.newsletter-cta :global(.btn-primary) {
+		background-color: var(--color-ink);
+		color: var(--color-lime);
+		border-color: var(--color-ink);
+	}
+
+	.newsletter-cta :global(.btn-primary:hover) {
+		background-color: var(--color-green-deep);
+		color: var(--color-lime);
+		border-color: var(--color-green-deep);
 	}
 </style>

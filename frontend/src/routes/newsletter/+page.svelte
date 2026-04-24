@@ -3,6 +3,10 @@
 	import { toasts } from '$lib/stores/toast';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 
+	let { data } = $props();
+	const page = $derived(data.page);
+	const form = $derived(page?.form ?? {});
+
 	let name = $state('');
 	let email = $state('');
 	let consent = $state(false);
@@ -26,7 +30,7 @@
 				}
 			});
 			subscribed = true;
-			toasts.success('Te-ai abonat cu succes!');
+			toasts.success(form.success_title ?? 'Te-ai abonat cu succes!');
 		} catch (err: any) {
 			if (err?.message?.includes('unique')) {
 				toasts.info('Acest email este deja abonat la newsletter.');
@@ -40,57 +44,71 @@
 </script>
 
 <SeoHead
-	title="Newsletter"
-	description="Abonează-te la newsletterul SENS pentru ultimele știri și actualizări."
+	title={page?.seo?.meta_title ?? page?.title ?? 'Newsletter'}
+	description={page?.seo?.meta_description ?? page?.description ?? 'Abonează-te la newsletterul SENS.'}
 />
 
 <div class="container newsletter-page">
 	<div class="newsletter-card">
 		<div class="newsletter-card__header">
-			<h1>Rămâi la curent cu SENS</h1>
-			<p>Abonează-te la newsletter pentru știri, comunicate și actualizări din partid. Primești maxim 2 emailuri pe săptămână.</p>
+			<h1>{page?.title ?? 'Rămâi la curent cu SENS'}</h1>
+			{#if page?.description}
+				<p>{page.description}</p>
+			{/if}
 		</div>
 
 		{#if subscribed}
 			<div class="success-box">
 				<span class="success-icon">✓</span>
 				<div>
-					<h2>Mulțumim pentru abonare!</h2>
-					<p>Vei primi un email de confirmare. Verifică și folderul Spam dacă nu îl găsești.</p>
+					<h2>{form.success_title ?? 'Mulțumim pentru abonare!'}</h2>
+					<p>{form.success_message ?? 'Vei primi un email de confirmare.'}</p>
 				</div>
 			</div>
 		{:else}
 			<form onsubmit={handleSubmit} class="newsletter-form">
 				<div class="form-group">
-					<label for="nl-name">Nume <span class="optional">(opțional)</span></label>
+					<label for="nl-name">{form.name_label ?? 'Nume (opțional)'}</label>
 					<input
 						id="nl-name"
 						type="text"
 						bind:value={name}
-						placeholder="Numele tău"
+						placeholder={form.name_placeholder ?? 'Numele tău'}
 					/>
 				</div>
 				<div class="form-group">
-					<label for="nl-email">Email *</label>
+					<label for="nl-email">{form.email_label ?? 'Email'} *</label>
 					<input
 						id="nl-email"
 						type="email"
 						bind:value={email}
 						required
-						placeholder="email@exemplu.ro"
+						placeholder={form.email_placeholder ?? 'email@exemplu.ro'}
 					/>
 				</div>
 				<label class="checkbox-group">
 					<input type="checkbox" bind:checked={consent} />
-					<span>
-						Sunt de acord cu prelucrarea datelor personale conform
-						<a href="/politica-confidentialitate" target="_blank">Politicii de Confidențialitate</a>.
-					</span>
+					<span>{form.consent_text ?? 'Sunt de acord cu prelucrarea datelor personale conform Politicii de Confidențialitate.'}</span>
 				</label>
 				<button type="submit" class="btn btn-primary btn-lg" disabled={sending}>
-					{sending ? 'Se procesează...' : 'Abonează-te la newsletter'}
+					{sending ? (form.submitting_text ?? 'Se procesează...') : (form.submit_text ?? 'Abonează-te la newsletter')}
 				</button>
 			</form>
+		{/if}
+
+		{#if page?.benefits?.length}
+			<div class="benefits">
+				<h2>{page.benefits_heading ?? 'Ce vei primi'}</h2>
+				<div class="benefits-grid">
+					{#each page.benefits as b}
+						<div class="benefit">
+							{#if b.emoji}<span class="benefit__emoji">{b.emoji}</span>{/if}
+							<h3>{b.title}</h3>
+							<p>{b.description}</p>
+						</div>
+					{/each}
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -98,26 +116,29 @@
 <style>
 	.newsletter-page {
 		padding-block: var(--space-16);
-		display: flex;
-		justify-content: center;
 	}
 	.newsletter-card {
-		max-width: 520px;
+		max-width: 640px;
 		width: 100%;
+		margin: 0 auto;
 	}
 	.newsletter-card__header {
 		margin-bottom: var(--space-8);
 	}
 	.newsletter-card__header h1 {
-		font-size: var(--text-2xl);
-		margin-bottom: var(--space-3);
-	}
-	@media (min-width: 768px) {
-		.newsletter-card__header h1 { font-size: var(--text-3xl); }
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 4vw, 3.5rem);
+		font-weight: 500;
+		letter-spacing: -0.015em;
+		text-transform: uppercase;
+		line-height: 1;
+		color: var(--color-ink);
+		margin-bottom: var(--space-4);
 	}
 	.newsletter-card__header p {
-		color: var(--color-text-muted);
-		line-height: 1.6;
+		font-family: var(--font-body);
+		color: var(--color-ink-soft);
+		line-height: 1.5;
 	}
 
 	.newsletter-form {
@@ -128,29 +149,26 @@
 	.form-group {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-1);
+		gap: var(--space-2);
 	}
 	.form-group label {
-		font-size: var(--text-sm);
-		font-weight: 600;
-		color: var(--color-text);
-	}
-	.optional {
-		font-weight: 400;
-		color: var(--color-text-muted);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
 	}
 	.form-group input {
-		padding: 0.75rem 1rem;
-		border: 2px solid var(--color-border);
-		border-radius: var(--radius-md);
+		padding: 0.875rem 1rem;
+		border: 1.5px solid var(--color-ink);
 		font-family: var(--font-body);
 		font-size: var(--text-base);
-		background-color: var(--color-white);
-		transition: border-color var(--transition-fast);
+		background-color: var(--color-paper);
+		color: var(--color-ink);
 	}
 	.form-group input:focus {
 		outline: none;
-		border-color: var(--color-green-dark);
+		background-color: var(--color-cream);
 	}
 
 	.checkbox-group {
@@ -158,18 +176,18 @@
 		gap: var(--space-3);
 		align-items: flex-start;
 		cursor: pointer;
-		font-size: var(--text-sm);
-		color: var(--color-text-muted);
+		font-size: 0.9375rem;
+		color: var(--color-ink);
 		line-height: 1.5;
 	}
 	.checkbox-group input[type="checkbox"] {
 		margin-top: 3px;
 		flex-shrink: 0;
-		accent-color: var(--color-green-dark);
+		accent-color: var(--color-lime);
 	}
 	.checkbox-group a {
-		color: var(--color-green-dark);
-		font-weight: 600;
+		color: var(--color-green-deep);
+		text-decoration: underline;
 	}
 
 	.success-box {
@@ -177,16 +195,15 @@
 		gap: var(--space-4);
 		align-items: flex-start;
 		padding: var(--space-6);
-		background-color: var(--color-bg);
-		border-radius: var(--radius-md);
-		border-left: 4px solid var(--color-green-leaf);
+		background-color: var(--color-lime);
+		border: 1.5px solid var(--color-ink);
 	}
 	.success-icon {
 		flex-shrink: 0;
 		width: 40px;
 		height: 40px;
-		background-color: var(--color-green-leaf);
-		color: white;
+		background-color: var(--color-ink);
+		color: var(--color-lime);
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -195,12 +212,55 @@
 		font-size: var(--text-lg);
 	}
 	.success-box h2 {
-		font-size: var(--text-lg);
+		font-family: var(--font-display);
+		font-size: var(--text-xl);
+		text-transform: uppercase;
 		margin-bottom: var(--space-2);
-		color: var(--color-green-dark);
+		color: var(--color-ink);
 	}
 	.success-box p {
-		color: var(--color-text-muted);
-		line-height: 1.6;
+		color: var(--color-ink);
+		line-height: 1.5;
+	}
+
+	.benefits {
+		margin-top: var(--space-16);
+		padding-top: var(--space-10);
+		border-top: 1px solid rgba(12, 81, 24, 0.15);
+	}
+	.benefits h2 {
+		font-family: var(--font-display);
+		font-size: clamp(1.5rem, 2.5vw, 2rem);
+		font-weight: 500;
+		text-transform: uppercase;
+		margin-bottom: var(--space-6);
+		color: var(--color-ink);
+	}
+	.benefits-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-6);
+	}
+	@media (min-width: 640px) {
+		.benefits-grid { grid-template-columns: repeat(3, 1fr); }
+	}
+	.benefit { padding: var(--space-4) 0; }
+	.benefit__emoji {
+		display: block;
+		font-size: 1.75rem;
+		margin-bottom: var(--space-2);
+	}
+	.benefit h3 {
+		font-family: var(--font-display);
+		font-size: 1.125rem;
+		font-weight: 500;
+		text-transform: uppercase;
+		margin-bottom: var(--space-2);
+		color: var(--color-ink);
+	}
+	.benefit p {
+		font-size: 0.9375rem;
+		color: var(--color-ink-soft);
+		line-height: 1.5;
 	}
 </style>

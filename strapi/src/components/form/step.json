@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_form_steps",
+  "info": {
+    "displayName": "Pas formular",
+    "icon": "list-ol"
+  },
+  "attributes": {
+    "number": { "type": "integer", "required": true, "min": 1 },
+    "label": { "type": "string", "required": true, "maxLength": 60 },
+    "description": { "type": "string", "maxLength": 200 }
+  }
+}

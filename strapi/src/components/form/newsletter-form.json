@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_form_newsletter_forms",
+  "info": {
+    "displayName": "Formular newsletter",
+    "icon": "envelope"
+  },
+  "attributes": {
+    "name_label": { "type": "string", "default": "Nume (opțional)", "maxLength": 60 },
+    "name_placeholder": { "type": "string", "default": "Numele tău", "maxLength": 100 },
+    "email_label": { "type": "string", "default": "Email", "maxLength": 60 },
+    "email_placeholder": { "type": "string", "default": "email@exemplu.ro", "maxLength": 100 },
+    "submit_text": { "type": "string", "default": "Abonează-te", "maxLength": 60 },
+    "submitting_text": { "type": "string", "default": "Se abonează...", "maxLength": 60 },
+    "consent_text": { "type": "text", "default": "Sunt de acord cu prelucrarea datelor personale conform Politicii de Confidențialitate.", "maxLength": 500 },
+    "success_title": { "type": "string", "default": "Mulțumim pentru abonare!", "maxLength": 100 },
+    "success_message": { "type": "text", "default": "Vei primi un email de confirmare. Verifică și folderul Spam dacă nu îl găsești.", "maxLength": 300 }
+  }
+}

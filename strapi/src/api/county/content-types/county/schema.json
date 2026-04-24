@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "counties",
+  "info": {
+    "singularName": "county",
+    "pluralName": "counties",
+    "displayName": "🗺️ Județe",
+    "description": "Județele României pentru formularul de înscriere"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 100
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

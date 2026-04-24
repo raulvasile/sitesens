@@ -1,78 +1,96 @@
 /* ============================================================
-   SENS Design System — Global Styles & Design Tokens
+   SENS Design System — Direction C (Optimistic & Airy)
    ============================================================ */
 
-/* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@400;500;600;700;800&display=swap');
+/* Google Fonts sunt încărcate direct în app.html pentru preload + preconnect */
 
 /* --- Design Tokens --- */
 :root {
-	/* Brand Colors */
+	/* Brand palette (new) */
+	--color-green-deep: #0C5118;
 	--color-green-dark: #103229;
-	--color-green-mid: #0C5118;
-	--color-green-leaf: #91FF00;
-	--color-orange: #00BF63;
-	--color-orange-light: #CCFFCC;
-	--color-brand-emerald: #5AB782;
-	--color-brand-vibrant: #00BF63;
-	--color-brand-lime: #6FD025;
-	--color-brand-neon: #91FF00;
-	--color-brand-custom: #00bd58;
-	--color-bg: #f7faf6;
+	--color-green-mid: #00BF63;
+	--color-green-soft: #5AB782;
+	--color-green-bright: #6FD025;
+	--color-lime: #91FF00;
+	--color-pastel-green: #CCFFCC;
+	--color-cream: #F5F1E8;
+	--color-paper: #FAF7F0;
+	--color-ink: #0A1F10;
+	--color-ink-soft: #2A3B30;
+	--color-rose: #EB9AAA;
+
+	/* Aliases păstrate pentru backwards-compatibility */
+	--color-green-leaf: var(--color-lime);
+	--color-orange: var(--color-green-mid);
+	--color-orange-light: var(--color-pastel-green);
+	--color-brand-emerald: var(--color-green-soft);
+	--color-brand-vibrant: var(--color-green-mid);
+	--color-brand-lime: var(--color-green-bright);
+	--color-brand-neon: var(--color-lime);
+	--color-brand-custom: var(--color-green-deep);
+	--color-bg: var(--color-paper);
 	--color-white: #ffffff;
-	--color-text: #1a1a1a;
-	--color-text-muted: #6b7280;
+	--color-text: var(--color-ink);
+	--color-text-muted: var(--color-ink-soft);
 	--color-error: #dc2626;
-	--color-border: #e5e7eb;
-	--color-skeleton: #e9ede8;
+	--color-border: rgba(12, 81, 24, 0.15);
+	--color-skeleton: #e9e4d5;
+	--color-footer-bg: var(--color-green-deep);
 
 	/* Tipografie */
-	--font-display: 'Fraunces', Georgia, serif;
-	--font-body: 'Manrope', system-ui, sans-serif;
+	--font-display: 'Oswald', 'Arial Narrow', sans-serif;
+	--font-body: 'League Spartan', 'Inter', system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-	/* Font sizes — mobile first */
-	--text-xs: 0.75rem;     /* 12px */
-	--text-sm: 0.875rem;    /* 14px */
-	--text-base: 1rem;      /* 16px */
-	--text-lg: 1.125rem;    /* 18px */
-	--text-xl: 1.375rem;    /* 22px */
-	--text-2xl: 1.75rem;    /* 28px */
-	--text-3xl: 2rem;       /* 32px */
-	--text-4xl: 2.5rem;     /* 40px */
-	--text-5xl: 3.5rem;     /* 56px */
+	/* Font sizes */
+	--text-xs: 0.75rem;      /* 12px */
+	--text-sm: 0.875rem;     /* 14px */
+	--text-base: 1rem;       /* 16px */
+	--text-lg: 1.125rem;     /* 18px */
+	--text-xl: 1.375rem;     /* 22px */
+	--text-2xl: 1.75rem;     /* 28px */
+	--text-3xl: 2.5rem;      /* 40px */
+	--text-4xl: 3.5rem;      /* 56px */
+	--text-5xl: 5rem;        /* 80px */
+	--text-6xl: 7.5rem;      /* 120px */
 
-	/* Spacing scale (rem) */
+	/* Spacing scale */
 	--space-1: 0.25rem;
 	--space-2: 0.5rem;
 	--space-3: 0.75rem;
 	--space-4: 1rem;
+	--space-5: 1.25rem;
 	--space-6: 1.5rem;
 	--space-8: 2rem;
+	--space-10: 2.5rem;
 	--space-12: 3rem;
 	--space-16: 4rem;
+	--space-20: 5rem;
 	--space-24: 6rem;
 	--space-32: 8rem;
 
-	/* Border radius */
-	--radius-sm: 4px;
-	--radius-md: 8px;      /* carduri */
-	--radius-lg: 12px;     /* butoane mari */
-	--radius-xl: 24px;     /* badge-uri */
-	--radius-full: 9999px; /* avatare / pills */
+	/* Border radius — Direction C: SHARP edges */
+	--radius-sm: 0;
+	--radius-md: 0;
+	--radius-lg: 0;
+	--radius-xl: 0;
+	--radius-full: 9999px;  /* păstrat pentru avatare/chips rotunde dacă e nevoie */
 
 	/* Shadows */
-	--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-	--shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
-	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+	--shadow-sm: 0 1px 2px rgba(10, 31, 16, 0.08);
+	--shadow-md: 0 4px 12px rgba(10, 31, 16, 0.10);
+	--shadow-lg: 0 12px 32px rgba(10, 31, 16, 0.14);
+	--shadow-lime: 8px 8px 0 var(--color-lime);
 
 	/* Transitions */
-	--transition-fast: 150ms ease;
-	--transition-base: 250ms ease;
-	--transition-slow: 400ms ease;
+	--transition-fast: 180ms cubic-bezier(.2, .7, .3, 1);
+	--transition-base: 250ms cubic-bezier(.2, .7, .3, 1);
+	--transition-slow: 400ms cubic-bezier(.2, .7, .3, 1);
 
 	/* Layout */
 	--container-max: 1280px;
-	--navbar-height: 64px;
+	--navbar-height: 72px;
 }
 
 /* --- Reset & Base --- */
@@ -92,9 +110,11 @@ html {
 body {
 	font-family: var(--font-body);
 	font-size: var(--text-base);
-	line-height: 1.6;
-	color: var(--color-text);
-	background-color: var(--color-bg);
+	line-height: 1.5;
+	color: var(--color-ink);
+	background-color: var(--color-paper);
+	font-variant-ligatures: common-ligatures;
+	letter-spacing: 0.005em;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
@@ -102,29 +122,27 @@ body {
 /* --- Tipografie --- */
 h1, h2, h3, h4, h5, h6 {
 	font-family: var(--font-display);
-	line-height: 1.2;
-	font-weight: 700;
+	font-weight: 500;
+	letter-spacing: -0.01em;
+	line-height: 1;
 }
 
-h1 { font-size: var(--text-2xl); }
-h2 { font-size: var(--text-xl); }
-h3 { font-size: var(--text-lg); font-weight: 600; }
+h1 { font-size: clamp(2.5rem, 6vw + 1rem, 5rem); }
+h2 { font-size: clamp(2rem, 4vw + 1rem, 3.5rem); }
+h3 { font-size: clamp(1.5rem, 2vw + 0.75rem, 2.25rem); }
+h4 { font-size: var(--text-xl); }
+h5 { font-size: var(--text-lg); }
+h6 { font-size: var(--text-base); text-transform: uppercase; letter-spacing: 0.08em; }
 
-@media (min-width: 768px) {
-	h1 { font-size: var(--text-4xl); }
-	h2 { font-size: var(--text-3xl); }
-	h3 { font-size: var(--text-2xl); }
-}
-
-p { line-height: 1.7; }
+p { line-height: 1.55; }
 
 a {
-	color: var(--color-green-dark);
+	color: var(--color-ink);
 	text-decoration: none;
 	transition: color var(--transition-fast);
 }
 
-a:hover { color: var(--color-brand-vibrant); }
+a:hover { color: var(--color-green-deep); }
 
 img, video {
 	max-width: 100%;
@@ -136,68 +154,251 @@ img, video {
 	width: 100%;
 	max-width: var(--container-max);
 	margin-inline: auto;
-	padding-inline: var(--space-4);
+	padding-inline: var(--space-6);
 }
 
 @media (min-width: 768px) {
-	.container { padding-inline: var(--space-6); }
+	.container { padding-inline: var(--space-10); }
 }
 
 @media (min-width: 1024px) {
-	.container { padding-inline: var(--space-8); }
+	.container { padding-inline: var(--space-12); }
 }
 
-/* --- Butoane — clase globale (folosite si in Button.svelte) --- */
+/* --- Butoane — stil Direction C: UPPERCASE Oswald, sharp corners --- */
 .btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: var(--space-2);
-	font-family: var(--font-body);
+	font-family: var(--font-display);
 	font-size: var(--text-sm);
-	font-weight: 600;
+	font-weight: 500;
 	line-height: 1;
-	padding: 0.75rem 1.5rem;
-	border-radius: var(--radius-lg);
-	border: 2px solid transparent;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	padding: 0.875rem 1.5rem;
+	border: 1.5px solid transparent;
 	cursor: pointer;
 	transition: all var(--transition-fast);
 	text-decoration: none;
 	white-space: nowrap;
+	border-radius: 0;
 }
 
-.btn-primary {
-	background-color: var(--color-brand-vibrant);
-	color: var(--color-white);
-	border-color: var(--color-brand-vibrant);
+/* Primary — lime cu ink text */
+.btn-primary,
+.btn-lime {
+	background-color: var(--color-lime);
+	color: var(--color-ink);
+	border-color: var(--color-lime);
 }
 
-.btn-primary:hover {
-	background-color: var(--color-brand-custom);
-	border-color: var(--color-brand-custom);
-	color: var(--color-white);
+.btn-primary:hover,
+.btn-primary:active,
+.btn-lime:hover,
+.btn-lime:active {
+	background-color: var(--color-ink);
+	color: var(--color-lime);
+	border-color: var(--color-ink);
 }
 
-.btn-secondary {
+/* Outline pe dark (cream border) */
+.btn-outline-cream {
 	background-color: transparent;
-	color: var(--color-green-dark);
-	border-color: var(--color-green-dark);
+	color: var(--color-cream);
+	border-color: var(--color-cream);
 }
 
-.btn-secondary:hover {
-	background-color: var(--color-green-dark);
-	color: var(--color-white);
+.btn-outline-cream:hover,
+.btn-outline-cream:active {
+	background-color: var(--color-cream);
+	color: var(--color-green-deep);
+	border-color: var(--color-cream);
 }
 
+/* Outline pe light (ink border) */
+.btn-secondary,
+.btn-outline-ink {
+	background-color: transparent;
+	color: var(--color-ink);
+	border-color: var(--color-ink);
+}
+
+.btn-secondary:hover,
+.btn-secondary:active,
+.btn-outline-ink:hover,
+.btn-outline-ink:active {
+	background-color: var(--color-ink);
+	color: var(--color-lime);
+	border-color: var(--color-ink);
+}
+
+/* Deep — green-deep bg, cream text */
+.btn-deep {
+	background-color: var(--color-green-deep);
+	color: var(--color-cream);
+	border-color: var(--color-green-deep);
+}
+
+.btn-deep:hover,
+.btn-deep:active {
+	background-color: var(--color-ink);
+	border-color: var(--color-ink);
+	color: var(--color-lime);
+}
+
+/* Ghost — doar text, fără fundal */
 .btn-ghost {
 	background-color: transparent;
-	color: var(--color-green-dark);
+	color: var(--color-ink);
 	border-color: transparent;
-	padding-inline: var(--space-2);
+	padding-inline: var(--space-3);
 }
 
-.btn-ghost:hover {
-	color: var(--color-brand-vibrant);
+.btn-ghost:hover { color: var(--color-green-deep); }
+
+/* Large variant */
+.btn-lg {
+	font-size: var(--text-base);
+	padding: 1rem 1.75rem;
+}
+
+.btn-sm {
+	font-size: 0.75rem;
+	padding: 0.625rem 1.125rem;
+	letter-spacing: 0.08em;
+}
+
+/* --- Utility classes (Direction C) --- */
+.uppercase {
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.mono {
+	font-family: var(--font-mono);
+	font-variant-numeric: tabular-nums;
+}
+
+.spartan { font-family: var(--font-body); }
+
+.oswald { font-family: var(--font-display); }
+
+/* Meta label — mono micile codici/date */
+.meta {
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--color-ink-soft);
+}
+
+/* Tilted card motif */
+.tilt-card {
+	position: relative;
+	background: var(--color-paper);
+	transform: rotate(-1.2deg);
+	transition: transform var(--transition-base);
+}
+
+.tilt-card:hover {
+	transform: rotate(0deg) translateY(-4px);
+}
+
+.tilt-card-r {
+	transform: rotate(1.2deg);
+}
+
+.tilt-card-r:hover {
+	transform: rotate(0deg) translateY(-4px);
+}
+
+/* Lime accent box — inline highlight rotat */
+.lime-accent {
+	display: inline-block;
+	background-color: var(--color-lime);
+	color: var(--color-ink);
+	padding: 0 0.3em;
+	transform: rotate(-1deg);
+	font-style: italic;
+}
+
+/* Arrow link cu gap transition */
+.arrow-link {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2);
+	color: var(--color-ink);
+	font-family: var(--font-display);
+	font-size: var(--text-sm);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	transition: gap var(--transition-fast), color var(--transition-fast);
+}
+
+.arrow-link:hover {
+	gap: var(--space-4);
+	color: var(--color-green-deep);
+}
+
+/* --- Chips (micile pill-uri uppercase) --- */
+.chip {
+	display: inline-flex;
+	align-items: center;
+	font-family: var(--font-display);
+	font-size: 0.6875rem;
+	font-weight: 500;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	background-color: var(--color-lime);
+	color: var(--color-ink);
+	padding: 0.25rem 0.625rem;
+	line-height: 1.4;
+}
+
+.chip-outline {
+	background-color: transparent;
+	border: 1px solid var(--color-ink);
+}
+
+.chip-rose {
+	background-color: var(--color-rose);
+	color: var(--color-ink);
+}
+
+.chip-cream {
+	background-color: var(--color-cream);
+	color: var(--color-ink);
+}
+
+/* Backwards-compat badge clase (mapate la chip) */
+.badge {
+	display: inline-flex;
+	align-items: center;
+	font-family: var(--font-display);
+	font-size: 0.6875rem;
+	font-weight: 500;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	padding: 0.25rem 0.625rem;
+	line-height: 1.4;
+}
+
+.badge-green {
+	background-color: var(--color-lime);
+	color: var(--color-ink);
+}
+
+.badge-orange {
+	background-color: var(--color-green-soft);
+	color: var(--color-ink);
+}
+
+.badge-muted {
+	background-color: var(--color-cream);
+	color: var(--color-ink-soft);
 }
 
 /* --- Skeleton loading --- */
@@ -205,12 +406,11 @@ img, video {
 	background: linear-gradient(
 		90deg,
 		var(--color-skeleton) 25%,
-		#dde5db 50%,
+		#dcd7c9 50%,
 		var(--color-skeleton) 75%
 	);
 	background-size: 200% 100%;
 	animation: skeleton-shimmer 1.5s infinite;
-	border-radius: var(--radius-md);
 }
 
 @keyframes skeleton-shimmer {
@@ -218,37 +418,76 @@ img, video {
 	100% { background-position: -200% 0; }
 }
 
-/* --- Badge --- */
-.badge {
+/* --- SENS Mark logo (skewed frame) --- */
+.sens-mark {
 	display: inline-flex;
 	align-items: center;
-	font-size: var(--text-xs);
+	justify-content: center;
+	position: relative;
+	padding: 0.25em 0.7em 0.25em 0.4em;
+	font-family: var(--font-display);
 	font-weight: 500;
-	padding: 0.25rem 0.625rem;
-	border-radius: var(--radius-xl);
+	letter-spacing: 0.02em;
+	border: 2.5px solid currentColor;
+	transform: skewY(-6deg) rotate(-3deg);
+	text-transform: uppercase;
 	line-height: 1;
 }
 
-.badge-green {
-	background-color: var(--color-brand-vibrant);
-	color: var(--color-white);
+.sens-mark::after {
+	content: '';
+	position: absolute;
+	right: -5px;
+	top: -3px;
+	bottom: -3px;
+	width: 4px;
+	background-color: currentColor;
 }
 
-.badge-orange {
-	background-color: var(--color-brand-emerald);
-	color: var(--color-white);
+.sens-mark > span {
+	display: inline-block;
+	transform: skewY(6deg) rotate(3deg);
 }
 
-.badge-muted {
-	background-color: var(--color-border);
-	color: var(--color-text-muted);
+/* --- Photo placeholder (striped diagonal) --- */
+.photo-placeholder {
+	position: relative;
+	background:
+		repeating-linear-gradient(
+			135deg,
+			rgba(12, 81, 24, 0.08) 0,
+			rgba(12, 81, 24, 0.08) 1px,
+			transparent 1px,
+			transparent 12px
+		),
+		var(--color-cream);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: rgba(12, 81, 24, 0.55);
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+}
+
+.photo-placeholder--dark {
+	background:
+		repeating-linear-gradient(
+			135deg,
+			rgba(145, 255, 0, 0.1) 0,
+			rgba(145, 255, 0, 0.1) 1px,
+			transparent 1px,
+			transparent 12px
+		),
+		var(--color-green-deep);
+	color: rgba(245, 241, 232, 0.5);
 }
 
 /* --- Accesibilitate --- */
 :focus-visible {
-	outline: 3px solid var(--color-brand-vibrant);
+	outline: 2.5px solid var(--color-lime);
 	outline-offset: 2px;
-	border-radius: var(--radius-sm);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -259,7 +498,7 @@ img, video {
 	}
 }
 
-/* --- Utilitati --- */
+/* --- Utilitare --- */
 .sr-only {
 	position: absolute;
 	width: 1px;

@@ -1,0 +1,11 @@
+{
+  "collectionName": "components_form_next_steps",
+  "info": {
+    "displayName": "Pas următor",
+    "icon": "arrow-right"
+  },
+  "attributes": {
+    "icon": { "type": "string", "maxLength": 20 },
+    "text": { "type": "text", "required": true, "maxLength": 300 }
+  }
+}

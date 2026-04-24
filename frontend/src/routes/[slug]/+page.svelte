@@ -89,34 +89,44 @@
 
 	.tab-nav {
 		display: flex;
-		gap: var(--space-1);
-		border-bottom: 2px solid var(--color-border);
+		gap: 0;
+		border-bottom: 1.5px solid var(--color-ink);
 		margin-bottom: var(--space-8);
 		overflow-x: auto;
+		overflow-y: hidden;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+
+	.tab-nav::-webkit-scrollbar {
+		display: none;
 	}
 
 	.tab-nav__btn {
-		padding: var(--space-3) var(--space-4);
+		padding: var(--space-3) var(--space-5);
 		border: none;
 		background: none;
 		cursor: pointer;
-		font-family: var(--font-body);
-		font-size: var(--text-sm);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
 		font-weight: 500;
-		color: var(--color-text-muted);
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
 		white-space: nowrap;
-		border-bottom: 3px solid transparent;
-		margin-bottom: -2px;
+		border-bottom: 2px solid transparent;
+		margin-bottom: -1.5px;
 		transition: all var(--transition-fast);
+		line-height: 1.4;
 	}
 
 	.tab-nav__btn:hover {
-		color: var(--color-green-dark);
+		color: var(--color-ink);
 	}
 
 	.tab-nav__btn.active {
-		color: var(--color-green-dark);
-		border-bottom-color: var(--color-brand-neon);
+		color: var(--color-ink);
+		border-bottom-color: var(--color-lime);
 	}
 
 	.tab-content {

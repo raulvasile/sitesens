@@ -13,6 +13,28 @@ export default {
     // ── Top-up: evenimente noi (idempotent — adaugă doar cele lipsă) ──
     await topUpEvents(strapi);
 
+    // ── Top-up: județe (idempotent) ──
+    await topUpCounties(strapi);
+
+    // ── Top-up: domenii de interes (idempotent) ──
+    await topUpInterestAreas(strapi);
+
+    // ── Top-up: pagini single type (idempotent — populate dacă sunt goale) ──
+    await topUpInscriptionPage(strapi);
+    await topUpNewsletterPage(strapi);
+    await topUpCommunityPage(strapi);
+    await topUpPrivacyPolicyPage(strapi);
+    await topUpEventsPage(strapi);
+
+    // ── Migration: populează blocks.social-feed cu platforms dacă lipsesc ──
+    await migrateSocialFeedPlatforms(strapi);
+
+    // ── Migration: activează auto_next_event + meta_text pe Hero din homepage ──
+    await migrateHeroFeaturedLink(strapi);
+
+    // ── Migration: schimbă background_color 'green' → 'lime' pe word-carousel ──
+    await migrateWordCarouselBackground(strapi);
+
     // ── Admin: etichete câmpuri în română ──
     await configureAdminLabels(strapi);
   },
@@ -143,12 +165,19 @@ async function setupPublicPermissions(strapi: Core.Strapi) {
     { controller: 'api::team-member.team-member', actions: ['find', 'findOne'] },
     { controller: 'api::page.page', actions: ['find', 'findOne'] },
     { controller: 'api::section.section', actions: ['find', 'findOne'] },
+    { controller: 'api::county.county', actions: ['find', 'findOne'] },
+    { controller: 'api::interest-area.interest-area', actions: ['find', 'findOne'] },
     // Single types
     { controller: 'api::homepage.homepage', actions: ['find'] },
     { controller: 'api::contact-page.contact-page', actions: ['find'] },
     { controller: 'api::donate-page.donate-page', actions: ['find'] },
     { controller: 'api::navigation.navigation', actions: ['find'] },
     { controller: 'api::footer.footer', actions: ['find'] },
+    { controller: 'api::inscription-page.inscription-page', actions: ['find'] },
+    { controller: 'api::newsletter-page.newsletter-page', actions: ['find'] },
+    { controller: 'api::community-page.community-page', actions: ['find'] },
+    { controller: 'api::privacy-policy-page.privacy-policy-page', actions: ['find'] },
+    { controller: 'api::events-page.events-page', actions: ['find'] },
     // Newsletter — doar create (subscribe)
     { controller: 'api::newsletter-subscriber.newsletter-subscriber', actions: ['create'] },
     // Membership — doar create (înscriere)
@@ -590,11 +619,13 @@ async function seedData(strapi: Core.Strapi) {
           __component: 'blocks.social-feed',
           title: 'Urmărește-ne',
           subtitle: 'Fii la curent cu activitatea noastră pe rețelele sociale.',
-          facebook_url: 'https://www.facebook.com/miscarea.sens',
-          instagram_url: 'https://www.instagram.com/miscarea.sens/',
-          show_facebook: true,
-          show_instagram: true,
+          show_embeds: false,
           variant: 'compact',
+          platforms: [
+            { name: 'Facebook', handle: 'miscarea.sens', url: 'https://www.facebook.com/miscarea.sens', description: 'Știri, comunicate și discuții.', color: '#1877f2', follow_cta: 'Urmărește', order: 1 },
+            { name: 'Instagram', handle: '@miscarea.sens', url: 'https://www.instagram.com/miscarea.sens/', description: 'Imagini și povești din comunitate.', color: '#E1306C', follow_cta: 'Urmărește', order: 2 },
+            { name: 'TikTok', handle: '@miscarea.sens', url: 'https://www.tiktok.com/@miscarea.sens', description: 'Conținut video scurt despre valorile noastre.', color: '#000000', follow_cta: 'Urmărește', order: 3 },
+          ],
         },
         {
           __component: 'blocks.newsletter-cta',
@@ -964,14 +995,19 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       description: 'Descriere',
       start_date: 'Data început',
       end_date: 'Data sfârșit',
-      location_name: 'Locație',
+      location_name: 'Locație (scurt)',
+      venue: 'Loc (ex: Casa de Cultură)',
+      city: 'Oraș',
       location_coords: 'Coordonate GPS',
       cover_image: 'Imagine copertă',
       max_participants: 'Număr maxim participanți',
+      spots_taken: 'Locuri ocupate',
+      is_featured: 'Eveniment evidențiat (featured)',
+      registration_url: 'URL înregistrare (opțional)',
       registration_open: 'Înscrieri deschise',
       event_type: 'Tip eveniment',
       social_posts: 'Postări social media',
-      ical_url: 'Link calendar',
+      ical_url: 'Link calendar iCal',
       seo: 'SEO',
     },
     'api::team-member.team-member': {
@@ -1027,6 +1063,82 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       content: 'Conținut pagină',
       seo: 'SEO',
     },
+    'api::county.county': {
+      name: 'Nume',
+      slug: 'URL (slug)',
+      order: 'Ordine',
+    },
+    'api::interest-area.interest-area': {
+      name: 'Nume',
+      slug: 'URL (slug)',
+      icon: 'Iconiță (emoji)',
+      description: 'Descriere',
+      order: 'Ordine',
+    },
+    'api::inscription-page.inscription-page': {
+      title: 'Titlu',
+      subtitle: 'Subtitlu',
+      steps: 'Pași formular',
+      personal_section_heading: 'Titlu secțiune date personale',
+      address_section_heading: 'Titlu secțiune adresă',
+      labels: 'Etichete câmpuri',
+      validation: 'Mesaje validare',
+      consents: 'Consimțăminte',
+      submit_text: 'Text buton trimite',
+      submitting_text: 'Text buton în procesare',
+      prev_step_text: 'Text buton anterior',
+      next_step_text: 'Text buton următor',
+      success: 'Secțiune succes',
+      seo: 'SEO',
+    },
+    'api::newsletter-page.newsletter-page': {
+      title: 'Titlu',
+      description: 'Descriere',
+      form: 'Configurare formular',
+      benefits_heading: 'Titlu beneficii',
+      benefits: 'Beneficii',
+      seo: 'SEO',
+    },
+    'api::community-page.community-page': {
+      title: 'Titlu',
+      subtitle: 'Subtitlu',
+      platforms: 'Platforme sociale',
+      posts_heading: 'Titlu postări',
+      features_heading: 'Titlu motive',
+      features: 'Motive să ne urmărești',
+      embed_fallback_text: 'Text fallback embed',
+      seo: 'SEO',
+    },
+    'api::privacy-policy-page.privacy-policy-page': {
+      title: 'Titlu',
+      subtitle: 'Subtitlu',
+      content: 'Conținut',
+      cmf_text: 'Text CMF',
+      last_updated: 'Ultima actualizare',
+      seo: 'SEO',
+    },
+    'api::events-page.events-page': {
+      eyebrow: 'Kicker (ex: EVENIMENTE · CALENDAR 2026)',
+      title: 'Titlu',
+      title_italic: 'Titlu italic (continuare)',
+      lead: 'Text introducere',
+      featured_label: 'Etichetă "featured"',
+      featured_cta_primary: 'CTA principal featured',
+      featured_cta_secondary: 'CTA secundar featured',
+      location_label: 'Etichetă locație',
+      interval_label: 'Etichetă interval',
+      spots_template: 'Template locuri ({taken}/{max})',
+      list_reserve_cta: 'CTA listă "rezervă"',
+      filter_all_label: 'Etichetă filtru "toate"',
+      host_section_kicker: 'Kicker secțiune filiale',
+      host_section_title: 'Titlu secțiune filiale',
+      host_section_body: 'Text secțiune filiale',
+      host_section_cta: 'CTA secțiune filiale',
+      host_section_url: 'URL CTA filiale',
+      host_section_visible: 'Afișează secțiunea filiale',
+      empty_state: 'Text listă goală',
+      seo: 'SEO',
+    },
     'api::navigation.navigation': {
       main_menu: 'Meniu principal',
       secondary_menu: 'Meniu secundar (dreapta)',
@@ -1063,7 +1175,11 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       background_image: 'Imagine fundal',
       variant: 'Variantă',
       rotating_words: 'Cuvinte rotative',
-      featured_link: 'Link evidențiat',
+      featured_link: 'Link evidențiat (legacy)',
+      next_event: 'Următorul eveniment (auto)',
+      meta_text: 'Text meta (ex: Live · manifest 2026)',
+      chip_text: 'Text chip foto',
+      chip_visible: 'Afișează chip foto',
     },
     'blocks.word-rotation': {
       words: 'Cuvinte (array JSON, ex: ["Sănătate", "Educație"])',
@@ -1077,6 +1193,14 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       icon: 'Iconiță (emoji)',
       auto_next_event: 'Auto: următorul eveniment',
     },
+    'blocks.next-event': {
+      label: 'Etichetă (ex: Următorul eveniment)',
+      cta_text: 'Text CTA',
+      icon: 'Iconiță (emoji)',
+      empty_label: 'Etichetă când nu există eveniment',
+      empty_url: 'URL când nu există eveniment',
+      hide_when_empty: 'Ascunde cardul dacă nu există eveniment',
+    },
     'blocks.word-carousel': {
       items: 'Elemente',
       speed_seconds: 'Viteză (secunde pentru un ciclu complet)',
@@ -1087,6 +1211,100 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       text: 'Text',
       url: 'Link (opțional)',
       highlight: 'Evidențiat',
+    },
+    'form.contact-form-config': {
+      name_label: 'Etichetă nume', name_placeholder: 'Placeholder nume',
+      email_label: 'Etichetă email', email_placeholder: 'Placeholder email',
+      subject_label: 'Etichetă subiect', subject_placeholder: 'Placeholder subiect',
+      message_label: 'Etichetă mesaj', message_placeholder: 'Placeholder mesaj',
+      submit_text: 'Text buton trimite', submitting_text: 'Text în procesare',
+      success_title: 'Titlu succes', success_message: 'Mesaj succes',
+    },
+    'form.membership-labels': {
+      first_name_label: 'Etichetă prenume', first_name_placeholder: 'Placeholder prenume',
+      last_name_label: 'Etichetă nume', last_name_placeholder: 'Placeholder nume',
+      email_label: 'Etichetă email', email_placeholder: 'Placeholder email',
+      phone_label: 'Etichetă telefon', phone_placeholder: 'Placeholder telefon',
+      birth_date_label: 'Etichetă data nașterii',
+      county_label: 'Etichetă județ', county_placeholder: 'Placeholder județ',
+      city_label: 'Etichetă localitate', city_placeholder: 'Placeholder localitate',
+      address_label: 'Etichetă adresă', address_placeholder: 'Placeholder adresă',
+      motivation_label: 'Etichetă motivație', motivation_placeholder: 'Placeholder motivație',
+      interests_label: 'Etichetă domenii', interests_help: 'Text ajutor domenii',
+    },
+    'form.validation-messages': {
+      required_generic: 'Mesaj generic obligatoriu',
+      email_required: 'Email obligatoriu', email_invalid: 'Email invalid',
+      phone_required: 'Telefon obligatoriu', phone_invalid: 'Telefon invalid',
+      first_name_required: 'Prenume obligatoriu', last_name_required: 'Nume obligatoriu',
+      birth_date_required: 'Dată naștere obligatorie',
+      county_required: 'Județ obligatoriu', city_required: 'Localitate obligatorie',
+      address_required: 'Adresă obligatorie',
+      consent_required: 'Consimțământ obligatoriu',
+      duplicate_error: 'Eroare duplicat', generic_error: 'Eroare generică',
+    },
+    'form.newsletter-form': {
+      name_label: 'Etichetă nume', name_placeholder: 'Placeholder nume',
+      email_label: 'Etichetă email', email_placeholder: 'Placeholder email',
+      submit_text: 'Text buton', submitting_text: 'Text în procesare',
+      consent_text: 'Text consimțământ',
+      success_title: 'Titlu succes', success_message: 'Mesaj succes',
+    },
+    'form.consent-item': {
+      key: 'Cheie (tip consimțământ)',
+      label: 'Text consimțământ',
+      required: 'Obligatoriu',
+      help_text: 'Text ajutor',
+    },
+    'form.step': {
+      number: 'Număr',
+      label: 'Etichetă',
+      description: 'Descriere',
+    },
+    'form.next-step': {
+      icon: 'Iconiță (emoji)',
+      text: 'Text',
+    },
+    'form.success-section': {
+      title: 'Titlu',
+      message: 'Mesaj',
+      next_steps_heading: 'Titlu secțiune pași',
+      next_steps: 'Pași următori',
+      primary_cta_label: 'Text buton principal',
+      primary_cta_url: 'Link buton principal',
+      secondary_cta_label: 'Text buton secundar',
+      secondary_cta_url: 'Link buton secundar',
+    },
+    'social.platform': {
+      name: 'Nume platformă',
+      handle: 'Handle',
+      url: 'URL profil',
+      description: 'Descriere',
+      color: 'Culoare brand',
+      embed_url: 'URL embed (iframe)',
+      icon_svg: 'Iconiță SVG',
+      follow_cta: 'Text CTA urmărește',
+      order: 'Ordine',
+    },
+    'social.feature': {
+      emoji: 'Emoji',
+      title: 'Titlu',
+      description: 'Descriere',
+    },
+    'donate.transparency-item': {
+      label: 'Etichetă',
+      percentage: 'Procent',
+      description: 'Descriere',
+    },
+    'donate.preset-amount': {
+      amount: 'Sumă (RON)',
+      label: 'Etichetă opțională',
+    },
+    'shared.newsletter-section': {
+      title: 'Titlu',
+      description: 'Descriere',
+      placeholder: 'Placeholder email',
+      submit_text: 'Text buton',
     },
     'blocks.text-block': {
       body: 'Conținut',
@@ -1220,10 +1438,10 @@ async function configureAdminLabels(strapi: Core.Strapi) {
     'blocks.social-feed': {
       title: 'Titlu',
       subtitle: 'Subtitlu',
-      facebook_url: 'URL Facebook',
-      instagram_url: 'URL Instagram',
-      show_facebook: 'Afișează Facebook',
-      show_instagram: 'Afișează Instagram',
+      platforms: 'Platforme sociale',
+      show_embeds: 'Afișează embed-uri (iframe)',
+      posts_heading: 'Titlu secțiune postări',
+      embed_fallback_text: 'Text fallback embed (folosește {platform})',
       variant: 'Variantă (full/compact)',
     },
   };
@@ -1279,5 +1497,468 @@ async function applyLabels(
     }
   } catch {
     // Silently skip — configuration will be set on next admin access
+  }
+}
+
+/**
+ * Top-up 42 județe (idempotent — doar cele lipsă).
+ */
+async function topUpCounties(strapi: Core.Strapi) {
+  const counties = [
+    'Alba', 'Arad', 'Argeș', 'Bacău', 'Bihor', 'Bistrița-Năsăud', 'Botoșani',
+    'Brașov', 'Brăila', 'București', 'Buzău', 'Caraș-Severin', 'Călărași',
+    'Cluj', 'Constanța', 'Covasna', 'Dâmbovița', 'Dolj', 'Galați', 'Giurgiu',
+    'Gorj', 'Harghita', 'Hunedoara', 'Ialomița', 'Iași', 'Ilfov', 'Maramureș',
+    'Mehedinți', 'Mureș', 'Neamț', 'Olt', 'Prahova', 'Satu Mare', 'Sălaj',
+    'Sibiu', 'Suceava', 'Teleorman', 'Timiș', 'Tulcea', 'Vaslui', 'Vâlcea', 'Vrancea',
+  ];
+
+  let added = 0;
+  for (let i = 0; i < counties.length; i++) {
+    const name = counties[i];
+    const existing = await strapi.documents('api::county.county' as any).findMany({
+      filters: { name },
+      limit: 1,
+    });
+    if (existing.length === 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await strapi.documents('api::county.county' as any).create({
+        data: { name, order: i } as any,
+      });
+      added++;
+    }
+  }
+
+  if (added > 0) {
+    strapi.log.info(`🗺️  Județe adăugate: ${added}/${counties.length}`);
+  }
+}
+
+/**
+ * Top-up domenii de interes (idempotent).
+ */
+async function topUpInterestAreas(strapi: Core.Strapi) {
+  const areas = [
+    { name: 'Mediu', icon: '🌱', description: 'Protecția naturii, biodiversitate, arii protejate.' },
+    { name: 'Educație', icon: '📚', description: 'Reforma educațională, acces și calitate.' },
+    { name: 'Sănătate', icon: '❤️', description: 'Sistem de sănătate centrat pe prevenție.' },
+    { name: 'Sustenabilitate', icon: '♻️', description: 'Tranziție verde, economie circulară.' },
+    { name: 'Tineret', icon: '🌟', description: 'Politici pentru generația tânără.' },
+    { name: 'Digitalizare', icon: '💻', description: 'Guvernare digitală, servicii moderne.' },
+    { name: 'Agricultură', icon: '🌾', description: 'Agricultură ecologică, securitate alimentară.' },
+    { name: 'Transport', icon: '🚊', description: 'Transport public verde, mobilitate activă.' },
+    { name: 'Energie', icon: '⚡', description: 'Energie regenerabilă, independență energetică.' },
+  ];
+
+  let added = 0;
+  for (let i = 0; i < areas.length; i++) {
+    const a = areas[i];
+    const existing = await strapi.documents('api::interest-area.interest-area' as any).findMany({
+      filters: { name: a.name },
+      limit: 1,
+    });
+    if (existing.length === 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await strapi.documents('api::interest-area.interest-area' as any).create({
+        data: { ...a, order: i } as any,
+      });
+      added++;
+    }
+  }
+
+  if (added > 0) {
+    strapi.log.info(`🎯 Domenii de interes adăugate: ${added}/${areas.length}`);
+  }
+}
+
+/**
+ * Top-up inscription page (idempotent — populate doar dacă e goală).
+ */
+async function topUpInscriptionPage(strapi: Core.Strapi) {
+  const existing = await strapi.documents('api::inscription-page.inscription-page' as any).findFirst();
+  if (existing?.title) return;
+
+  const data = {
+    title: 'Înscrie-te în SENS',
+    subtitle: 'Completează formularul de mai jos pentru a iniția procesul de aderare.',
+    personal_section_heading: 'Informații personale',
+    address_section_heading: 'Adresă',
+    submit_text: 'Trimite cererea',
+    submitting_text: 'Se trimite...',
+    prev_step_text: 'Pasul anterior',
+    next_step_text: 'Pasul următor',
+    steps: [
+      { number: 1, label: 'Date personale' },
+      { number: 2, label: 'Motivație' },
+      { number: 3, label: 'Confirmare' },
+    ],
+    labels: {
+      first_name_label: 'Prenume', first_name_placeholder: 'Prenumele tău',
+      last_name_label: 'Nume', last_name_placeholder: 'Numele tău',
+      email_label: 'Email', email_placeholder: 'email@exemplu.ro',
+      phone_label: 'Telefon', phone_placeholder: '07xx xxx xxx',
+      birth_date_label: 'Data nașterii',
+      county_label: 'Județ', county_placeholder: 'Alege județul',
+      city_label: 'Localitate', city_placeholder: 'Orașul sau comuna',
+      address_label: 'Adresa completă', address_placeholder: 'Strada, număr, bloc, scara, apartament',
+      motivation_label: 'Motivație (opțional)', motivation_placeholder: 'De ce vrei să te alături mișcării SENS?',
+      interests_label: 'Domenii de interes',
+      interests_help: 'Alege domeniile în care vrei să te implici. Poți selecta mai multe.',
+    },
+    validation: {
+      required_generic: 'Acest câmp este obligatoriu',
+      email_required: 'Email-ul este obligatoriu',
+      email_invalid: 'Email invalid',
+      phone_required: 'Telefonul este obligatoriu',
+      phone_invalid: 'Număr de telefon invalid',
+      first_name_required: 'Prenumele este obligatoriu',
+      last_name_required: 'Numele este obligatoriu',
+      birth_date_required: 'Data nașterii este obligatorie',
+      county_required: 'Județul este obligatoriu',
+      city_required: 'Localitatea este obligatorie',
+      address_required: 'Adresa este obligatorie',
+      consent_required: 'Trebuie să accepți această condiție pentru a continua',
+      duplicate_error: 'Există deja o cerere cu acest email',
+      generic_error: 'A apărut o eroare. Încearcă din nou în câteva momente.',
+    },
+    consents: [
+      { key: 'gdpr', label: 'Sunt de acord cu prelucrarea datelor personale conform Politicii de Confidențialitate.', required: true },
+      { key: 'statute', label: 'Am citit și accept Statutul Partidului SENS.', required: true },
+      { key: 'data_processing', label: 'Confirm că datele furnizate sunt corecte și complete.', required: true },
+      { key: 'newsletter', label: 'Doresc să primesc newsletter-ul SENS pe email.', required: false },
+    ],
+    success: {
+      title: 'Cererea ta a fost trimisă!',
+      message: 'Mulțumim pentru interesul tău de a face parte din SENS. Echipa noastră va analiza cererea și te va contacta în cel mai scurt timp.',
+      next_steps_heading: 'Pașii următori:',
+      next_steps: [
+        { icon: '📧', text: 'Vei primi un email de confirmare în câteva minute.' },
+        { icon: '📞', text: 'Un coordonator local te va contacta în 3-5 zile lucrătoare.' },
+        { icon: '🤝', text: 'Te vei alătura echipei din județul tău pentru prima întâlnire.' },
+      ],
+      primary_cta_label: 'Înapoi la pagina principală',
+      primary_cta_url: '/',
+      secondary_cta_label: 'Află mai multe despre SENS',
+      secondary_cta_url: '/despre-noi',
+    },
+  };
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await strapi.documents('api::inscription-page.inscription-page' as any).create({
+      data: data as any,
+      status: 'published',
+    });
+    strapi.log.info('📝 Inscription page seeded');
+  } catch (err) {
+    strapi.log.warn(`Inscription page seed failed: ${err}`);
+  }
+}
+
+/**
+ * Top-up newsletter page.
+ */
+async function topUpNewsletterPage(strapi: Core.Strapi) {
+  const existing = await strapi.documents('api::newsletter-page.newsletter-page' as any).findFirst();
+  if (existing?.title) return;
+
+  const data = {
+    title: 'Rămâi la curent cu SENS',
+    description: 'Abonează-te la newsletter pentru știri, comunicate și actualizări din partid. Primești maxim 2 emailuri pe săptămână.',
+    form: {
+      name_label: 'Nume (opțional)',
+      name_placeholder: 'Numele tău',
+      email_label: 'Email',
+      email_placeholder: 'email@exemplu.ro',
+      submit_text: 'Abonează-te la newsletter',
+      submitting_text: 'Se abonează...',
+      consent_text: 'Sunt de acord cu prelucrarea datelor personale conform Politicii de Confidențialitate.',
+      success_title: 'Mulțumim pentru abonare!',
+      success_message: 'Vei primi un email de confirmare. Verifică și folderul Spam dacă nu îl găsești.',
+    },
+    benefits_heading: 'Ce vei primi',
+    benefits: [
+      { emoji: '📢', title: 'Comunicate oficiale', description: 'Primele știri și anunțuri direct de la echipa SENS.' },
+      { emoji: '📊', title: 'Analize și rapoarte', description: 'Studii aprofundate despre politicile noastre.' },
+      { emoji: '🎟️', title: 'Invitații la evenimente', description: 'Acces prioritar la dezbateri, întâlniri și acțiuni.' },
+    ],
+  };
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await strapi.documents('api::newsletter-page.newsletter-page' as any).create({
+      data: data as any,
+      status: 'published',
+    });
+    strapi.log.info('📧 Newsletter page seeded');
+  } catch (err) {
+    strapi.log.warn(`Newsletter page seed failed: ${err}`);
+  }
+}
+
+/**
+ * Top-up community page.
+ */
+async function topUpCommunityPage(strapi: Core.Strapi) {
+  const existing = await strapi.documents('api::community-page.community-page' as any).findFirst();
+  if (existing?.title) return;
+
+  const data = {
+    title: 'Comunitate',
+    subtitle: 'Urmărește-ne pe rețelele sociale și fii la curent cu activitatea noastră.',
+    posts_heading: 'Ultimele postări',
+    features_heading: 'De ce să ne urmărești?',
+    embed_fallback_text: 'Deschide pe {platform}',
+    platforms: [
+      {
+        name: 'Facebook', handle: 'miscarea.sens',
+        url: 'https://www.facebook.com/miscarea.sens',
+        description: 'Știri, comunicate și discuții cu comunitatea noastră.',
+        color: '#1877f2',
+        embed_url: 'https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fmiscarea.sens',
+        follow_cta: 'Urmărește', order: 1,
+      },
+      {
+        name: 'Instagram', handle: '@miscarea.sens',
+        url: 'https://www.instagram.com/miscarea.sens/',
+        description: 'Imagini din activitățile noastre, povești și momente din comunitate.',
+        color: '#E1306C',
+        embed_url: 'https://www.instagram.com/miscarea.sens/embed',
+        follow_cta: 'Urmărește', order: 2,
+      },
+      {
+        name: 'TikTok', handle: '@miscarea.sens',
+        url: 'https://www.tiktok.com/@miscarea.sens',
+        description: 'Conținut video scurt despre valorile și acțiunile noastre.',
+        color: '#000000',
+        follow_cta: 'Urmărește', order: 3,
+      },
+    ],
+    features: [
+      { emoji: '📢', title: 'Comunicate și poziții', description: 'Primele știri și reacții oficiale la evenimente din actualitate.' },
+      { emoji: '📸', title: 'Din teren', description: 'Imagini și povești din acțiunile noastre la nivel național.' },
+      { emoji: '💬', title: 'Conversație', description: 'Răspundem la întrebări și inițiem discuții despre schimbare.' },
+    ],
+  };
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await strapi.documents('api::community-page.community-page' as any).create({
+      data: data as any,
+      status: 'published',
+    });
+    strapi.log.info('🌐 Community page seeded');
+  } catch (err) {
+    strapi.log.warn(`Community page seed failed: ${err}`);
+  }
+}
+
+/**
+ * Top-up privacy policy page.
+ */
+async function topUpPrivacyPolicyPage(strapi: Core.Strapi) {
+  const existing = await strapi.documents('api::privacy-policy-page.privacy-policy-page' as any).findFirst();
+  if (existing?.title) return;
+
+  const data = {
+    title: 'Politica de Confidențialitate',
+    subtitle: 'Cum protejăm datele tale personale',
+    content: [
+      { type: 'heading', level: 2, children: [{ type: 'text', text: 'Operator de date' }] },
+      { type: 'paragraph', children: [{ type: 'text', text: 'Partidul SENS (CMF nr. 11240065) este operatorul datelor tale personale, colectate prin intermediul acestui site.' }] },
+      { type: 'heading', level: 2, children: [{ type: 'text', text: 'Date colectate' }] },
+      { type: 'paragraph', children: [{ type: 'text', text: 'Colectăm datele pe care ni le furnizezi direct prin formularele de pe site (nume, email, telefon, date demografice) și date tehnice anonime (adresa IP, user agent).' }] },
+      { type: 'heading', level: 2, children: [{ type: 'text', text: 'Scopul prelucrării' }] },
+      { type: 'paragraph', children: [{ type: 'text', text: 'Folosim datele pentru: procesarea cererilor de aderare, trimiterea newsletter-ului (dacă ai consimțit), comunicare cu tine, statistici anonime.' }] },
+      { type: 'heading', level: 2, children: [{ type: 'text', text: 'Drepturile tale' }] },
+      { type: 'paragraph', children: [{ type: 'text', text: 'Ai dreptul de acces, rectificare, ștergere, portabilitate și opoziție la prelucrare. Pentru a exercita aceste drepturi, contactează-ne la contact@partidulsens.ro.' }] },
+      { type: 'heading', level: 2, children: [{ type: 'text', text: 'Cookies' }] },
+      { type: 'paragraph', children: [{ type: 'text', text: 'Site-ul folosește cookies strict necesare și, cu consimțământul tău, cookies de analiză (Google Analytics). Poți refuza cookies non-esențiale.' }] },
+      { type: 'paragraph', children: [{ type: 'text', text: 'Ultima actualizare: ' + new Date().toLocaleDateString('ro-RO') }] },
+    ],
+    cmf_text: 'Partidul SENS — CMF nr. 11240065',
+    last_updated: new Date().toISOString().split('T')[0],
+  };
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await strapi.documents('api::privacy-policy-page.privacy-policy-page' as any).create({
+      data: data as any,
+      status: 'published',
+    });
+    strapi.log.info('🔒 Privacy policy page seeded');
+  } catch (err) {
+    strapi.log.warn(`Privacy policy seed failed: ${err}`);
+  }
+}
+
+/**
+ * Migration: populează blocks.social-feed din homepage cu `platforms` dacă lipsesc
+ * (pentru homepage-uri seedate în versiunea veche a schemei).
+ */
+async function migrateSocialFeedPlatforms(strapi: Core.Strapi) {
+  try {
+    const homepage = await strapi.documents('api::homepage.homepage').findFirst({
+      populate: { content: { populate: '*' } as any } as any,
+    });
+    if (!homepage || !Array.isArray((homepage as any).content)) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const content = (homepage as any).content as any[];
+    const defaultPlatforms = [
+      { name: 'Facebook', handle: 'miscarea.sens', url: 'https://www.facebook.com/miscarea.sens', description: 'Știri, comunicate și discuții.', color: '#1877f2', follow_cta: 'Urmărește', order: 1 },
+      { name: 'Instagram', handle: '@miscarea.sens', url: 'https://www.instagram.com/miscarea.sens/', description: 'Imagini și povești din comunitate.', color: '#E1306C', follow_cta: 'Urmărește', order: 2 },
+      { name: 'TikTok', handle: '@miscarea.sens', url: 'https://www.tiktok.com/@miscarea.sens', description: 'Conținut video scurt despre valorile noastre.', color: '#000000', follow_cta: 'Urmărește', order: 3 },
+    ];
+
+    let needsUpdate = false;
+    const newContent = content.map((block) => {
+      if (block?.__component === 'blocks.social-feed') {
+        if (!Array.isArray(block.platforms) || block.platforms.length === 0) {
+          needsUpdate = true;
+          return { ...block, platforms: defaultPlatforms };
+        }
+      }
+      return block;
+    });
+
+    if (needsUpdate) {
+      await strapi.documents('api::homepage.homepage').update({
+        documentId: (homepage as any).documentId,
+        data: { content: newContent } as any,
+        status: 'published',
+      });
+      strapi.log.info('🔁 SocialFeed platforms populated in homepage');
+    }
+  } catch (err) {
+    strapi.log.warn(`SocialFeed migration failed: ${err}`);
+  }
+}
+
+/**
+ * Migration: populează Hero meta_text + activează featured_link cu auto_next_event
+ * pentru homepage-uri existente (fallback pentru schema nouă).
+ */
+async function migrateHeroFeaturedLink(strapi: Core.Strapi) {
+  try {
+    const homepage = await strapi.documents('api::homepage.homepage').findFirst({
+      populate: { content: { populate: '*' } as any } as any,
+    });
+    if (!homepage || !Array.isArray((homepage as any).content)) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const content = (homepage as any).content as any[];
+
+    let needsUpdate = false;
+    const newContent = content.map((block) => {
+      if (block?.__component === 'blocks.hero') {
+        const updates: Record<string, unknown> = {};
+        if (!block.meta_text) {
+          updates.meta_text = 'Live · manifest 2026';
+        }
+        if (!block.next_event) {
+          updates.next_event = {
+            label: 'Următorul eveniment',
+            cta_text: 'Rezervă loc',
+            icon: '📅',
+            empty_label: 'Vezi toate evenimentele',
+            empty_url: '/evenimente',
+            hide_when_empty: false,
+          };
+        }
+        if (Object.keys(updates).length > 0) {
+          needsUpdate = true;
+          return { ...block, ...updates };
+        }
+      }
+      return block;
+    });
+
+    if (needsUpdate) {
+      await strapi.documents('api::homepage.homepage').update({
+        documentId: (homepage as any).documentId,
+        data: { content: newContent } as any,
+        status: 'published',
+      });
+      strapi.log.info('🎯 Hero featured_link + meta_text populated in homepage');
+    }
+  } catch (err) {
+    strapi.log.warn(`Hero featured_link migration failed: ${err}`);
+  }
+}
+
+/**
+ * Migration: schimbă word-carousel background_color 'green' → 'lime' (noua paletă Direction C).
+ * One-shot: după prima rulare, background rămâne 'lime' și nu e schimbat înapoi dacă user-ul îl modifică.
+ */
+async function migrateWordCarouselBackground(strapi: Core.Strapi) {
+  try {
+    const homepage = await strapi.documents('api::homepage.homepage').findFirst({
+      populate: { content: { populate: '*' } as any } as any,
+    });
+    if (!homepage || !Array.isArray((homepage as any).content)) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const content = (homepage as any).content as any[];
+
+    let needsUpdate = false;
+    const newContent = content.map((block) => {
+      if (block?.__component === 'blocks.word-carousel' && block.background_color === 'green') {
+        needsUpdate = true;
+        return { ...block, background_color: 'lime' };
+      }
+      return block;
+    });
+
+    if (needsUpdate) {
+      await strapi.documents('api::homepage.homepage').update({
+        documentId: (homepage as any).documentId,
+        data: { content: newContent } as any,
+        status: 'published',
+      });
+      strapi.log.info('🎨 WordCarousel background migrated to lime');
+    }
+  } catch (err) {
+    strapi.log.warn(`WordCarousel migration failed: ${err}`);
+  }
+}
+
+/**
+ * Top-up events page (idempotent — populate dacă e goală).
+ */
+async function topUpEventsPage(strapi: Core.Strapi) {
+  const existing = await strapi.documents('api::events-page.events-page' as any).findFirst();
+  if ((existing as any)?.title) return;
+
+  const data = {
+    eyebrow: 'EVENIMENTE · CALENDAR 2026',
+    title: 'Ne vedem',
+    title_italic: 'pe teren.',
+    lead: 'Dezbateri, marșuri, workshop-uri, întâlniri de filială. Politica se face în oameni, nu în comunicate de presă.',
+    featured_label: 'FEATURED',
+    featured_cta_primary: 'Rezervă loc',
+    featured_cta_secondary: '+ Adaugă în calendar',
+    location_label: 'Locație',
+    interval_label: 'Interval',
+    spots_template: '{taken} / {max} locuri',
+    list_reserve_cta: 'Rezervă',
+    filter_all_label: 'Toate',
+    host_section_kicker: 'Filiale',
+    host_section_title: 'Vrei să organizezi un eveniment în orașul tău?',
+    host_section_body: 'Filialele locale primesc sprijin logistic și financiar pentru dezbateri, workshop-uri și acțiuni publice.',
+    host_section_cta: 'Trimite propunerea',
+    host_section_url: '/contact',
+    host_section_visible: true,
+    empty_state: 'Nu sunt evenimente programate momentan.',
+  };
+
+  try {
+    await strapi.documents('api::events-page.events-page' as any).create({
+      data: data as any,
+      status: 'published',
+    });
+    strapi.log.info('📅 Events page seeded');
+  } catch (err) {
+    strapi.log.warn(`Events page seed failed: ${err}`);
   }
 }

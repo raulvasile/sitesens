@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_blocks_next_events",
+  "info": {
+    "displayName": "Următorul eveniment",
+    "icon": "calendar-check",
+    "description": "Card care afișează automat următorul eveniment viitor"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "default": "Următorul eveniment",
+      "maxLength": 80
+    },
+    "cta_text": {
+      "type": "string",
+      "default": "Rezervă loc",
+      "maxLength": 40
+    },
+    "icon": {
+      "type": "string",
+      "default": "📅",
+      "maxLength": 10
+    },
+    "empty_label": {
+      "type": "string",
+      "default": "Vezi toate evenimentele",
+      "maxLength": 80
+    },
+    "empty_url": {
+      "type": "string",
+      "default": "/evenimente",
+      "maxLength": 200
+    },
+    "hide_when_empty": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

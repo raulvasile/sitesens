@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_donate_transparency_items",
+  "info": {
+    "displayName": "Element transparență",
+    "icon": "chart-pie"
+  },
+  "attributes": {
+    "label": { "type": "string", "required": true, "maxLength": 100 },
+    "percentage": { "type": "integer", "required": true, "min": 0, "max": 100 },
+    "description": { "type": "text", "maxLength": 300 }
+  }
+}
