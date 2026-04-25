@@ -34,6 +34,11 @@
 		line-height: 1.6;
 		color: var(--color-ink);
 	}
+	@media (min-width: 1024px) {
+		/* Desktop: fill the full container width (matches other blocks like
+		   Hero, CardGrid). Bump font slightly for readability at this width. */
+		.prose { max-width: none; font-size: 1.1875rem; }
+	}
 
 	:global(.prose h2) {
 		font-family: var(--font-display);

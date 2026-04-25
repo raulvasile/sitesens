@@ -33,7 +33,7 @@
 		/* Match .a11y-widget bottom level so the two FABs sit on the same line. */
 		bottom: var(--space-6);
 		right: var(--space-4);
-		display: none;
+		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		width: 52px;
@@ -51,8 +51,11 @@
 		box-shadow: var(--shadow-md);
 	}
 
-	@media (max-width: 767px) {
-		.back-to-top { display: inline-flex; }
+	@media (hover: hover) {
+		.back-to-top:hover {
+			background: var(--color-lime);
+			color: var(--color-ink);
+		}
 	}
 
 	.back-to-top--visible {

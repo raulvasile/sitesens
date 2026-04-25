@@ -384,7 +384,7 @@
 		margin-bottom: var(--space-12);
 	}
 	/* Dynamic Zone variant — let blocks (galleries, video, stats) breathe full
-	   width; their internal `.container` keeps the prose readable on text. */
+	   width. Each block's own component decides its inner prose width. */
 	.article-body--zone {
 		max-width: none;
 	}
@@ -394,9 +394,6 @@
 	.article-body--zone :global(section .container) {
 		padding-inline: 0;
 		max-width: none;
-	}
-	.article-body--zone :global(.text-block .prose) {
-		max-width: 72ch;
 	}
 	.article-body :global(p) {
 		font-size: 1.125rem;
