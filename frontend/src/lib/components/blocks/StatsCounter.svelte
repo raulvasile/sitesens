@@ -78,4 +78,9 @@
 		text-transform: uppercase;
 		color: rgba(245, 241, 232, 0.8);
 	}
+
+	/* mobile-tighten:.stats */
+	@media (max-width: 767px) {
+		.stats { padding-block: var(--space-10); }
+	}
 </style>

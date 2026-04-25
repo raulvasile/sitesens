@@ -4,8 +4,8 @@
   "info": {
     "singularName": "inscription-page",
     "pluralName": "inscription-pages",
-    "displayName": "⚙️ Pagină Înscriere",
-    "description": "Conținut pentru pagina /inscrie-te"
+    "displayName": "Pagină Înscriere",
+    "description": "Conținutul paginii /inscrie-te (text introductiv, etichete formular)."
   },
   "options": {
     "draftAndPublish": true

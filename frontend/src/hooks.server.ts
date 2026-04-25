@@ -8,15 +8,32 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const strapiUrl = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
 
+	// TikTok embed.js loads scripts/styles/images/iframes from a constellation
+	// of CDNs (ttwstatic, tiktokcdn, byteoversea, ibyteimg). We allow all of
+	// them so the embed actually renders; without these the script is blocked.
+	const tiktokDomains = [
+		'https://www.tiktok.com',
+		'https://*.tiktok.com',
+		'https://*.ttwstatic.com',
+		'https://*.tiktokcdn.com',
+		'https://*.tiktokcdn-us.com',
+		'https://*.byteoversea.com',
+		'https://*.ibyteimg.com',
+	].join(' ');
+
 	// Content Security Policy
 	const csp = [
 		`default-src 'self'`,
-		`script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.instagram.com https://www.googletagmanager.com https://www.google-analytics.com`,
-		`style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.googletagmanager.com`,
-		`img-src 'self' ${strapiUrl} data: https: https://www.googletagmanager.com https://www.google-analytics.com`,
-		`font-src 'self' data: https://fonts.gstatic.com`,
-		`connect-src 'self' ${strapiUrl} https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com`,
-		`frame-src https://www.facebook.com https://www.instagram.com`,
+		`script-src 'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net https://www.instagram.com ${tiktokDomains} https://www.googletagmanager.com https://www.google-analytics.com`,
+		`script-src-elem 'self' 'unsafe-inline' https://connect.facebook.net https://www.instagram.com ${tiktokDomains} https://www.googletagmanager.com https://www.google-analytics.com`,
+		`style-src 'self' 'unsafe-inline' ${tiktokDomains} https://www.googletagmanager.com`,
+		`style-src-elem 'self' 'unsafe-inline' ${tiktokDomains} https://www.googletagmanager.com`,
+		`img-src 'self' ${strapiUrl} data: blob: https: ${tiktokDomains}`,
+		`media-src 'self' blob: ${tiktokDomains}`,
+		`font-src 'self' data: ${tiktokDomains}`,
+		`connect-src 'self' ${strapiUrl} ${tiktokDomains} https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com`,
+		`frame-src https://www.facebook.com https://www.instagram.com ${tiktokDomains}`,
+		`worker-src 'self' blob:`,
 		`object-src 'none'`,
 		`base-uri 'self'`,
 		`form-action 'self'`,

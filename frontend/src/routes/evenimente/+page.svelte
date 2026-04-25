@@ -73,13 +73,6 @@
 		if (!end) return s;
 		return `${s} – ${formatTime(end)}`;
 	}
-	function spotsText(event: { spots_taken?: number | null; max_participants?: number | null }): string | null {
-		if (event.max_participants == null) return null;
-		const taken = event.spots_taken ?? 0;
-		const tpl = pageCfg?.spots_template ?? '{taken} / {max} locuri';
-		return tpl.replace('{taken}', String(taken)).replace('{max}', String(event.max_participants));
-	}
-
 	function buildUrl(params: Record<string, string>) {
 		const searchParams = new URLSearchParams();
 		Object.entries(params).forEach(([k, v]) => {
@@ -116,6 +109,9 @@
 					<img
 						src={getStrapiMediaUrl(featured.cover_image.url)}
 						alt={featured.cover_image.alternativeText ?? featured.title}
+						loading="eager"
+						decoding="async"
+						fetchpriority="high"
 					/>
 				{:else}
 					<div class="featured__photo-placeholder photo-placeholder photo-placeholder--dark">
@@ -150,9 +146,6 @@
 					<div class="featured__info-col">
 						<div class="featured__info-label">{pageCfg?.interval_label ?? 'Interval'}</div>
 						<div class="featured__info-value">{formatInterval(featured.start_date, featured.end_date)}</div>
-						{#if spotsText(featured)}
-							<div class="featured__spots">{spotsText(featured)}</div>
-						{/if}
 					</div>
 				</div>
 
@@ -180,11 +173,13 @@
 			href={buildUrl({ tab: 'viitoare', type: activeType })}
 			class="filter-pill"
 			class:filter-pill--active={activeTab === 'viitoare'}
+			data-sveltekit-noscroll
 		>Viitoare</a>
 		<a
 			href={buildUrl({ tab: 'trecute', type: activeType })}
 			class="filter-pill"
 			class:filter-pill--active={activeTab === 'trecute'}
+			data-sveltekit-noscroll
 		>Trecute</a>
 	</div>
 
@@ -214,6 +209,7 @@
 						class:type-dropdown__item--active={activeType === et.value}
 						role="menuitem"
 						onclick={closeDropdowns}
+						data-sveltekit-noscroll
 					>{et.label}</a>
 				{/each}
 			</div>
@@ -322,6 +318,7 @@
 		color: var(--color-green-deep);
 		font-style: italic;
 		font-weight: 400;
+		margin-left: 0.18em;
 	}
 	.page-header__lead {
 		font-family: var(--font-body);
@@ -438,14 +435,6 @@
 		font-size: 0.9375rem;
 		line-height: 1.4;
 	}
-	.featured__spots {
-		font-family: var(--font-mono);
-		font-size: 0.6875rem;
-		letter-spacing: 0.08em;
-		color: var(--color-lime);
-		margin-top: 6px;
-	}
-
 	.featured__ctas {
 		display: flex;
 		gap: var(--space-3);

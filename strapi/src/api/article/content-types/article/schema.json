@@ -4,8 +4,8 @@
   "info": {
     "singularName": "article",
     "pluralName": "articles",
-    "displayName": "📝 Știri",
-    "description": "Știri, comunicate de presă, analize"
+    "displayName": "Articole",
+    "description": "Știri, comunicate de presă și analize publicate în secțiunea /stiri."
   },
   "options": {
     "draftAndPublish": true
@@ -25,13 +25,25 @@
       "type": "text",
       "maxLength": 300
     },
-    "body": {
-      "type": "blocks"
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "blocks.text-block",
+        "blocks.image-gallery",
+        "blocks.quote",
+        "blocks.video-embed",
+        "blocks.stats-counter",
+        "blocks.cta-banner",
+        "blocks.spacer",
+        "blocks.article-stat"
+      ]
     },
     "cover_image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "category": {
       "type": "relation",
@@ -60,6 +72,11 @@
       "type": "integer",
       "min": 1,
       "default": 5
+    },
+    "featured_stat": {
+      "type": "component",
+      "repeatable": false,
+      "component": "blocks.article-stat"
     }
   }
 }

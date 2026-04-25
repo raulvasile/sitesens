@@ -5,6 +5,7 @@ import { error } from '@sveltejs/kit';
 export const load: PageLoad = async ({ url, fetch }) => {
 	const page = parseInt(url.searchParams.get('page') ?? '1');
 	const category = url.searchParams.get('categorie') ?? '';
+	const tag = url.searchParams.get('tag') ?? '';
 	const search = url.searchParams.get('q') ?? '';
 
 	const params: Record<string, string> = {
@@ -18,9 +19,12 @@ export const load: PageLoad = async ({ url, fetch }) => {
 	};
 
 	if (category) {
-		// Match both direct category OR any article whose category has this parent slug
 		params['filters[$or][0][category][slug][$eq]'] = category;
 		params['filters[$or][1][category][parent][slug][$eq]'] = category;
+	}
+
+	if (tag) {
+		params['filters[tags][slug][$eq]'] = tag;
 	}
 
 	if (search) {
@@ -42,6 +46,7 @@ export const load: PageLoad = async ({ url, fetch }) => {
 			pagination: (articlesRes as any)?.meta?.pagination ?? { page: 1, pageCount: 1, total: 0 },
 			categories: (categoriesRes as any)?.data ?? [],
 			currentCategory: category,
+			currentTag: tag,
 			currentSearch: search,
 			currentPage: page,
 			loadError: false,

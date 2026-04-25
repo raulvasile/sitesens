@@ -4,8 +4,8 @@
   "info": {
     "singularName": "section",
     "pluralName": "sections",
-    "displayName": "📝 Secțiuni",
-    "description": "Secțiuni cu Dynamic Zone pentru paginile cu tab-uri"
+    "displayName": "Secțiuni",
+    "description": "Secțiuni cu tab-uri pentru paginile interioare (atașate unei Pagini). Fiecare are Dynamic Zone propriu."
   },
   "options": {
     "draftAndPublish": true
@@ -20,6 +20,8 @@
       "type": "dynamiczone",
       "components": [
         "blocks.hero",
+        "blocks.hero-refined",
+        "blocks.hero-editorial",
         "blocks.text-block",
         "blocks.cta-banner",
         "blocks.image-gallery",
@@ -33,7 +35,13 @@
         "blocks.latest-articles",
         "blocks.upcoming-events",
         "blocks.contact-form",
-        "blocks.spacer"
+        "blocks.spacer",
+        "blocks.timeline",
+        "blocks.mission-band",
+        "blocks.chapters-grid",
+        "blocks.team-grid",
+        "blocks.page-header",
+        "blocks.romania-map"
       ]
     },
     "display_order": {

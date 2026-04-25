@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import { getIconSvg } from '$lib/icons';
 	import { sanitizeSvg } from '$lib/sanitize';
+	import { openCard, registerCards, type CardDetail } from '$lib/cardModal';
 
 	interface CardPoint { text: string; }
 	interface CardItem {
+		id: number;
 		icon?: string;
 		title: string;
 		description?: string;
@@ -11,6 +14,7 @@
 		link_text?: string;
 		link_url?: string;
 		image?: { url: string; alternativeText?: string };
+		details?: unknown[];
 	}
 	interface Props {
 		data: {
@@ -22,6 +26,31 @@
 
 	let { data }: Props = $props();
 	const cols = data.columns ?? '3';
+
+	function hasDetails(c: CardItem): boolean {
+		return Array.isArray(c.details) && c.details.length > 0;
+	}
+
+	function toCardDetail(c: CardItem): CardDetail {
+		return {
+			id: c.id,
+			title: c.title,
+			details: c.details ?? [],
+			meta: {
+				subtitle: c.description,
+				image: c.image ? { url: c.image.url, alt: c.image.alternativeText } : null,
+			},
+		};
+	}
+
+	// Register cards that have `details` so deep-links (?card=<id>) resolve.
+	let unregister: () => void = () => {};
+	$effect(() => {
+		unregister();
+		const registered = data.cards.filter(hasDetails).map(toCardDetail);
+		unregister = registered.length > 0 ? registerCards(registered) : () => {};
+	});
+	onDestroy(() => unregister());
 </script>
 
 <section class="card-grid">
@@ -34,7 +63,18 @@
 				{@const total = String(data.cards.length).padStart(2, '0')}
 				{@const idx = String(i + 1).padStart(2, '0')}
 				{@const abbr = card.title.slice(0, 3).toUpperCase()}
-				<article class="card-grid__card" style={`--card-index: ${i}`}>
+				{@const clickable = hasDetails(card)}
+				<article class="card-grid__card" class:card-grid__card--clickable={clickable} style={`--card-index: ${i}`}>
+					{#if clickable}
+						<button
+							type="button"
+							class="card-grid__overlay-btn"
+							aria-label={`Vezi detalii: ${card.title}`}
+							aria-haspopup="dialog"
+							onclick={() => openCard(toCardDetail(card))}
+						></button>
+						<span class="card-grid__more" aria-hidden="true">→</span>
+					{/if}
 					<div class="card-grid__kicker">
 						<span>{idx} / {total}</span>
 						<span>{abbr}</span>
@@ -47,6 +87,8 @@
 							src={card.image.url.startsWith('http') ? card.image.url : `${import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337'}${card.image.url}`}
 							alt={card.image.alternativeText ?? card.title}
 							class="card-grid__image"
+							loading="lazy"
+							decoding="async"
 						/>
 					{/if}
 
@@ -64,7 +106,7 @@
 						</ul>
 					{/if}
 
-					{#if card.link_text && card.link_url}
+					{#if !clickable && card.link_text && card.link_url}
 						<a href={card.link_url} class="card-grid__link">
 							{card.link_text}
 							<span class="arrow-animate">&rarr;</span>
@@ -87,8 +129,11 @@
 
 <style>
 	.card-grid {
-		padding-block: var(--space-20);
+		padding-block: var(--space-12);
 		background-color: var(--color-paper);
+	}
+	@media (min-width: 768px) {
+		.card-grid { padding-block: var(--space-20); }
 	}
 
 	.card-grid__heading {
@@ -124,8 +169,8 @@
 
 	.card-grid__card {
 		position: relative;
-		padding: 24px 20px;
-		min-height: 220px;
+		padding: 18px 16px;
+		min-height: 160px;
 		display: flex;
 		flex-direction: column;
 		transition: transform var(--transition-base), outline-offset var(--transition-base);
@@ -134,17 +179,70 @@
 		outline-offset: -2px;
 	}
 
+	.card-grid__card--clickable {
+		cursor: pointer;
+	}
+
+	/* Overlay button covers the whole card so any click anywhere triggers the
+	   modal. It sits below the visible link/icon (z-index 0 vs 1) so internal
+	   focusable elements still work, but for now `details` cards have no
+	   internal links so this is the simplest robust pattern. */
+	.card-grid__overlay-btn {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 0;
+		margin: 0;
+		z-index: 1;
+	}
+	.card-grid__overlay-btn:focus-visible {
+		outline: 2px solid var(--color-lime);
+		outline-offset: -4px;
+	}
+
+	.card-grid__more {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		line-height: 1;
+		color: currentColor;
+		opacity: 0.5;
+		transition: transform var(--transition-fast), opacity var(--transition-fast);
+		z-index: 2;
+		pointer-events: none;
+	}
+	@media (hover: hover) {
+		.card-grid__card--clickable:hover .card-grid__more {
+			transform: translate(2px, -2px);
+			opacity: 1;
+		}
+		.card-grid__card:hover {
+			outline-color: var(--color-ink);
+			outline-offset: -2px;
+			transform: translateY(-4px);
+		}
+	}
+	/* Touch / no-hover devices: trigger the visual nudge only on real tap (active). */
+	.card-grid__card--clickable:active .card-grid__more {
+		transform: translate(2px, -2px);
+		opacity: 1;
+	}
+	.card-grid__card:active {
+		outline-color: var(--color-ink);
+		outline-offset: -2px;
+	}
+
 	@media (min-width: 768px) {
 		.card-grid__card {
 			padding: 40px 28px;
 			min-height: 360px;
 		}
-	}
-
-	.card-grid__card:hover {
-		outline-color: var(--color-ink);
-		outline-offset: -2px;
-		transform: translateY(-4px);
 	}
 
 	/* Direction C rotation: cream / lime / green-deep / green-dark */
@@ -167,7 +265,8 @@
 
 	/* Mono kicker row (0X / 04  ·  ABB) — design C style */
 	.card-grid__kicker {
-		display: flex;
+		/* Hidden on mobile to declutter; appears on tablet/desktop. */
+		display: none;
 		justify-content: space-between;
 		align-items: center;
 		font-family: var(--font-mono);
@@ -180,20 +279,22 @@
 	}
 
 	.card-grid__letter {
-		display: block;
+		display: none; /* hidden on mobile to free space for a bigger title */
 		font-family: var(--font-display);
 		font-weight: 500;
-		font-size: 5rem; /* 80px — mobile */
+		font-size: 3.5rem;
 		line-height: 0.85;
 		color: currentColor;
 		letter-spacing: -0.02em;
 		text-transform: uppercase;
 		margin-top: auto;
-		margin-bottom: var(--space-3);
+		margin-bottom: var(--space-2);
 	}
 
 	@media (min-width: 768px) {
+		.card-grid__kicker { display: flex; }
 		.card-grid__letter {
+			display: block;
 			font-size: 13.75rem; /* 220px */
 			margin-bottom: var(--space-4);
 		}
@@ -246,21 +347,26 @@
 
 	.card-grid__title {
 		font-family: var(--font-display);
-		font-size: 1.375rem; /* 22px */
+		font-size: 1.75rem; /* 28px mobile — bigger now that the giant letter is hidden */
 		font-weight: 500;
 		letter-spacing: -0.01em;
 		text-transform: uppercase;
-		line-height: 1.1;
+		line-height: 1.05;
+		margin-top: auto;
 		color: currentColor;
 		margin-bottom: 10px;
 	}
 
 	.card-grid__desc {
 		font-family: var(--font-body);
-		font-size: 0.875rem; /* 14px */
+		font-size: 0.8125rem; /* 13px mobile */
 		line-height: 1.4;
 		opacity: 0.85;
-		margin-bottom: var(--space-4);
+		margin-bottom: var(--space-3);
+	}
+	@media (min-width: 768px) {
+		.card-grid__title { font-size: 1.375rem; }
+		.card-grid__desc { font-size: 0.875rem; margin-bottom: var(--space-4); }
 	}
 
 	.card-grid__points {

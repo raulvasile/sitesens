@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_accordion_items",
   "info": {
-    "displayName": "Element Acordeon",
-    "icon": "list"
+    "displayName": "Element acordeon",
+    "icon": "list",
+    "description": "Un rând din acordeon (întrebare + răspuns)."
   },
   "attributes": {
     "title": {

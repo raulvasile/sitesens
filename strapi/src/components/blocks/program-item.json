@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_program_items",
   "info": {
-    "displayName": "Punct Program",
-    "icon": "seed"
+    "displayName": "Element program",
+    "icon": "seed",
+    "description": "Un punct din Programul partidului. Folosit în Puncte Program."
   },
   "attributes": {
     "area": {
@@ -12,6 +13,9 @@
     "text": {
       "type": "text",
       "required": true
+    },
+    "details": {
+      "type": "blocks"
     }
   }
 }

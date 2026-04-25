@@ -4,8 +4,8 @@
   "info": {
     "singularName": "privacy-policy-page",
     "pluralName": "privacy-policy-pages",
-    "displayName": "⚙️ Politica de Confidențialitate",
-    "description": "Conținut pentru pagina /politica-confidentialitate"
+    "displayName": "Pagină Politică Confidențialitate",
+    "description": "Conținutul paginii /politica-confidentialitate."
   },
   "options": {
     "draftAndPublish": true

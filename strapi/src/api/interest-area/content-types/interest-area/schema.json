@@ -4,8 +4,8 @@
   "info": {
     "singularName": "interest-area",
     "pluralName": "interest-areas",
-    "displayName": "🎯 Domenii de interes",
-    "description": "Domenii de interes pentru formularul de înscriere"
+    "displayName": "Domenii de Interes",
+    "description": "Lista domeniilor de interes folosite ca opțiuni în formularul de înscriere."
   },
   "options": {
     "draftAndPublish": false

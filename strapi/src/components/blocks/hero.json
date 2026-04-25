@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_heroes",
   "info": {
-    "displayName": "Secțiune Hero",
-    "icon": "landscape"
+    "displayName": "Hero",
+    "icon": "landscape",
+    "description": "Hero principal (Direction C — paper, fotografie dreapta). Pentru alte stiluri folosește 'Hero — Refined' (foto full-bg) sau 'Hero — Manifesto' (titlu enorm editorial)."
   },
   "attributes": {
     "title": {

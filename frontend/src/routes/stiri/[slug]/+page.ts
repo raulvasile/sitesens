@@ -1,5 +1,6 @@
 import type { PageLoad } from './$types';
 import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
+import { enrichDynamicZone } from '$lib/enrichDynamicZone';
 import { error } from '@sveltejs/kit';
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
@@ -12,6 +13,16 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 			'populate[category]': 'true',
 			'populate[author][populate][photo]': 'true',
 			'populate[tags]': 'true',
+			'populate[featured_stat]': 'true',
+			// Dynamic zone — populate per component type so nested media/items load.
+			'populate[content][on][blocks.text-block][populate]': '*',
+			'populate[content][on][blocks.image-gallery][populate]': '*',
+			'populate[content][on][blocks.quote][populate]': '*',
+			'populate[content][on][blocks.video-embed][populate]': '*',
+			'populate[content][on][blocks.stats-counter][populate]': '*',
+			'populate[content][on][blocks.cta-banner][populate]': '*',
+			'populate[content][on][blocks.spacer][populate]': '*',
+			'populate[content][on][blocks.article-stat][populate]': '*',
 			'populate[seo][populate][og_image]': 'true',
 			...previewParams,
 		}, undefined, fetch),
@@ -30,8 +41,13 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 		throw error(404, 'Articolul nu a fost găsit');
 	}
 
+	const article = articles[0] as any;
+	if (Array.isArray(article.content)) {
+		article.content = await enrichDynamicZone(article.content, fetch);
+	}
+
 	return {
-		article: articles[0],
+		article,
 		relatedArticles: ((relatedRes as any).data ?? []).slice(0, 3),
 	};
 };

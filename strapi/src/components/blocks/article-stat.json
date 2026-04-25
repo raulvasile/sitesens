@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_blocks_article_stats",
+  "info": {
+    "displayName": "Statistică articol",
+    "icon": "chartCircle",
+    "description": "Bloc evidențiat în pagina de știre cu un număr/procent + etichetă scurtă + paragraf de context."
+  },
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "context": {
+      "type": "text",
+      "maxLength": 400
+    }
+  }
+}

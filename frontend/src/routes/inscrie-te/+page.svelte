@@ -350,6 +350,7 @@
 								<input type="checkbox" bind:checked={consentStatute} />
 								<span>{getConsent('statute')?.label ?? ''}{getConsent('statute')?.required !== false ? ' *' : ''}</span>
 							</label>
+							{#if getConsent('statute')?.help_text}<span class="consent-help">{getConsent('statute')?.help_text}</span>{/if}
 							{#if step3Errors.consentStatute}<span class="form-error consent-error">{step3Errors.consentStatute}</span>{/if}
 						{/if}
 
@@ -358,6 +359,7 @@
 								<input type="checkbox" bind:checked={consentGdpr} />
 								<span>{getConsent('gdpr')?.label ?? ''}{getConsent('gdpr')?.required !== false ? ' *' : ''}</span>
 							</label>
+							{#if getConsent('gdpr')?.help_text}<span class="consent-help">{getConsent('gdpr')?.help_text}</span>{/if}
 							{#if step3Errors.consentGdpr}<span class="form-error consent-error">{step3Errors.consentGdpr}</span>{/if}
 						{/if}
 
@@ -366,6 +368,7 @@
 								<input type="checkbox" bind:checked={consentDataProcessing} />
 								<span>{getConsent('data_processing')?.label ?? ''}{getConsent('data_processing')?.required !== false ? ' *' : ''}</span>
 							</label>
+							{#if getConsent('data_processing')?.help_text}<span class="consent-help">{getConsent('data_processing')?.help_text}</span>{/if}
 							{#if step3Errors.consentDataProcessing}<span class="form-error consent-error">{step3Errors.consentDataProcessing}</span>{/if}
 						{/if}
 
@@ -374,6 +377,7 @@
 								<input type="checkbox" bind:checked={consentNewsletter} />
 								<span>{getConsent('newsletter')?.label ?? ''}</span>
 							</label>
+							{#if getConsent('newsletter')?.help_text}<span class="consent-help">{getConsent('newsletter')?.help_text}</span>{/if}
 						{/if}
 					</div>
 				</div>
@@ -430,14 +434,16 @@
 		justify-content: center;
 		gap: var(--space-3);
 		margin-bottom: var(--space-12);
-		flex-wrap: wrap;
+		/* Single row, never wraps — even on small screens */
+		flex-wrap: nowrap;
 	}
 	.stepper__item {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: var(--space-2);
-		min-width: 80px;
+		min-width: 0;
+		flex-shrink: 1;
 	}
 	.stepper__circle {
 		width: 40px;
@@ -452,6 +458,7 @@
 		color: var(--color-ink);
 		background-color: var(--color-paper);
 		transition: all var(--transition-fast);
+		flex-shrink: 0;
 	}
 	.stepper__item--active .stepper__circle {
 		background-color: var(--color-lime);
@@ -467,6 +474,11 @@
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		color: var(--color-ink-soft);
+		text-align: center;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
 	}
 	.stepper__item--active .stepper__label { color: var(--color-ink); font-weight: 500; }
 	.stepper__line {
@@ -474,8 +486,28 @@
 		height: 1.5px;
 		background-color: var(--color-ink);
 		opacity: 0.2;
+		flex-shrink: 1;
+		min-width: 12px;
 	}
 	.stepper__line--done { opacity: 1; }
+
+	/* Mobile: shrink everything so 3 steps + 2 lines fit on one row */
+	@media (max-width: 480px) {
+		.stepper {
+			gap: var(--space-2);
+			margin-bottom: var(--space-8);
+		}
+		.stepper__circle {
+			width: 32px;
+			height: 32px;
+			font-size: 0.875rem;
+		}
+		.stepper__label {
+			font-size: 0.5625rem;
+			letter-spacing: 0.08em;
+		}
+		.stepper__line { width: auto; flex: 1 1 16px; }
+	}
 
 	/* ── Form ── */
 	.signup-form-container { padding-bottom: var(--space-16); }
@@ -641,6 +673,13 @@
 	}
 	.consent-item a { color: var(--color-green-deep); text-decoration: underline; text-underline-offset: 3px; }
 	.consent-error { margin-left: 32px; }
+	.consent-help {
+		display: block;
+		margin: var(--space-1) 0 var(--space-3) 32px;
+		font-size: 0.8125rem;
+		color: var(--color-ink-soft);
+		opacity: 0.85;
+	}
 
 	/* ── Navigation ── */
 	.form-nav {

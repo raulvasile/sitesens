@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { sanitizeSvg } from '$lib/sanitize';
 
 	interface SocialPlatform {
@@ -22,12 +23,6 @@
 			posts_heading?: string;
 			embed_fallback_text?: string;
 			variant?: 'full' | 'compact';
-			// legacy fallback
-			facebook_url?: string;
-			instagram_url?: string;
-			show_facebook?: boolean;
-			show_instagram?: boolean;
-			[key: string]: unknown;
 		};
 	}
 
@@ -37,43 +32,49 @@
 	const isCompact = $derived(data.variant === 'compact');
 	const showEmbeds = $derived(data.show_embeds === true);
 
-	// Prefer nou `platforms` din CMS; fallback la legacy facebook_url/instagram_url
-	const platforms = $derived.by<SocialPlatform[]>(() => {
-		if (data.platforms?.length) {
-			return [...data.platforms].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-		}
-		// Legacy fallback
-		const list: SocialPlatform[] = [];
-		if (data.show_facebook !== false && data.facebook_url) {
-			list.push({
-				name: 'Facebook',
-				handle: 'miscarea.sens',
-				url: data.facebook_url,
-				description: 'Știri, comunicate și discuții.',
-				color: '#1877f2',
-				follow_cta: 'Urmărește',
-			});
-		}
-		if (data.show_instagram !== false && data.instagram_url) {
-			const match = data.instagram_url.match(/instagram\.com\/([^/?]+)/);
-			list.push({
-				name: 'Instagram',
-				handle: match ? `@${match[1]}` : '@miscarea.sens',
-				url: data.instagram_url,
-				description: 'Imagini și povești din comunitate.',
-				color: '#E1306C',
-				follow_cta: 'Urmărește',
-			});
-		}
-		return list;
-	});
+	const platforms = $derived(
+		[...(data.platforms ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+	);
 
-	const embedPlatforms = $derived(platforms.filter((p) => p.embed_url));
+	function platformKey(name: string): string {
+		return (name ?? '').trim().toLowerCase();
+	}
+
+	function tiktokUsername(url: string): string | null {
+		const m = url.match(/tiktok\.com\/@([A-Za-z0-9._-]+)/);
+		return m ? m[1] : null;
+	}
+
+	type EmbedKind = 'tiktok-blockquote' | 'iframe' | 'none';
+
+	function embedKind(p: SocialPlatform): EmbedKind {
+		const key = platformKey(p.name);
+		if (key === 'facebook' || key === 'fb') return 'none';
+		if (key === 'tiktok') return tiktokUsername(p.url) ? 'tiktok-blockquote' : 'none';
+		return p.embed_url ? 'iframe' : 'none';
+	}
+
+	const embedPlatforms = $derived(
+		platforms.map((p) => ({ ...p, _kind: embedKind(p) })).filter((p) => p._kind !== 'none')
+	);
+
+	const hasTikTok = $derived(embedPlatforms.some((p) => p._kind === 'tiktok-blockquote'));
 
 	function embedFallback(platformName: string): string {
 		const tpl = data.embed_fallback_text ?? 'Deschide pe {platform}';
 		return tpl.replace('{platform}', platformName);
 	}
+
+	onMount(() => {
+		if (!hasTikTok || !showEmbeds) return;
+		const SRC = 'https://www.tiktok.com/embed.js';
+		const existing = document.querySelector<HTMLScriptElement>(`script[src="${SRC}"]`);
+		if (existing) existing.remove();
+		const s = document.createElement('script');
+		s.async = true;
+		s.src = SRC;
+		document.body.appendChild(s);
+	});
 </script>
 
 {#if platforms.length > 0}
@@ -128,20 +129,39 @@
 							<h4 style="--card-color: {platform.color ?? 'var(--color-green-deep)'}">
 								{platform.name}
 							</h4>
-							<iframe
-								src={platform.embed_url}
-								width="500"
-								height="600"
-								style="border:none;overflow:hidden"
-								scrolling="no"
-								frameborder="0"
-								title={`Feed ${platform.name}`}
-								loading="lazy"
-							></iframe>
-							<p class="social-feed__embed-fallback">
-								Nu se încarcă? <a href={platform.url} target="_blank" rel="noopener noreferrer">{embedFallback(platform.name)}</a>
-							</p>
+							{#if platform._kind === 'tiktok-blockquote'}
+								{@const username = tiktokUsername(platform.url)}
+								{#if username}
+									<blockquote
+										class="tiktok-embed"
+										cite={`https://www.tiktok.com/@${username}`}
+										data-unique-id={username}
+										data-embed-from="embed_page"
+										data-embed-type="creator"
+										style="max-width:780px; min-width:288px;"
+									>
+										<section>
+											<a target="_blank" rel="noopener noreferrer" href={`https://www.tiktok.com/@${username}?refer=creator_embed`}>
+												@{username}
+											</a>
+										</section>
+									</blockquote>
+								{/if}
+							{:else if platform._kind === 'iframe'}
+								<iframe
+									src={platform.embed_url}
+									width="500"
+									style="border:none;overflow:hidden"
+									scrolling="no"
+									frameborder="0"
+									title={`Feed ${platform.name}`}
+									loading="lazy"
+								></iframe>
+							{/if}
 						</div>
+						<p class="social-feed__embed-fallback">
+							Nu se încarcă? <a href={platform.url} target="_blank" rel="noopener noreferrer">{embedFallback(platform.name)}</a>
+						</p>
 					{/each}
 				</div>
 			</div>
@@ -308,11 +328,31 @@
 		color: var(--card-color);
 		margin-bottom: var(--space-3);
 	}
-	.social-feed__embed iframe {
-		max-width: 100%;
-		width: 100%;
+	.social-feed__embed {
+		--embed-height: 500px;
+		height: var(--embed-height);
+		max-height: var(--embed-height);
+		overflow: hidden;
 		background: white;
 		border: 1.5px solid var(--color-ink);
+		display: block;
+		width: 100%;
+	}
+	.social-feed__embed iframe {
+		display: block;
+		width: 100% !important;
+		height: 100% !important;
+		max-width: 100%;
+		border: none;
+	}
+	.social-feed__embed :global(.tiktok-embed),
+	.social-feed__embed :global(.tiktok-embed iframe) {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+		height: 100% !important;
+		max-height: 100% !important;
+		margin: 0 !important;
 	}
 	.social-feed__embed-fallback {
 		margin-top: var(--space-3);

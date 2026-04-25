@@ -1,4 +1,5 @@
 import type { PageLoad } from './$types';
+import { error } from '@sveltejs/kit';
 import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
 import { enrichDynamicZone } from '$lib/enrichDynamicZone';
 
@@ -21,6 +22,8 @@ export const load: PageLoad = async ({ url, fetch }) => {
 		// need explicit 'populate' per component type.
 		const res = await fetchStrapi<HomepageData>('/homepage', {
 			'populate[content][on][blocks.hero][populate]': '*',
+			'populate[content][on][blocks.hero-refined][populate]': '*',
+			'populate[content][on][blocks.hero-editorial][populate]': '*',
 			'populate[content][on][blocks.text-block][populate]': '*',
 			'populate[content][on][blocks.cta-banner][populate]': '*',
 			'populate[content][on][blocks.image-gallery][populate]': '*',
@@ -48,7 +51,10 @@ export const load: PageLoad = async ({ url, fetch }) => {
 		}
 
 		return { homepage };
-	} catch {
-		return { homepage: null };
+	} catch (err) {
+		// Surface the failure so the global +error.svelte page renders, instead
+		// of a blank homepage that silently hides Strapi being down.
+		const status = (err as { status?: number })?.status;
+		throw error(status && status >= 500 ? 503 : 500, 'Nu putem încărca pagina principală momentan.');
 	}
 };

@@ -100,4 +100,9 @@
 		color: var(--color-ink);
 		border-color: var(--color-cream);
 	}
+
+	/* mobile-tighten:.cta-banner */
+	@media (max-width: 767px) {
+		.cta-banner { padding-block: var(--space-10); }
+	}
 </style>

@@ -1,12 +1,24 @@
 {
   "collectionName": "components_social_features",
   "info": {
-    "displayName": "Feature social",
-    "icon": "star"
+    "displayName": "Funcție Feed Social",
+    "icon": "star",
+    "description": "Sub-componentă Feed Social: o caracteristică afișată pentru o platformă."
   },
   "attributes": {
-    "emoji": { "type": "string", "maxLength": 10 },
-    "title": { "type": "string", "required": true, "maxLength": 100 },
-    "description": { "type": "text", "required": true, "maxLength": 400 }
+    "emoji": {
+      "type": "string",
+      "maxLength": 10
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "maxLength": 400
+    }
   }
 }

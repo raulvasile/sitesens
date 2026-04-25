@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_stat_items",
   "info": {
-    "displayName": "Element Statistică",
-    "icon": "chartBubble"
+    "displayName": "Element statistică",
+    "icon": "chartBubble",
+    "description": "O statistică (număr + etichetă). Folosit în Counter Statistici."
   },
   "attributes": {
     "number": {

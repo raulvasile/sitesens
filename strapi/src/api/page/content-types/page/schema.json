@@ -4,8 +4,8 @@
   "info": {
     "singularName": "page",
     "pluralName": "pages",
-    "displayName": "📝 Pagini",
-    "description": "Pagini statice cu layout flexibil (Dynamic Zone)"
+    "displayName": "Pagini",
+    "description": "Pagini statice cu layout flexibil prin Dynamic Zone, accesibile la /[slug] (ex: /despre-noi)."
   },
   "options": {
     "draftAndPublish": true
@@ -25,6 +25,8 @@
       "type": "dynamiczone",
       "components": [
         "blocks.hero",
+        "blocks.hero-refined",
+        "blocks.hero-editorial",
         "blocks.text-block",
         "blocks.cta-banner",
         "blocks.image-gallery",
@@ -38,7 +40,13 @@
         "blocks.latest-articles",
         "blocks.upcoming-events",
         "blocks.contact-form",
-        "blocks.spacer"
+        "blocks.spacer",
+        "blocks.timeline",
+        "blocks.mission-band",
+        "blocks.chapters-grid",
+        "blocks.team-grid",
+        "blocks.page-header",
+        "blocks.romania-map"
       ]
     },
     "seo": {

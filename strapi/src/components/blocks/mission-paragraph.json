@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_blocks_mission_paragraphs",
+  "info": {
+    "displayName": "Paragraf misiune",
+    "icon": "quote",
+    "description": "Un paragraf din Bandă Misiune. Marchează cuvinte cu **cuvant** pentru evidențiere lime."
+  },
+  "attributes": {
+    "text": {
+      "type": "text",
+      "required": true,
+      "maxLength": 600
+    }
+  }
+}

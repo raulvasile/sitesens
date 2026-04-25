@@ -1,18 +1,50 @@
 {
   "collectionName": "components_social_platforms",
   "info": {
-    "displayName": "Platformă socială",
-    "icon": "share-alt"
+    "displayName": "Platformă Feed Social",
+    "icon": "share-alt",
+    "description": "Sub-componentă Feed Social: o platformă afișată în feed (Facebook, Instagram etc.)."
   },
   "attributes": {
-    "name": { "type": "string", "required": true, "maxLength": 60 },
-    "handle": { "type": "string", "maxLength": 100 },
-    "url": { "type": "string", "required": true, "maxLength": 300 },
-    "description": { "type": "text", "maxLength": 300 },
-    "color": { "type": "string", "regex": "^#[0-9A-Fa-f]{6}$", "default": "#0C5118" },
-    "embed_url": { "type": "string", "maxLength": 500 },
-    "icon_svg": { "type": "text", "maxLength": 5000 },
-    "follow_cta": { "type": "string", "default": "Urmărește", "maxLength": 60 },
-    "order": { "type": "integer", "default": 0 }
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 60
+    },
+    "handle": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "url": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 300
+    },
+    "color": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#0C5118"
+    },
+    "embed_url": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "icon_svg": {
+      "type": "text",
+      "maxLength": 5000
+    },
+    "follow_cta": {
+      "type": "string",
+      "default": "Urmărește",
+      "maxLength": 60
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
   }
 }

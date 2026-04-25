@@ -93,6 +93,10 @@
 	--navbar-height: 72px;
 }
 
+@media (min-width: 768px) {
+	:root { --navbar-height: 88px; }
+}
+
 /* --- Reset & Base --- */
 *,
 *::before,
@@ -485,6 +489,12 @@ img, video {
 }
 
 /* --- Accesibilitate --- */
+/* Suppress the default focus ring (mouse click leaves focus on buttons/links
+   in Safari and shows a UA outline). We re-add a lime outline only for
+   keyboard focus via :focus-visible — that's the actual a11y need. */
+:focus {
+	outline: none;
+}
 :focus-visible {
 	outline: 2.5px solid var(--color-lime);
 	outline-offset: 2px;

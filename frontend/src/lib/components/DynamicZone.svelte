@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Component } from 'svelte';
 	import Hero from './blocks/Hero.svelte';
+	import HeroRefined from './blocks/HeroRefined.svelte';
+	import HeroEditorial from './blocks/HeroEditorial.svelte';
 	import TextBlock from './blocks/TextBlock.svelte';
 	import CtaBanner from './blocks/CtaBanner.svelte';
 	import ImageGallery from './blocks/ImageGallery.svelte';
@@ -17,16 +19,44 @@
 	import Spacer from './blocks/Spacer.svelte';
 	import SocialFeed from './blocks/SocialFeed.svelte';
 	import WordCarousel from './blocks/WordCarousel.svelte';
+	import Timeline from './blocks/Timeline.svelte';
+	import MissionBand from './blocks/MissionBand.svelte';
+	import ChaptersGrid from './blocks/ChaptersGrid.svelte';
+	import TeamGrid from './blocks/TeamGrid.svelte';
+	import PageHeader from './blocks/PageHeader.svelte';
+	import RomaniaMap from './blocks/RomaniaMap.svelte';
 
 	interface Props {
 		content: Array<{ __component: string; [key: string]: unknown }>;
+		/** Alternate paper/cream background between consecutive blocks (homepage). */
+		zebra?: boolean;
 	}
 
-	let { content = [] }: Props = $props();
+	let { content = [], zebra = false }: Props = $props();
+
+	/**
+	 * Blocks that own a strong, opinionated background (dark green, lime, etc.)
+	 * — for these we let the block's own background show through and skip
+	 * applying any zebra tint on the slot.
+	 */
+	const HAS_OWN_BG = new Set([
+		'blocks.hero',
+		'blocks.hero-refined',
+		'blocks.hero-editorial',
+		'blocks.stats-counter',
+		'blocks.word-carousel',
+		'blocks.newsletter-cta',
+		'blocks.cta-banner',
+		'blocks.mission-band',
+		'blocks.chapters-grid',
+		'blocks.romania-map',
+	]);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const componentMap: Record<string, Component<any>> = {
 		'blocks.hero': Hero,
+		'blocks.hero-refined': HeroRefined,
+		'blocks.hero-editorial': HeroEditorial,
 		'blocks.text-block': TextBlock,
 		'blocks.cta-banner': CtaBanner,
 		'blocks.image-gallery': ImageGallery,
@@ -42,15 +72,50 @@
 		'blocks.contact-form': ContactForm,
 		'blocks.spacer': Spacer,
 		'blocks.social-feed': SocialFeed,
-		'blocks.word-carousel': WordCarousel
+		'blocks.word-carousel': WordCarousel,
+		'blocks.timeline': Timeline,
+		'blocks.mission-band': MissionBand,
+		'blocks.chapters-grid': ChaptersGrid,
+		'blocks.team-grid': TeamGrid,
+		'blocks.page-header': PageHeader,
+		'blocks.romania-map': RomaniaMap
 	};
 </script>
 
-{#each content as block (block.__component + JSON.stringify(block))}
-	{#if componentMap[block.__component]}
-		{@const BlockComponent = componentMap[block.__component]}
-		<BlockComponent data={block} />
-	{:else}
-		<!-- Block type "{block.__component}" not implemented yet -->
-	{/if}
-{/each}
+{#if zebra}
+	{#each content as block, i (block.__component + JSON.stringify(block))}
+		{#if componentMap[block.__component]}
+			{@const BlockComponent = componentMap[block.__component]}
+			{@const ownsBg = HAS_OWN_BG.has(block.__component)}
+			<div
+				class="dz-slot"
+				class:dz-slot--cream={!ownsBg && i % 2 === 1}
+				class:dz-slot--paper={!ownsBg && i % 2 === 0}
+			>
+				<BlockComponent data={block} />
+			</div>
+		{/if}
+	{/each}
+{:else}
+	{#each content as block (block.__component + JSON.stringify(block))}
+		{#if componentMap[block.__component]}
+			{@const BlockComponent = componentMap[block.__component]}
+			<BlockComponent data={block} />
+		{/if}
+	{/each}
+{/if}
+
+<style>
+	.dz-slot--paper {
+		background-color: var(--color-paper);
+	}
+	.dz-slot--cream {
+		background-color: var(--color-cream);
+	}
+	/* Neutralize the inner block's own paper background so the slot's tint
+	   shows through. Blocks listed in HAS_OWN_BG keep their explicit colors. */
+	.dz-slot--cream :global(> section),
+	.dz-slot--paper :global(> section) {
+		background-color: transparent !important;
+	}
+</style>

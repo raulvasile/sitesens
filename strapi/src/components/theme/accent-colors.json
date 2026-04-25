@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_theme_accent_colors",
+  "info": {
+    "displayName": "Culori Accent & Stare",
+    "icon": "alien",
+    "description": "Culori secundare pentru accente și stări (erori, avertismente)."
+  },
+  "attributes": {
+    "rose": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#EB9AAA",
+      "description": "Roz — chip-uri 'consultare', accente complementare"
+    },
+    "error": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#dc2626",
+      "description": "Roșu pentru erori în formulare și mesaje critice"
+    }
+  }
+}

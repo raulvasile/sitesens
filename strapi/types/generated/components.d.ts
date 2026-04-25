@@ -3,6 +3,7 @@ import type { Schema, Struct } from '@strapi/strapi';
 export interface BlocksAccordion extends Struct.ComponentSchema {
   collectionName: 'components_blocks_accordions';
   info: {
+    description: 'List\u0103 de \u00EEntreb\u0103ri frecvente sau sec\u021Biuni expandabile.';
     displayName: 'Acordeon';
     icon: 'bulletList';
   };
@@ -15,7 +16,8 @@ export interface BlocksAccordion extends Struct.ComponentSchema {
 export interface BlocksAccordionItem extends Struct.ComponentSchema {
   collectionName: 'components_blocks_accordion_items';
   info: {
-    displayName: 'Element Acordeon';
+    description: 'Un r\u00E2nd din acordeon (\u00EEntrebare + r\u0103spuns).';
+    displayName: 'Element acordeon';
     icon: 'list';
   };
   attributes: {
@@ -24,10 +26,36 @@ export interface BlocksAccordionItem extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksArticleStat extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_article_stats';
+  info: {
+    description: 'Bloc eviden\u021Biat \u00EEn pagina de \u0219tire cu un num\u0103r/procent + etichet\u0103 scurt\u0103 + paragraf de context.';
+    displayName: 'Statistic\u0103 articol';
+    icon: 'chartCircle';
+  };
+  attributes: {
+    context: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    value: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+  };
+}
+
 export interface BlocksCardGrid extends Struct.ComponentSchema {
   collectionName: 'components_blocks_card_grids';
   info: {
-    displayName: 'Gril\u0103 Carduri';
+    description: 'Gril\u0103 cu 2-4 coloane. Fiecare card are titlu, descriere, list\u0103 op\u021Bional\u0103 \u0219i link.';
+    displayName: 'Gril\u0103 de carduri';
     icon: 'apps';
   };
   attributes: {
@@ -41,11 +69,13 @@ export interface BlocksCardGrid extends Struct.ComponentSchema {
 export interface BlocksCardGridItem extends Struct.ComponentSchema {
   collectionName: 'components_blocks_card_grid_items';
   info: {
-    displayName: 'Element Card';
+    description: 'Card individual din Grila de carduri.';
+    displayName: 'Card';
     icon: 'apps';
   };
   attributes: {
     description: Schema.Attribute.Text;
+    details: Schema.Attribute.Blocks;
     icon: Schema.Attribute.String;
     image: Schema.Attribute.Media<'images'>;
     link_text: Schema.Attribute.String;
@@ -55,9 +85,74 @@ export interface BlocksCardGridItem extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksChapterItem extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_chapter_items';
+  info: {
+    description: 'Un ora\u0219/filial\u0103 cu cod op\u021Bional \u0219i URL. Folosit \u00EEn Gril\u0103 Filiale.';
+    displayName: 'Filial\u0103';
+    icon: 'pin';
+  };
+  attributes: {
+    code: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+  };
+}
+
+export interface BlocksChaptersGrid extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_chapters_grids';
+  info: {
+    description: 'Gril\u0103 ora\u0219e / filiale active pe fundal verde \u00EEnchis (stil Direction C).';
+    displayName: 'Gril\u0103 Filiale';
+    icon: 'globe';
+  };
+  attributes: {
+    background_color: Schema.Attribute.Enumeration<
+      ['green-dark', 'green-deep', 'ink']
+    > &
+      Schema.Attribute.DefaultTo<'green-dark'>;
+    cta_link: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    cta_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    items: Schema.Attribute.Component<'blocks.chapter-item', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Filiale active'>;
+  };
+}
+
 export interface BlocksContactForm extends Struct.ComponentSchema {
   collectionName: 'components_blocks_contact_forms';
   info: {
+    description: 'Formular de contact integrat \u00EEntr-o pagin\u0103.';
     displayName: 'Formular Contact';
     icon: 'envelop';
   };
@@ -70,10 +165,36 @@ export interface BlocksContactForm extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksCountyChapter extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_county_chapters';
+  info: {
+    description: 'Filiala asociat\u0103 unui jude\u021B. Folosit\u0103 \u00EEn Hart\u0103 Rom\u00E2nia pentru navigare. Codul trebuie s\u0103 corespund\u0103 codului ISO 3166-2:RO al jude\u021Bului (ex: CJ, TM, B, IS).';
+    displayName: 'Filial\u0103 pe jude\u021B';
+    icon: 'pin';
+  };
+  attributes: {
+    code: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 4;
+      }>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    url: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+  };
+}
+
 export interface BlocksCtaBanner extends Struct.ComponentSchema {
   collectionName: 'components_blocks_cta_banners';
   info: {
-    displayName: 'Banner Ac\u021Biune';
+    description: 'Band\u0103 cu titlu, descriere \u0219i buton \u2014 \u00EEndemn la ac\u021Biune.';
+    displayName: 'Band\u0103 CTA';
     icon: 'cursor';
   };
   attributes: {
@@ -91,8 +212,8 @@ export interface BlocksCtaBanner extends Struct.ComponentSchema {
 export interface BlocksFeaturedLink extends Struct.ComponentSchema {
   collectionName: 'components_blocks_featured_links';
   info: {
-    description: 'Card mic cu o info important\u0103 (ex: urm\u0103torul eveniment, anun\u021B)';
-    displayName: 'Link eviden\u021Biat';
+    description: 'Link mare eviden\u021Biat \u00EEn Hero (ex: anun\u021B urm\u0103torul eveniment). Sub-component\u0103 Hero.';
+    displayName: 'Link eviden\u021Biat (Hero)';
     icon: 'link';
   };
   attributes: {
@@ -116,7 +237,8 @@ export interface BlocksFeaturedLink extends Struct.ComponentSchema {
 export interface BlocksHero extends Struct.ComponentSchema {
   collectionName: 'components_blocks_heroes';
   info: {
-    displayName: 'Sec\u021Biune Hero';
+    description: "Hero principal (Direction C \u2014 paper, fotografie dreapta). Pentru alte stiluri folose\u0219te 'Hero \u2014 Refined' (foto full-bg) sau 'Hero \u2014 Manifesto' (titlu enorm editorial).";
+    displayName: 'Hero';
     icon: 'landscape';
   };
   attributes: {
@@ -144,10 +266,169 @@ export interface BlocksHero extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksHeroDirection extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_hero_directions';
+  info: {
+    description: 'Un punct din lista de 4 direc\u021Bii afi\u0219at\u0103 \u00EEn Hero varianta Editorial (cod + nume + descriere scurt\u0103).';
+    displayName: 'Direc\u021Bie Hero (Editorial)';
+    icon: 'list';
+  };
+  attributes: {
+    body: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    code: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 4;
+      }>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+  };
+}
+
+export interface BlocksHeroEditorial extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_hero_editorials';
+  info: {
+    description: 'Hero editorial cu titlu enorm tipografic, f\u0103r\u0103 fotografie. Sub titlu: lead+CTA, list\u0103 numerotat\u0103 cu direc\u021Bii \u0219i citat tilted. Inspirat din Direction B (Manifesto / Editorial).';
+    displayName: 'Hero \u2014 Manifesto';
+    icon: 'feather';
+  };
+  attributes: {
+    cta_link: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    cta_secondary_link: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    cta_secondary_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    cta_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    directions: Schema.Attribute.Component<'blocks.hero-direction', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 6;
+        },
+        number
+      >;
+    directions_kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Patru direc\u021Bii'>;
+    manifesto_kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Manifest'>;
+    manifesto_lead: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 600;
+      }>;
+    pull_quote_author_meta: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    pull_quote_author_name: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    pull_quote_author_photo: Schema.Attribute.Media<'images'>;
+    pull_quote_text: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    title_emphasis: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    top_meta_center: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    top_meta_left: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    top_meta_right: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+  };
+}
+
+export interface BlocksHeroRefined extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_hero_refineds';
+  info: {
+    description: 'Hero cu fotografie pe tot ecranul, text alb, accent verde-lime. Titlu mare \u00EEn st\u00E2nga, descriere \u0219i butoane \u00EEn dreapta. Inspirat din Direction A (Refined & Confident).';
+    displayName: 'Hero \u2014 Refined';
+    icon: 'picture';
+  };
+  attributes: {
+    background_image: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.Required;
+    cta_link: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    cta_secondary_link: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    cta_secondary_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    cta_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    title_italic_accent: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    top_meta_left: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    top_meta_right: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+  };
+}
+
 export interface BlocksImageGallery extends Struct.ComponentSchema {
   collectionName: 'components_blocks_image_galleries';
   info: {
-    displayName: 'Galerie Imagini';
+    description: 'Galerie cu mai multe imagini.';
+    displayName: 'Galerie de imagini';
     icon: 'picture';
   };
   attributes: {
@@ -161,7 +442,8 @@ export interface BlocksImageGallery extends Struct.ComponentSchema {
 export interface BlocksLatestArticles extends Struct.ComponentSchema {
   collectionName: 'components_blocks_latest_articles';
   info: {
-    displayName: 'Ultimele Articole';
+    description: 'List\u0103 auto-populat\u0103 cu cele mai recente articole din /stiri.';
+    displayName: 'Ultimele articole';
     icon: 'file';
   };
   attributes: {
@@ -183,10 +465,63 @@ export interface BlocksLatestArticles extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksMissionBand extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_mission_bands';
+  info: {
+    description: 'Band\u0103 cu fundal verde: kicker mono + titlu cu accent italic + paragrafe (cuvintele \u00EEntre ** devin lime).';
+    displayName: 'Band\u0103 Misiune';
+    icon: 'compass';
+  };
+  attributes: {
+    background_color: Schema.Attribute.Enumeration<
+      ['green-deep', 'green-dark', 'ink']
+    > &
+      Schema.Attribute.DefaultTo<'green-deep'>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    heading_italic: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Misiune'>;
+    paragraphs: Schema.Attribute.Component<'blocks.mission-paragraph', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+  };
+}
+
+export interface BlocksMissionParagraph extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_mission_paragraphs';
+  info: {
+    description: 'Un paragraf din Band\u0103 Misiune. Marcheaz\u0103 cuvinte cu **cuvant** pentru eviden\u021Biere lime.';
+    displayName: 'Paragraf misiune';
+    icon: 'quote';
+  };
+  attributes: {
+    text: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 600;
+      }>;
+  };
+}
+
 export interface BlocksNewsletterCta extends Struct.ComponentSchema {
   collectionName: 'components_blocks_newsletter_ctas';
   info: {
-    displayName: 'Abonare Newsletter';
+    description: 'Bloc cu formular abonare la newsletter (\u00EEnregistreaz\u0103 \u00EEn Abona\u021Bi Newsletter).';
+    displayName: 'CTA Newsletter';
     icon: 'envelop';
   };
   attributes: {
@@ -200,8 +535,8 @@ export interface BlocksNewsletterCta extends Struct.ComponentSchema {
 export interface BlocksNextEvent extends Struct.ComponentSchema {
   collectionName: 'components_blocks_next_events';
   info: {
-    description: 'Card care afi\u0219eaz\u0103 automat urm\u0103torul eveniment viitor';
-    displayName: 'Urm\u0103torul eveniment';
+    description: 'Sub-component\u0103 Hero care afi\u0219eaz\u0103 automat urm\u0103torul eveniment viitor.';
+    displayName: 'Urm\u0103torul eveniment (Hero)';
     icon: 'calendar-check';
   };
   attributes: {
@@ -235,14 +570,58 @@ export interface BlocksNextEvent extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksPageHeader extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_page_headers';
+  info: {
+    description: 'Antet pentru pagini interioare (Direction C): eyebrow mono + meta dreapta + titlu mare cu accent italic + lead, plus continuare op\u021Bional\u0103 cu eviden\u021Biere lime.';
+    displayName: 'Antet Pagin\u0103';
+    icon: 'header';
+  };
+  attributes: {
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'paper'>;
+    continuation: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    continuation_highlight: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    eyebrow: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    lead: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 600;
+      }>;
+    meta: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    title_italic: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+  };
+}
+
 export interface BlocksProgramItem extends Struct.ComponentSchema {
   collectionName: 'components_blocks_program_items';
   info: {
-    displayName: 'Punct Program';
+    description: 'Un punct din Programul partidului. Folosit \u00EEn Puncte Program.';
+    displayName: 'Element program';
     icon: 'seed';
   };
   attributes: {
     area: Schema.Attribute.String & Schema.Attribute.Required;
+    details: Schema.Attribute.Blocks;
     text: Schema.Attribute.Text & Schema.Attribute.Required;
   };
 }
@@ -250,6 +629,7 @@ export interface BlocksProgramItem extends Struct.ComponentSchema {
 export interface BlocksProgramPoints extends Struct.ComponentSchema {
   collectionName: 'components_blocks_program_points';
   info: {
+    description: 'List\u0103 de puncte din programul partidului, cu titlu pentru \u00EEntreaga sec\u021Biune.';
     displayName: 'Puncte Program';
     icon: 'seed';
   };
@@ -266,6 +646,7 @@ export interface BlocksProgramPoints extends Struct.ComponentSchema {
 export interface BlocksQuote extends Struct.ComponentSchema {
   collectionName: 'components_blocks_quotes';
   info: {
+    description: 'Bloc cu un citat mare \u0219i autor op\u021Bional.';
     displayName: 'Citat';
     icon: 'quote';
   };
@@ -276,11 +657,40 @@ export interface BlocksQuote extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksRomaniaMap extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_romania_maps';
+  info: {
+    description: 'Hart\u0103 interactiv\u0103 cu cele 42 jude\u021Be. Jude\u021Bele cu filial\u0103 setat\u0103 mai jos devin clickable \u0219i se coloreaz\u0103 verde; celelalte r\u0103m\u00E2n gri. Click pe un jude\u021B activ deschide URL-ul filialei.';
+    displayName: 'Hart\u0103 Rom\u00E2nia';
+    icon: 'globe';
+  };
+  attributes: {
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'paper'>;
+    chapters: Schema.Attribute.Component<'blocks.county-chapter', true>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'Pe harta Rom\u00E2niei.'>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Filiale'>;
+    subheading: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+  };
+}
+
 export interface BlocksSocialFeed extends Struct.ComponentSchema {
   collectionName: 'components_blocks_social_feeds';
   info: {
-    description: 'Sec\u021Biune urm\u0103re\u0219te-ne cu link-uri c\u0103tre re\u021Bele sociale';
-    displayName: 'Social Feed';
+    description: 'Feed cu post\u0103ri sau linkuri din social media.';
+    displayName: 'Feed Social';
     icon: 'globe';
   };
   attributes: {
@@ -289,8 +699,6 @@ export interface BlocksSocialFeed extends Struct.ComponentSchema {
         maxLength: 100;
       }> &
       Schema.Attribute.DefaultTo<'Deschide pe {platform}'>;
-    facebook_url: Schema.Attribute.String & Schema.Attribute.Private;
-    instagram_url: Schema.Attribute.String & Schema.Attribute.Private;
     platforms: Schema.Attribute.Component<'social.platform', true>;
     posts_heading: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
@@ -298,8 +706,6 @@ export interface BlocksSocialFeed extends Struct.ComponentSchema {
       }> &
       Schema.Attribute.DefaultTo<'Ultimele post\u0103ri'>;
     show_embeds: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    show_facebook: Schema.Attribute.Boolean & Schema.Attribute.Private;
-    show_instagram: Schema.Attribute.Boolean & Schema.Attribute.Private;
     subtitle: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 400;
@@ -317,7 +723,8 @@ export interface BlocksSocialFeed extends Struct.ComponentSchema {
 export interface BlocksSpacer extends Struct.ComponentSchema {
   collectionName: 'components_blocks_spacers';
   info: {
-    displayName: 'Spa\u021Biu';
+    description: 'Spa\u021Biu vertical configurabil \u00EEntre blocuri.';
+    displayName: 'Spa\u021Biator';
     icon: 'arrowDown';
   };
   attributes: {
@@ -329,7 +736,8 @@ export interface BlocksSpacer extends Struct.ComponentSchema {
 export interface BlocksStatItem extends Struct.ComponentSchema {
   collectionName: 'components_blocks_stat_items';
   info: {
-    displayName: 'Element Statistic\u0103';
+    description: 'O statistic\u0103 (num\u0103r + etichet\u0103). Folosit \u00EEn Counter Statistici.';
+    displayName: 'Element statistic\u0103';
     icon: 'chartBubble';
   };
   attributes: {
@@ -341,7 +749,8 @@ export interface BlocksStatItem extends Struct.ComponentSchema {
 export interface BlocksStatsCounter extends Struct.ComponentSchema {
   collectionName: 'components_blocks_stats_counters';
   info: {
-    displayName: 'Contor Statistici';
+    description: 'Band\u0103 cu mai multe statistici (num\u0103r mare + etichet\u0103).';
+    displayName: 'Counter Statistici';
     icon: 'chartBubble';
   };
   attributes: {
@@ -349,9 +758,52 @@ export interface BlocksStatsCounter extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksTeamGrid extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_team_grids';
+  info: {
+    description: 'Gril\u0103 auto-populat\u0103 cu membri din colec\u021Bia Echip\u0103 (filtru leadership op\u021Bional).';
+    displayName: 'Gril\u0103 Echip\u0103';
+    icon: 'user';
+  };
+  attributes: {
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'paper'>;
+    cta_link: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    cta_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Conducere'>;
+    limit: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 24;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<6>;
+    mode: Schema.Attribute.Enumeration<['leadership', 'team', 'all']> &
+      Schema.Attribute.DefaultTo<'leadership'>;
+  };
+}
+
 export interface BlocksTextBlock extends Struct.ComponentSchema {
   collectionName: 'components_blocks_text_blocks';
   info: {
+    description: 'Con\u021Binut text formatat (rich text) cu paragrafe, heading-uri, list\u0103, citat.';
     displayName: 'Bloc Text';
     icon: 'file';
   };
@@ -362,10 +814,76 @@ export interface BlocksTextBlock extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksTimeline extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_timelines';
+  info: {
+    description: 'List\u0103 cronologic\u0103 vertical\u0103 \u2014 parcursul organiza\u021Biei sau alt timeline.';
+    displayName: 'Parcurs (Timeline)';
+    icon: 'history';
+  };
+  attributes: {
+    background_color: Schema.Attribute.Enumeration<
+      ['cream', 'paper', 'green-deep', 'green-dark']
+    > &
+      Schema.Attribute.DefaultTo<'cream'>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'\u0218ase ani,'>;
+    heading_italic: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'f\u0103r\u0103 pauze.'>;
+    items: Schema.Attribute.Component<'blocks.timeline-item', true> &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Parcursul nostru'>;
+  };
+}
+
+export interface BlocksTimelineItem extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_timeline_items';
+  info: {
+    description: 'Un moment din Parcurs (an + descriere). Marcheaz\u0103 ultimul cu is_current pentru eviden\u021Biere.';
+    displayName: 'Element parcurs';
+    icon: 'calendar';
+  };
+  attributes: {
+    body: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    current_label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 30;
+      }> &
+      Schema.Attribute.DefaultTo<'ACUM'>;
+    is_current: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    year: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+  };
+}
+
 export interface BlocksUpcomingEvents extends Struct.ComponentSchema {
   collectionName: 'components_blocks_upcoming_events';
   info: {
-    displayName: 'Evenimente Viitoare';
+    description: 'List\u0103 auto-populat\u0103 cu urm\u0103toarele evenimente din /evenimente.';
+    displayName: 'Evenimente viitoare';
     icon: 'calendar';
   };
   attributes: {
@@ -390,7 +908,8 @@ export interface BlocksUpcomingEvents extends Struct.ComponentSchema {
 export interface BlocksVideoEmbed extends Struct.ComponentSchema {
   collectionName: 'components_blocks_video_embeds';
   info: {
-    displayName: 'Video \u00CEncorporat';
+    description: '\u00CEnglobare video YouTube / Vimeo prin URL.';
+    displayName: 'Embed video';
     icon: 'play';
   };
   attributes: {
@@ -402,8 +921,8 @@ export interface BlocksVideoEmbed extends Struct.ComponentSchema {
 export interface BlocksWordCarousel extends Struct.ComponentSchema {
   collectionName: 'components_blocks_word_carousels';
   info: {
-    description: 'Band\u0103 full-width cu cuvinte care se deruleaz\u0103 orizontal (marquee continuu)';
-    displayName: 'Carusel de cuvinte';
+    description: 'Carusel orizontal cu cuvinte mari care se rotesc (efect ticker).';
+    displayName: 'Carusel cuvinte';
     icon: 'arrowRight';
   };
   attributes: {
@@ -438,7 +957,8 @@ export interface BlocksWordCarousel extends Struct.ComponentSchema {
 export interface BlocksWordCarouselItem extends Struct.ComponentSchema {
   collectionName: 'components_blocks_word_carousel_items';
   info: {
-    displayName: 'Element carusel cuvinte';
+    description: 'Un cuv\u00E2nt din Carusel cuvinte.';
+    displayName: 'Cuv\u00E2nt carusel';
     icon: 'cursor';
   };
   attributes: {
@@ -455,8 +975,8 @@ export interface BlocksWordCarouselItem extends Struct.ComponentSchema {
 export interface BlocksWordRotation extends Struct.ComponentSchema {
   collectionName: 'components_blocks_word_rotations';
   info: {
-    description: 'Cuvinte care se rotesc \u00EEntr-o pozi\u021Bie din titlu (folose\u0219te {{rotating}} \u00EEn titlu)';
-    displayName: 'Rota\u021Bie cuvinte';
+    description: 'Sub-component\u0103 Hero \u2014 cuvinte care se schimb\u0103 automat \u00EEn titlu (folose\u0219te placeholder-ul {{rotating}}).';
+    displayName: 'Cuvinte rotative (Hero)';
     icon: 'refresh';
   };
   attributes: {
@@ -477,7 +997,8 @@ export interface BlocksWordRotation extends Struct.ComponentSchema {
 export interface DonatePresetAmount extends Struct.ComponentSchema {
   collectionName: 'components_donate_preset_amounts';
   info: {
-    displayName: 'Sum\u0103 presetat\u0103';
+    description: 'Una dintre sumele preset (ex: 10, 25, 50 RON) afi\u0219ate pe pagina de dona\u021Bii.';
+    displayName: 'Sum\u0103 predefinit\u0103';
     icon: 'coins';
   };
   attributes: {
@@ -499,6 +1020,7 @@ export interface DonatePresetAmount extends Struct.ComponentSchema {
 export interface DonateTransparencyItem extends Struct.ComponentSchema {
   collectionName: 'components_donate_transparency_items';
   info: {
+    description: 'O linie \u00EEn sec\u021Biunea de transparen\u021B\u0103 financiar\u0103 (etichet\u0103 + valoare).';
     displayName: 'Element transparen\u021B\u0103';
     icon: 'chart-pie';
   };
@@ -527,24 +1049,28 @@ export interface DonateTransparencyItem extends Struct.ComponentSchema {
 export interface EventSocialPost extends Struct.ComponentSchema {
   collectionName: 'components_event_social_posts';
   info: {
-    displayName: 'Postare Social';
+    description: 'Link c\u0103tre o postare social media legat\u0103 de un eveniment trecut (Facebook, Instagram etc.). Apare ca un card cu link \u00EEn pagina evenimentului.';
+    displayName: 'Postare social (Eveniment)';
     icon: 'message';
   };
   attributes: {
-    embed_text: Schema.Attribute.Text;
-    media: Schema.Attribute.Media<'images' | 'videos'>;
     platform: Schema.Attribute.Enumeration<
-      ['facebook', 'instagram', 'twitter', 'tiktok']
+      ['facebook', 'instagram', 'twitter', 'tiktok', 'youtube', 'linkedin']
     > &
       Schema.Attribute.Required;
-    post_url: Schema.Attribute.String & Schema.Attribute.Required;
+    url: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
   };
 }
 
 export interface FooterSocialLink extends Struct.ComponentSchema {
   collectionName: 'components_footer_social_links';
   info: {
-    displayName: 'Link Social';
+    description: 'Link c\u0103tre un cont social media afi\u0219at \u00EEn footer (cu etichet\u0103 vizibil\u0103).';
+    displayName: 'Link Social (Footer)';
     icon: 'link';
   };
   attributes: {
@@ -568,7 +1094,8 @@ export interface FooterSocialLink extends Struct.ComponentSchema {
 export interface FormConsentItem extends Struct.ComponentSchema {
   collectionName: 'components_form_consent_items';
   info: {
-    displayName: 'Consim\u021B\u0103m\u00E2nt';
+    description: 'Un checkbox de consim\u021B\u0103m\u00E2nt cu text (ex: GDPR, statut).';
+    displayName: 'Element consim\u021B\u0103m\u00E2nt';
     icon: 'check-square';
   };
   attributes: {
@@ -592,7 +1119,8 @@ export interface FormConsentItem extends Struct.ComponentSchema {
 export interface FormContactFormConfig extends Struct.ComponentSchema {
   collectionName: 'components_form_contact_form_configs';
   info: {
-    displayName: 'Configurare formular contact';
+    description: 'Etichete, placeholders \u0219i mesaje pentru formularul de contact.';
+    displayName: 'Configurare formular Contact';
     icon: 'envelope';
   };
   attributes: {
@@ -662,7 +1190,8 @@ export interface FormContactFormConfig extends Struct.ComponentSchema {
 export interface FormMembershipLabels extends Struct.ComponentSchema {
   collectionName: 'components_form_membership_labels';
   info: {
-    displayName: 'Etichete formular aderare';
+    description: 'Toate etichetele \u0219i texte pentru pa\u0219ii formularului de aderare.';
+    displayName: 'Etichete formular \u00CEnscriere';
     icon: 'user-plus';
   };
   attributes: {
@@ -767,7 +1296,8 @@ export interface FormMembershipLabels extends Struct.ComponentSchema {
 export interface FormNewsletterForm extends Struct.ComponentSchema {
   collectionName: 'components_form_newsletter_forms';
   info: {
-    displayName: 'Formular newsletter';
+    description: 'Etichete \u0219i mesaje pentru formularul de abonare la newsletter.';
+    displayName: 'Configurare formular Newsletter';
     icon: 'envelope';
   };
   attributes: {
@@ -822,6 +1352,7 @@ export interface FormNewsletterForm extends Struct.ComponentSchema {
 export interface FormNextStep extends Struct.ComponentSchema {
   collectionName: 'components_form_next_steps';
   info: {
+    description: 'Card cu pasul urm\u0103tor dup\u0103 trimiterea unui formular (titlu + descriere + link).';
     displayName: 'Pas urm\u0103tor';
     icon: 'arrow-right';
   };
@@ -841,6 +1372,7 @@ export interface FormNextStep extends Struct.ComponentSchema {
 export interface FormStep extends Struct.ComponentSchema {
   collectionName: 'components_form_steps';
   info: {
+    description: 'Un pas din formularul multi-step de \u00EEnscriere (titlu + descriere).';
     displayName: 'Pas formular';
     icon: 'list-ol';
   };
@@ -868,7 +1400,8 @@ export interface FormStep extends Struct.ComponentSchema {
 export interface FormSuccessSection extends Struct.ComponentSchema {
   collectionName: 'components_form_success_sections';
   info: {
-    displayName: 'Sec\u021Biune succes';
+    description: 'Mesaj afi\u0219at dup\u0103 trimiterea cu succes a unui formular.';
+    displayName: 'Sec\u021Biune Succes';
     icon: 'check-circle';
   };
   attributes: {
@@ -911,6 +1444,7 @@ export interface FormSuccessSection extends Struct.ComponentSchema {
 export interface FormValidationMessages extends Struct.ComponentSchema {
   collectionName: 'components_form_validation_messages';
   info: {
+    description: 'Texte pentru erori comune de validare (c\u00E2mp obligatoriu, email invalid etc.).';
     displayName: 'Mesaje validare';
     icon: 'exclamation-triangle';
   };
@@ -988,26 +1522,11 @@ export interface FormValidationMessages extends Struct.ComponentSchema {
   };
 }
 
-export interface HomepageValueCard extends Struct.ComponentSchema {
-  collectionName: 'components_homepage_value_cards';
-  info: {
-    displayName: 'Card Valoare';
-    icon: 'star';
-  };
-  attributes: {
-    description: Schema.Attribute.Text;
-    link_text: Schema.Attribute.String;
-    link_url: Schema.Attribute.String;
-    points: Schema.Attribute.Component<'homepage.value-point', true>;
-    short_text: Schema.Attribute.String;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
-  };
-}
-
 export interface HomepageValuePoint extends Struct.ComponentSchema {
   collectionName: 'components_homepage_value_points';
   info: {
-    displayName: 'Punct Valoare';
+    description: 'Un sub-punct din cardurile de valori sau din carduri program.';
+    displayName: 'Punct valoare';
     icon: 'check';
   };
   attributes: {
@@ -1018,7 +1537,8 @@ export interface HomepageValuePoint extends Struct.ComponentSchema {
 export interface NavigationMenuItem extends Struct.ComponentSchema {
   collectionName: 'components_navigation_menu_items';
   info: {
-    displayName: 'Element Meniu';
+    description: 'Element de nivel 1 din meniul de navigare. Poate avea sub-elemente.';
+    displayName: 'Element meniu';
     icon: 'layer';
   };
   attributes: {
@@ -1034,7 +1554,8 @@ export interface NavigationMenuItem extends Struct.ComponentSchema {
 export interface NavigationMenuSubItem extends Struct.ComponentSchema {
   collectionName: 'components_navigation_menu_sub_items';
   info: {
-    displayName: 'Sub-element Meniu';
+    description: 'Element de nivel 2 (dropdown) dintr-un Element meniu.';
+    displayName: 'Sub-element meniu';
     icon: 'arrowRight';
   };
   attributes: {
@@ -1043,39 +1564,10 @@ export interface NavigationMenuSubItem extends Struct.ComponentSchema {
   };
 }
 
-export interface SharedNewsletterSection extends Struct.ComponentSchema {
-  collectionName: 'components_shared_newsletter_sections';
-  info: {
-    displayName: 'Sec\u021Biune newsletter';
-    icon: 'newspaper';
-  };
-  attributes: {
-    description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 300;
-      }> &
-      Schema.Attribute.DefaultTo<'Prime\u0219te ultimele \u0219tiri \u0219i anun\u021Buri ale Partidului SENS direct \u00EEn inbox.'>;
-    placeholder: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }> &
-      Schema.Attribute.DefaultTo<'email@exemplu.ro'>;
-    submit_text: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 60;
-      }> &
-      Schema.Attribute.DefaultTo<'Aboneaz\u0103-te'>;
-    title: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 150;
-      }> &
-      Schema.Attribute.DefaultTo<'Aboneaz\u0103-te la newsletter'>;
-  };
-}
-
 export interface SharedSeo extends Struct.ComponentSchema {
   collectionName: 'components_shared_seos';
   info: {
+    description: 'Meta tags pentru SEO: titlu, descriere, imagine OG, URL canonic, no-index.';
     displayName: 'SEO';
     icon: 'search';
   };
@@ -1097,7 +1589,8 @@ export interface SharedSeo extends Struct.ComponentSchema {
 export interface SharedSocialLink extends Struct.ComponentSchema {
   collectionName: 'components_shared_social_links';
   info: {
-    displayName: 'Link Social';
+    description: 'Link c\u0103tre un cont social media al unui membru echip\u0103.';
+    displayName: 'Link Social (Membru echip\u0103)';
     icon: 'link';
   };
   attributes: {
@@ -1112,7 +1605,8 @@ export interface SharedSocialLink extends Struct.ComponentSchema {
 export interface SocialFeature extends Struct.ComponentSchema {
   collectionName: 'components_social_features';
   info: {
-    displayName: 'Feature social';
+    description: 'Sub-component\u0103 Feed Social: o caracteristic\u0103 afi\u0219at\u0103 pentru o platform\u0103.';
+    displayName: 'Func\u021Bie Feed Social';
     icon: 'star';
   };
   attributes: {
@@ -1136,7 +1630,8 @@ export interface SocialFeature extends Struct.ComponentSchema {
 export interface SocialPlatform extends Struct.ComponentSchema {
   collectionName: 'components_social_platforms';
   info: {
-    displayName: 'Platform\u0103 social\u0103';
+    description: 'Sub-component\u0103 Feed Social: o platform\u0103 afi\u0219at\u0103 \u00EEn feed (Facebook, Instagram etc.).';
+    displayName: 'Platform\u0103 Feed Social';
     icon: 'share-alt';
   };
   attributes: {
@@ -1176,29 +1671,117 @@ export interface SocialPlatform extends Struct.ComponentSchema {
   };
 }
 
+export interface ThemeAccentColors extends Struct.ComponentSchema {
+  collectionName: 'components_theme_accent_colors';
+  info: {
+    description: 'Culori secundare pentru accente \u0219i st\u0103ri (erori, avertismente).';
+    displayName: 'Culori Accent & Stare';
+    icon: 'alien';
+  };
+  attributes: {
+    error: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#dc2626'>;
+    rose: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#EB9AAA'>;
+  };
+}
+
+export interface ThemeBrandColors extends Struct.ComponentSchema {
+  collectionName: 'components_theme_brand_colors';
+  info: {
+    description: 'Paleta principal\u0103 de verzi a brandului SENS. Aceste culori dau identitatea vizual\u0103 \u2014 modific\u0103rile afecteaz\u0103 tot site-ul.';
+    displayName: 'Culori Brand';
+    icon: 'paint';
+  };
+  attributes: {
+    green_bright: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#6FD025'>;
+    green_dark: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#103229'>;
+    green_deep: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#0C5118'>;
+    green_mid: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#00BF63'>;
+    green_soft: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#5AB782'>;
+    lime: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#91FF00'>;
+    pastel_green: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#CCFFCC'>;
+  };
+}
+
+export interface ThemeSurfaceColors extends Struct.ComponentSchema {
+  collectionName: 'components_theme_surface_colors';
+  info: {
+    description: 'Culorile pentru fundaluri \u0219i suprafe\u021Be \u2014 paper (fundal principal), cream (carduri/sec\u021Biuni alternate), ink (text \u00EEnchis).';
+    displayName: 'Culori Suprafe\u021Be';
+    icon: 'stack';
+  };
+  attributes: {
+    cream: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#F5F1E8'>;
+    ink: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#0A1F10'>;
+    ink_soft: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#2A3B30'>;
+    paper: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#FAF7F0'>;
+  };
+}
+
+export interface ThemeTypography extends Struct.ComponentSchema {
+  collectionName: 'components_theme_typography';
+  info: {
+    description: 'Familii de fonturi folosite \u00EEn site. Acestea sunt nume CSS (font-family) \u2014 fonturile efective trebuie s\u0103 fie \u00EEnc\u0103rcate din Google Fonts \u00EEn app.html.';
+    displayName: 'Tipografie';
+    icon: 'typhon';
+  };
+  attributes: {
+    font_body: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<"'League Spartan', 'Inter', system-ui, sans-serif">;
+    font_display: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<"'Oswald', 'Arial Narrow', sans-serif">;
+    font_mono: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<"'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace">;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'blocks.accordion': BlocksAccordion;
       'blocks.accordion-item': BlocksAccordionItem;
+      'blocks.article-stat': BlocksArticleStat;
       'blocks.card-grid': BlocksCardGrid;
       'blocks.card-grid-item': BlocksCardGridItem;
+      'blocks.chapter-item': BlocksChapterItem;
+      'blocks.chapters-grid': BlocksChaptersGrid;
       'blocks.contact-form': BlocksContactForm;
+      'blocks.county-chapter': BlocksCountyChapter;
       'blocks.cta-banner': BlocksCtaBanner;
       'blocks.featured-link': BlocksFeaturedLink;
       'blocks.hero': BlocksHero;
+      'blocks.hero-direction': BlocksHeroDirection;
+      'blocks.hero-editorial': BlocksHeroEditorial;
+      'blocks.hero-refined': BlocksHeroRefined;
       'blocks.image-gallery': BlocksImageGallery;
       'blocks.latest-articles': BlocksLatestArticles;
+      'blocks.mission-band': BlocksMissionBand;
+      'blocks.mission-paragraph': BlocksMissionParagraph;
       'blocks.newsletter-cta': BlocksNewsletterCta;
       'blocks.next-event': BlocksNextEvent;
+      'blocks.page-header': BlocksPageHeader;
       'blocks.program-item': BlocksProgramItem;
       'blocks.program-points': BlocksProgramPoints;
       'blocks.quote': BlocksQuote;
+      'blocks.romania-map': BlocksRomaniaMap;
       'blocks.social-feed': BlocksSocialFeed;
       'blocks.spacer': BlocksSpacer;
       'blocks.stat-item': BlocksStatItem;
       'blocks.stats-counter': BlocksStatsCounter;
+      'blocks.team-grid': BlocksTeamGrid;
       'blocks.text-block': BlocksTextBlock;
+      'blocks.timeline': BlocksTimeline;
+      'blocks.timeline-item': BlocksTimelineItem;
       'blocks.upcoming-events': BlocksUpcomingEvents;
       'blocks.video-embed': BlocksVideoEmbed;
       'blocks.word-carousel': BlocksWordCarousel;
@@ -1216,15 +1799,17 @@ declare module '@strapi/strapi' {
       'form.step': FormStep;
       'form.success-section': FormSuccessSection;
       'form.validation-messages': FormValidationMessages;
-      'homepage.value-card': HomepageValueCard;
       'homepage.value-point': HomepageValuePoint;
       'navigation.menu-item': NavigationMenuItem;
       'navigation.menu-sub-item': NavigationMenuSubItem;
-      'shared.newsletter-section': SharedNewsletterSection;
       'shared.seo': SharedSeo;
       'shared.social-link': SharedSocialLink;
       'social.feature': SocialFeature;
       'social.platform': SocialPlatform;
+      'theme.accent-colors': ThemeAccentColors;
+      'theme.brand-colors': ThemeBrandColors;
+      'theme.surface-colors': ThemeSurfaceColors;
+      'theme.typography': ThemeTypography;
     }
   }
 }

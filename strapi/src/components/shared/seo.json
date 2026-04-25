@@ -2,7 +2,8 @@
   "collectionName": "components_shared_seos",
   "info": {
     "displayName": "SEO",
-    "icon": "search"
+    "icon": "search",
+    "description": "Meta tags pentru SEO: titlu, descriere, imagine OG, URL canonic, no-index."
   },
   "attributes": {
     "meta_title": {
@@ -16,7 +17,9 @@
     "og_image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "canonical_url": {
       "type": "string"

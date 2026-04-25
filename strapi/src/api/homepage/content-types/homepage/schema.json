@@ -4,8 +4,8 @@
   "info": {
     "singularName": "homepage",
     "pluralName": "homepages",
-    "displayName": "⚙️ Homepage",
-    "description": "Conținutul paginii principale — page builder cu Dynamic Zone"
+    "displayName": "Pagină Principală",
+    "description": "Conținutul paginii / (homepage). Construită cu Dynamic Zone."
   },
   "options": {
     "draftAndPublish": true
@@ -16,6 +16,8 @@
       "type": "dynamiczone",
       "components": [
         "blocks.hero",
+        "blocks.hero-refined",
+        "blocks.hero-editorial",
         "blocks.text-block",
         "blocks.cta-banner",
         "blocks.image-gallery",
@@ -31,7 +33,13 @@
         "blocks.contact-form",
         "blocks.spacer",
         "blocks.social-feed",
-        "blocks.word-carousel"
+        "blocks.word-carousel",
+        "blocks.timeline",
+        "blocks.mission-band",
+        "blocks.chapters-grid",
+        "blocks.team-grid",
+        "blocks.page-header",
+        "blocks.romania-map"
       ]
     },
     "seo": {

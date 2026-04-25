@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_blocks_romania_maps",
+  "info": {
+    "displayName": "Hartă România",
+    "icon": "globe",
+    "description": "Hartă interactivă cu cele 42 județe. Județele cu filială setată mai jos devin clickable și se colorează verde; celelalte rămân gri. Click pe un județ activ deschide URL-ul filialei."
+  },
+  "attributes": {
+    "kicker": {
+      "type": "string",
+      "default": "Filiale",
+      "maxLength": 80
+    },
+    "heading": {
+      "type": "string",
+      "required": true,
+      "default": "Pe harta României.",
+      "maxLength": 200
+    },
+    "subheading": {
+      "type": "text",
+      "maxLength": 400
+    },
+    "chapters": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blocks.county-chapter"
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": ["paper", "cream"],
+      "default": "paper"
+    }
+  }
+}

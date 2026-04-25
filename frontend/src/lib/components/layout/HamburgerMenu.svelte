@@ -66,7 +66,7 @@
 	>
 		<div class="hamburger-menu__header">
 			<a href="/" class="hamburger-menu__logo" onclick={handleLinkClick}>
-				<img src={logoUrl} alt="SENS" height="28" />
+				<img src={logoUrl} alt="SENS" height="28" decoding="async" />
 			</a>
 			<button class="hamburger-menu__close" aria-label="Închide meniul" onclick={closeMenu}>
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -209,8 +209,12 @@
 		z-index: 201;
 		display: flex;
 		flex-direction: column;
-		overflow-y: auto;
+		overflow: hidden;
 		animation: slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.hamburger-menu__header {
+		flex-shrink: 0;
 	}
 
 	.hamburger-menu--out {
@@ -259,17 +263,27 @@
 		color: var(--color-cream);
 		cursor: pointer;
 		padding: var(--space-2);
-		transition: background-color var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
+		-webkit-tap-highlight-color: transparent;
+		transition: transform var(--transition-fast), color var(--transition-fast);
 	}
 
-	.hamburger-menu__close:hover {
-		background-color: rgba(145, 255, 0, 0.1);
-		color: var(--color-lime);
-		transform: rotate(90deg);
+	@media (hover: hover) {
+		.hamburger-menu__close:hover {
+			color: var(--color-lime);
+			transform: rotate(90deg);
+		}
+	}
+
+	.hamburger-menu__close:focus-visible {
+		outline: 2px solid var(--color-lime);
+		outline-offset: 2px;
 	}
 
 	.hamburger-menu__nav {
-		flex: 1;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		padding: var(--space-6) var(--space-8);
 		display: flex;
 		flex-direction: column;
@@ -362,8 +376,10 @@
 	}
 
 	.hamburger-menu__footer {
-		padding: var(--space-8);
+		flex-shrink: 0;
+		padding: var(--space-6) var(--space-8) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
 		border-top: 1px solid rgba(145, 255, 0, 0.15);
+		background-color: var(--color-green-deep);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);

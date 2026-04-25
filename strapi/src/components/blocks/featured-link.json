@@ -1,9 +1,9 @@
 {
   "collectionName": "components_blocks_featured_links",
   "info": {
-    "displayName": "Link evidențiat",
+    "displayName": "Link evidențiat (Hero)",
     "icon": "link",
-    "description": "Card mic cu o info importantă (ex: următorul eveniment, anunț)"
+    "description": "Link mare evidențiat în Hero (ex: anunț următorul eveniment). Sub-componentă Hero."
   },
   "attributes": {
     "label": {

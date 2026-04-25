@@ -1,26 +1,27 @@
 {
   "collectionName": "components_event_social_posts",
   "info": {
-    "displayName": "Postare Social",
-    "icon": "message"
+    "displayName": "Postare social (Eveniment)",
+    "icon": "message",
+    "description": "Link către o postare social media legată de un eveniment trecut (Facebook, Instagram etc.). Apare ca un card cu link în pagina evenimentului."
   },
   "attributes": {
     "platform": {
       "type": "enumeration",
-      "enum": ["facebook", "instagram", "twitter", "tiktok"],
+      "enum": [
+        "facebook",
+        "instagram",
+        "twitter",
+        "tiktok",
+        "youtube",
+        "linkedin"
+      ],
       "required": true
     },
-    "post_url": {
+    "url": {
       "type": "string",
-      "required": true
-    },
-    "embed_text": {
-      "type": "text"
-    },
-    "media": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images", "videos"]
+      "required": true,
+      "maxLength": 500
     }
   }
 }

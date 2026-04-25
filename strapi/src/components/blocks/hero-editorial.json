@@ -1,0 +1,84 @@
+{
+  "collectionName": "components_blocks_hero_editorials",
+  "info": {
+    "displayName": "Hero — Manifesto",
+    "icon": "feather",
+    "description": "Hero editorial cu titlu enorm tipografic, fără fotografie. Sub titlu: lead+CTA, listă numerotată cu direcții și citat tilted. Inspirat din Direction B (Manifesto / Editorial)."
+  },
+  "attributes": {
+    "top_meta_left": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "top_meta_center": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "top_meta_right": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "title_emphasis": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "manifesto_kicker": {
+      "type": "string",
+      "default": "Manifest",
+      "maxLength": 80
+    },
+    "manifesto_lead": {
+      "type": "text",
+      "maxLength": 600
+    },
+    "cta_text": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "cta_link": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "cta_secondary_text": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "cta_secondary_link": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "directions_kicker": {
+      "type": "string",
+      "default": "Patru direcții",
+      "maxLength": 80
+    },
+    "directions": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blocks.hero-direction",
+      "max": 6
+    },
+    "pull_quote_text": {
+      "type": "text",
+      "maxLength": 400
+    },
+    "pull_quote_author_name": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "pull_quote_author_meta": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "pull_quote_author_photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

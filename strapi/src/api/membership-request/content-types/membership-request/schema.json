@@ -4,8 +4,8 @@
   "info": {
     "singularName": "membership-request",
     "pluralName": "membership-requests",
-    "displayName": "👥 Cerere Aderare",
-    "description": "Cereri de aderare la Partidul SENS"
+    "displayName": "Cereri de Aderare",
+    "description": "Cereri primite din formularul /inscrie-te. Read-only din admin (înregistrate prin POST)."
   },
   "options": {
     "draftAndPublish": false
@@ -83,7 +83,11 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["pending", "approved", "rejected"],
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
       "default": "pending",
       "required": true
     },

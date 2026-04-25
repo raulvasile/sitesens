@@ -1,9 +1,9 @@
 {
   "collectionName": "components_blocks_word_carousels",
   "info": {
-    "displayName": "Carusel de cuvinte",
+    "displayName": "Carusel cuvinte",
     "icon": "arrowRight",
-    "description": "Bandă full-width cu cuvinte care se derulează orizontal (marquee continuu)"
+    "description": "Carusel orizontal cu cuvinte mari care se rotesc (efect ticker)."
   },
   "attributes": {
     "items": {
@@ -20,7 +20,12 @@
     },
     "background_color": {
       "type": "enumeration",
-      "enum": ["green", "dark", "white", "lime"],
+      "enum": [
+        "green",
+        "dark",
+        "white",
+        "lime"
+      ],
       "default": "green"
     },
     "separator": {

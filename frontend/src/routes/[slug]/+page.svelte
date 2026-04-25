@@ -2,6 +2,7 @@
 	import { page as pageState } from '$app/state';
 	import DynamicZone from '$lib/components/DynamicZone.svelte';
 	import SeoHead from '$lib/components/SeoHead.svelte';
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 
 	let { data } = $props();
 	const page = $derived(data.page);
@@ -56,6 +57,10 @@
 
 {#if hasTabs}
 	<!-- Pagina are secțiuni → afișare cu tab-uri -->
+	<div class="container page-breadcrumb">
+		<Breadcrumb items={[{ label: page.title }]} />
+	</div>
+
 	{#if page.content?.length}
 		<DynamicZone content={page.content} />
 	{/if}
@@ -79,10 +84,20 @@
 	</div>
 {:else}
 	<!-- Pagina simplă → Dynamic Zone direct -->
+	<div class="container page-breadcrumb">
+		<Breadcrumb items={[{ label: page.title }]} />
+	</div>
 	<DynamicZone content={page.content ?? []} />
 {/if}
 
 <style>
+	.page-breadcrumb {
+		/* Match the spacing other top-level pages use for their breadcrumb
+		   (see /comunitate, /contact: padding-block var(--space-10) var(--space-4)). */
+		padding-top: var(--space-10);
+		padding-bottom: var(--space-4);
+	}
+
 	.tabbed-page {
 		padding-block: var(--space-8);
 	}

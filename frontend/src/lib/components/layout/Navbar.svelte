@@ -58,7 +58,7 @@
 
 		<!-- Logo centrat pe mobile, stânga pe desktop -->
 		<a href="/" class="navbar__logo" aria-label="SENS — Acasă">
-			<img src={logoUrl} alt="Partidul SENS" height="32" />
+			<img src={logoUrl} alt="Partidul SENS" height="32" decoding="async" fetchpriority="high" />
 		</a>
 
 		<!-- Desktop: linkuri navigare din CMS -->
@@ -166,11 +166,25 @@
 		display: flex;
 		align-items: center;
 		gap: var(--space-6);
+		position: relative;
 	}
 
 	.navbar__logo img {
 		height: 36px;
 		width: auto;
+		display: block;
+	}
+
+	/* On mobile: center the logo against the viewport (not the flex flow,
+	   which would shift it off-center because of the hamburger on the left). */
+	@media (max-width: 767px) {
+		.navbar__logo {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			pointer-events: auto;
+		}
 	}
 
 	.navbar__hamburger {
@@ -228,8 +242,11 @@
 		background: none;
 		border: none;
 		cursor: pointer;
-		padding-bottom: 4px;
+		padding: 4px 0;
 		border-bottom: 1.5px solid transparent;
+		line-height: 1;
+		display: inline-flex;
+		align-items: center;
 	}
 
 	.navbar__dropdown-trigger {
@@ -307,9 +324,11 @@
 		font-weight: 400;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
-		padding-bottom: 4px;
+		padding: 4px 0;
 		border-bottom: 1.5px solid transparent;
 		transition: color var(--transition-fast), border-color var(--transition-fast);
+		align-items: center;
+		line-height: 1;
 	}
 
 	.navbar__secondary-link:hover {
@@ -321,13 +340,25 @@
 		display: none;
 		font-size: 0.75rem;
 		padding: 0.5rem 1.125rem;
+		line-height: 1;
+		align-items: center;
 	}
 
 	@media (min-width: 768px) {
+		/* Larger header on desktop — see also --navbar-height in app.css. */
 		.navbar__hamburger { display: none; }
-		.navbar__links { display: flex; }
-		.navbar__cta { display: inline-flex; }
-		.navbar__secondary-link { display: inline-flex; }
+		.navbar__links { display: flex; gap: var(--space-10); }
+		.navbar__cta {
+			display: inline-flex;
+			font-size: 0.8125rem;
+			padding: 0.625rem 1.25rem;
+		}
+		.navbar__secondary-link {
+			display: inline-flex;
+			font-size: 0.9375rem;
+		}
+		.navbar__link { font-size: 0.9375rem; }
+		.navbar__logo img { height: 44px; }
 
 		.navbar__logo {
 			margin-right: var(--space-6);
@@ -336,5 +367,17 @@
 		.navbar__actions {
 			margin-left: auto;
 		}
+	}
+
+	@media (min-width: 1280px) {
+		.navbar__link,
+		.navbar__secondary-link {
+			font-size: 1rem;
+		}
+		.navbar__cta {
+			font-size: 0.875rem;
+			padding: 0.6875rem 1.5rem;
+		}
+		.navbar__logo img { height: 48px; }
 	}
 </style>

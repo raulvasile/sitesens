@@ -1,4 +1,5 @@
 import type { PageLoad } from './$types';
+import { error } from '@sveltejs/kit';
 import { fetchStrapi, getPreviewStatus } from '$lib/strapi';
 
 export interface ContactFormConfig {
@@ -20,6 +21,8 @@ export interface ContactPageData {
 	id: number;
 	title: string;
 	subtitle: string | null;
+	header_eyebrow?: string;
+	form_kicker?: string;
 	email: string;
 	address: string | null;
 	schedule: string | null;
@@ -50,19 +53,8 @@ export const load: PageLoad = async ({ url, fetch }) => {
 			...previewParams,
 		}, undefined, fetch);
 		return { contactPage: res.data };
-	} catch {
-		return {
-			contactPage: {
-				id: 0,
-				title: 'Contact',
-				subtitle: null,
-				email: 'contact@partidulsens.ro',
-				address: null,
-				schedule: null,
-				newsletter_title: null,
-				newsletter_description: null,
-				seo: null
-			} as ContactPageData
-		};
+	} catch (err) {
+		const status = (err as { status?: number })?.status;
+		throw error(status && status >= 500 ? 503 : 500, 'Nu putem încărca pagina de Contact momentan.');
 	}
 };

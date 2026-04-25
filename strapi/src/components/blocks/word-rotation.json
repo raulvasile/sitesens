@@ -1,9 +1,9 @@
 {
   "collectionName": "components_blocks_word_rotations",
   "info": {
-    "displayName": "Rotație cuvinte",
+    "displayName": "Cuvinte rotative (Hero)",
     "icon": "refresh",
-    "description": "Cuvinte care se rotesc într-o poziție din titlu (folosește {{rotating}} în titlu)"
+    "description": "Sub-componentă Hero — cuvinte care se schimbă automat în titlu (folosește placeholder-ul {{rotating}})."
   },
   "attributes": {
     "words": {

@@ -70,6 +70,8 @@
 								src={getStrapiMediaUrl(article.cover_image.url)}
 								alt={article.cover_image.alternativeText ?? article.title}
 								class="latest-articles__image"
+								loading="lazy"
+								decoding="async"
 							/>
 						{:else}
 							<div class="latest-articles__image-placeholder"></div>
@@ -306,5 +308,10 @@
 	@keyframes shimmer {
 		0% { background-position: 200% 0; }
 		100% { background-position: -200% 0; }
+	}
+
+	/* mobile-tighten:.latest-articles */
+	@media (max-width: 767px) {
+		.latest-articles { padding-block: var(--space-10); }
 	}
 </style>

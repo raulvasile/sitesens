@@ -1,0 +1,36 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_themes",
+  "info": {
+    "singularName": "site-theme",
+    "pluralName": "site-themes",
+    "displayName": "Tema Site",
+    "description": "Variabilele CSS globale (culori, tipografie). Modificările aici se aplică pe tot site-ul. Lasă câmpuri goale pentru a folosi valorile implicite."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "brand": {
+      "type": "component",
+      "repeatable": false,
+      "component": "theme.brand-colors"
+    },
+    "surfaces": {
+      "type": "component",
+      "repeatable": false,
+      "component": "theme.surface-colors"
+    },
+    "accents": {
+      "type": "component",
+      "repeatable": false,
+      "component": "theme.accent-colors"
+    },
+    "typography": {
+      "type": "component",
+      "repeatable": false,
+      "component": "theme.typography"
+    }
+  }
+}

@@ -2,7 +2,8 @@
   "collectionName": "components_blocks_text_blocks",
   "info": {
     "displayName": "Bloc Text",
-    "icon": "file"
+    "icon": "file",
+    "description": "Conținut text formatat (rich text) cu paragrafe, heading-uri, listă, citat."
   },
   "attributes": {
     "body": {
@@ -10,7 +11,11 @@
     },
     "alignment": {
       "type": "enumeration",
-      "enum": ["left", "center", "right"],
+      "enum": [
+        "left",
+        "center",
+        "right"
+      ],
       "default": "left"
     }
   }

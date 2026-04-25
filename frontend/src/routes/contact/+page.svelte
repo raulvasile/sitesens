@@ -3,10 +3,13 @@
 	import { toasts } from '$lib/stores/toast';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
+	import SocialIcon from '$lib/components/ui/SocialIcon.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const cp = $derived(data.contactPage);
+	/** Single source of truth for social links — comes from Strapi Footer. */
+	const socialLinks = $derived(data.footer?.social_links ?? []);
 
 	let formName = $state('');
 	let formEmail = $state('');
@@ -22,8 +25,6 @@
 		e.preventDefault();
 		sending = true;
 		try {
-			// Send as email via mailto fallback — Strapi doesn't have a contact-message type yet
-			// For now, open mailto: link with pre-filled data
 			const subject = encodeURIComponent(formSubject || 'Mesaj de pe site');
 			const body = encodeURIComponent(
 				`Nume: ${formName}\nEmail: ${formEmail}\n\n${formMessage}`
@@ -72,20 +73,35 @@
 />
 
 <div class="container page-header">
-	<Breadcrumb items={[{ label: 'Contact' }]} />
-	<h1>{cp.title}</h1>
+	<Breadcrumb items={[{ label: cp.title }]} />
+	{#if cp.header_eyebrow}
+		<div class="page-header__bar">
+			<span class="page-header__eyebrow">— {cp.header_eyebrow}</span>
+		</div>
+	{/if}
+	<h1 class="page-header__title">{cp.title}</h1>
 	{#if cp.subtitle}
-		<p class="page-subtitle">{cp.subtitle}</p>
+		<p class="page-header__lead">{cp.subtitle}</p>
 	{/if}
 </div>
 
 <div class="container contact-layout">
 	<!-- ═══════ FORMULAR ═══════ -->
 	<section class="contact-form-section">
-		<h2>{cp.form_title ?? 'Trimite-ne un mesaj'}</h2>
+		<div class="contact-form-section__head">
+			{#if cp.form_kicker}
+				<span class="contact-form-section__kicker">— {cp.form_kicker}</span>
+			{/if}
+			<h2 class="contact-form-section__title">{cp.form_title ?? 'Trimite-ne un mesaj'}</h2>
+		</div>
+
 		{#if sent}
 			<div class="success-message">
-				<span class="success-icon">✓</span>
+				<span class="success-icon" aria-hidden="true">
+					<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="20 6 9 17 4 12" />
+					</svg>
+				</span>
 				<p>{cp.form?.success_message ?? `Clientul de email a fost deschis. Dacă nu s-a deschis automat, ne poți contacta direct la`} <a href="mailto:{cp.email}">{cp.email}</a>.</p>
 			</div>
 		{:else}
@@ -131,8 +147,9 @@
 						placeholder={cp.form?.message_placeholder ?? 'Scrie-ne mesajul tău...'}
 					></textarea>
 				</div>
-				<button type="submit" class="btn btn-primary" disabled={sending}>
+				<button type="submit" class="btn-submit" disabled={sending}>
 					{sending ? (cp.form?.submitting_text ?? 'Se trimite...') : (cp.form?.submit_text ?? 'Trimite mesajul')}
+					<span aria-hidden="true">→</span>
 				</button>
 			</form>
 		{/if}
@@ -140,49 +157,47 @@
 
 	<!-- ═══════ DATE CONTACT ═══════ -->
 	<aside class="contact-info">
-		<h2>{cp.info_heading ?? 'Date de contact'}</h2>
 		<div class="info-card">
-			<div class="info-item">
-				<span class="info-icon">📧</span>
-				<div>
-					<strong>Email</strong>
-					<a href="mailto:{cp.email}">{cp.email}</a>
-				</div>
+			<span class="info-card__kicker">— {cp.info_heading ?? 'Date de contact'}</span>
+
+			<div class="info-row">
+				<span class="info-row__label">Email</span>
+				<a class="info-row__link" href="mailto:{cp.email}">{cp.email}</a>
 			</div>
+
 			{#if cp.address}
-				<div class="info-item">
-					<span class="info-icon">📍</span>
-					<div>
-						<strong>Adresă sediu</strong>
-						<p>{cp.address}</p>
-					</div>
+				<div class="info-row">
+					<span class="info-row__label">Adresă sediu</span>
+					<p class="info-row__text">{cp.address}</p>
 				</div>
 			{/if}
+
 			{#if cp.schedule}
-				<div class="info-item">
-					<span class="info-icon">🕒</span>
-					<div>
-						<strong>Program</strong>
-						<p>{cp.schedule}</p>
-					</div>
+				<div class="info-row">
+					<span class="info-row__label">Program</span>
+					<p class="info-row__text">{cp.schedule}</p>
 				</div>
 			{/if}
 		</div>
 
-		<div class="social-links-box">
-			<h3>{cp.social_heading ?? 'Urmărește-ne'}</h3>
-			<div class="social-icons">
-				<a href="https://facebook.com/partidulsens" target="_blank" rel="noopener" aria-label="Facebook">
-					<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-				</a>
-				<a href="https://instagram.com/partidulsens" target="_blank" rel="noopener" aria-label="Instagram">
-					<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-				</a>
-				<a href="https://twitter.com/partidulsens" target="_blank" rel="noopener" aria-label="X (Twitter)">
-					<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-				</a>
+		{#if socialLinks.length > 0}
+			<div class="social-card">
+				<span class="social-card__kicker">— {cp.social_heading ?? 'Urmărește-ne'}</span>
+				<div class="social-card__icons">
+					{#each socialLinks as link}
+						<a
+							href={link.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={link.label}
+							class="social-card__btn"
+						>
+							<SocialIcon platform={link.platform} size={20} />
+						</a>
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/if}
 	</aside>
 </div>
 
@@ -190,7 +205,8 @@
 <section class="newsletter-contact">
 	<div class="container newsletter-contact__inner">
 		<div class="newsletter-contact__text">
-			<h2>{cp.newsletter_title ?? 'Abonează-te la newsletter'}</h2>
+			<span class="newsletter-contact__kicker">— Newsletter</span>
+			<h2 class="newsletter-contact__title">{cp.newsletter_title ?? 'Abonează-te la newsletter'}</h2>
 			{#if cp.newsletter_description}
 				<p>{cp.newsletter_description}</p>
 			{:else}
@@ -206,36 +222,46 @@
 				aria-label="Email pentru newsletter"
 				class="newsletter-contact__input"
 			/>
-			<button type="submit" class="btn btn-primary" disabled={nlSending}>
+			<button type="submit" class="newsletter-contact__btn" disabled={nlSending}>
 				{nlSending ? 'Se abonează...' : 'Abonează-te'}
+				<span aria-hidden="true">→</span>
 			</button>
 		</form>
 	</div>
 </section>
 
 <style>
+	/* ── Page header (Direction C) ── */
 	.page-header {
 		padding-top: var(--space-10);
 		padding-bottom: var(--space-4);
 	}
-
-	.page-header h1 {
-		font-family: var(--font-display);
-		font-size: clamp(2.5rem, 6vw, 5rem);
-		font-weight: 500;
-		letter-spacing: -0.015em;
+	.page-header__bar {
+		margin-top: var(--space-8);
+	}
+	.page-header__eyebrow {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
+		opacity: 0.55;
+	}
+	.page-header__title {
+		font-family: var(--font-display);
+		font-size: clamp(2.5rem, 7vw, 5.5rem);
+		font-weight: 500;
+		letter-spacing: -0.02em;
 		line-height: 1;
 		color: var(--color-ink);
-		margin-top: var(--space-5);
+		margin: var(--space-4) 0 0;
 	}
-
-	.page-subtitle {
+	.page-header__lead {
 		font-family: var(--font-body);
-		font-size: var(--text-lg);
+		font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+		line-height: 1.5;
 		color: var(--color-ink-soft);
-		margin-top: var(--space-4);
-		max-width: 600px;
+		margin: var(--space-6) 0 0;
+		max-width: 640px;
 	}
 
 	/* ── Layout ── */
@@ -243,24 +269,40 @@
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: var(--space-12);
-		padding-block: var(--space-12);
+		padding-block: var(--space-16) var(--space-20);
+		align-items: start;
 	}
-	@media (min-width: 768px) {
+	@media (min-width: 900px) {
 		.contact-layout {
-			grid-template-columns: 1fr 360px;
+			grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+			gap: var(--space-16);
 		}
 	}
 
 	/* ── Form section ── */
-	.contact-form-section h2 {
+	.contact-form-section__head {
+		margin-bottom: var(--space-8);
+	}
+	.contact-form-section__kicker {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.6;
+		margin-bottom: var(--space-3);
+	}
+	.contact-form-section__title {
 		font-family: var(--font-display);
-		font-size: 1.75rem;
+		font-size: clamp(1.75rem, 3.5vw, 2.5rem);
 		font-weight: 500;
 		letter-spacing: -0.01em;
-		text-transform: uppercase;
-		margin-bottom: var(--space-6);
+		line-height: 1;
 		color: var(--color-ink);
+		margin: 0;
 	}
+
 	.contact-form {
 		display: flex;
 		flex-direction: column;
@@ -307,6 +349,29 @@
 		min-height: 140px;
 	}
 
+	.btn-submit {
+		align-self: flex-start;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-3);
+		padding: 0.9375rem 1.75rem;
+		background-color: var(--color-ink);
+		color: var(--color-lime);
+		border: 1.5px solid var(--color-ink);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		cursor: pointer;
+		transition: background-color var(--transition-fast), color var(--transition-fast), gap var(--transition-fast);
+	}
+	.btn-submit:hover:not(:disabled) {
+		background-color: var(--color-green-deep);
+		gap: var(--space-4);
+	}
+	.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
 	.success-message {
 		display: flex;
 		align-items: flex-start;
@@ -321,15 +386,14 @@
 		height: 32px;
 		background-color: var(--color-ink);
 		color: var(--color-lime);
-		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-weight: 700;
 	}
 	.success-message p {
 		color: var(--color-ink);
 		line-height: 1.5;
+		margin: 0;
 	}
 	.success-message a {
 		color: var(--color-green-deep);
@@ -337,86 +401,105 @@
 		text-decoration: underline;
 	}
 
-	/* ── Contact info sidebar ── */
-	.contact-info h2 {
-		font-family: var(--font-display);
-		font-size: 1.5rem;
-		font-weight: 500;
-		letter-spacing: -0.01em;
-		text-transform: uppercase;
-		margin-bottom: var(--space-6);
-		color: var(--color-ink);
+	/* ── Sidebar: info + social ── */
+	.contact-info {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-5);
 	}
+
 	.info-card {
 		background-color: var(--color-cream);
+		border: 1.5px solid var(--color-ink);
 		padding: var(--space-6);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-5);
-		margin-bottom: var(--space-6);
 	}
-	.info-item {
-		display: flex;
-		gap: var(--space-3);
-		align-items: flex-start;
-	}
-	.info-icon {
-		font-size: var(--text-xl);
-		flex-shrink: 0;
-		margin-top: 2px;
-	}
-	.info-item strong {
-		display: block;
+	.info-card__kicker {
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
-		font-weight: 500;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		color: var(--color-ink-soft);
-		margin-bottom: var(--space-1);
+		opacity: 0.6;
 	}
-	.info-item a,
-	.info-item p {
-		font-family: var(--font-body);
-		font-size: 0.9375rem;
+	.info-row {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		padding-bottom: var(--space-4);
+		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
+	}
+	.info-row:last-child {
+		padding-bottom: 0;
+		border-bottom: none;
+	}
+	.info-row__label {
+		font-family: var(--font-mono);
+		font-size: 0.625rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.6;
+	}
+	.info-row__link,
+	.info-row__text {
+		font-family: var(--font-display);
+		font-size: 1.0625rem;
 		color: var(--color-ink);
-		line-height: 1.5;
+		line-height: 1.4;
+		margin: 0;
+		text-decoration: none;
+		word-break: break-word;
 	}
-	.info-item a:hover {
+	.info-row__link:hover {
 		color: var(--color-green-deep);
-		text-decoration: underline;
+		border-bottom: 1.5px solid var(--color-lime);
 	}
 
-	.social-links-box {
+	.social-card {
 		background-color: var(--color-green-deep);
 		color: var(--color-cream);
 		padding: var(--space-6);
-	}
-	.social-links-box h3 {
-		font-family: var(--font-display);
-		font-size: 1rem;
-		font-weight: 500;
-		letter-spacing: 0.05em;
-		text-transform: uppercase;
-		margin-bottom: var(--space-4);
-		color: var(--color-cream);
-	}
-	.social-icons {
 		display: flex;
-		gap: var(--space-4);
+		flex-direction: column;
+		gap: var(--space-5);
 	}
-	.social-icons a {
+	.social-card__kicker {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		opacity: 0.6;
+	}
+	.social-card__icons {
+		display: flex;
+		gap: var(--space-3);
+		flex-wrap: wrap;
+	}
+	.social-card__btn {
+		width: 40px;
+		height: 40px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background-color: transparent;
 		color: var(--color-cream);
-		transition: color var(--transition-fast);
+		border: 1.5px solid var(--color-cream);
+		text-decoration: none;
+		transition: background-color var(--transition-fast), color var(--transition-fast);
 	}
-	.social-icons a:hover {
-		color: var(--color-lime);
+	.social-card__btn:hover {
+		background-color: var(--color-lime);
+		color: var(--color-ink);
+		border-color: var(--color-lime);
 	}
 
 	/* ── Newsletter section ── */
 	.newsletter-contact {
 		background-color: var(--color-lime);
-		padding-block: var(--space-12);
+		padding-block: var(--space-16);
 		border-block: 2px solid var(--color-ink);
 	}
 	.newsletter-contact__inner {
@@ -426,25 +509,37 @@
 		justify-content: space-between;
 		gap: var(--space-8);
 	}
-	.newsletter-contact h2 {
+	.newsletter-contact__kicker {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		opacity: 0.65;
+		margin-bottom: var(--space-3);
+	}
+	.newsletter-contact__title {
 		font-family: var(--font-display);
-		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-size: clamp(1.75rem, 3vw, 2.75rem);
 		font-weight: 500;
 		letter-spacing: -0.01em;
 		text-transform: uppercase;
 		color: var(--color-ink);
-		margin-bottom: var(--space-2);
+		margin: 0 0 var(--space-2);
 		line-height: 1;
 	}
 	.newsletter-contact p {
 		color: var(--color-ink);
 		opacity: 0.8;
+		margin: 0;
 	}
 	.newsletter-contact__form {
 		display: flex;
 		gap: var(--space-2);
 		flex-wrap: wrap;
 		min-width: 280px;
+		flex: 1 1 320px;
 	}
 	.newsletter-contact__input {
 		flex: 1;
@@ -460,14 +555,25 @@
 		outline: none;
 		background-color: var(--color-paper);
 	}
-	.newsletter-contact :global(.btn-primary) {
+	.newsletter-contact__btn {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: 0.875rem 1.5rem;
 		background-color: var(--color-ink);
 		color: var(--color-lime);
-		border-color: var(--color-ink);
+		border: 1.5px solid var(--color-ink);
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		cursor: pointer;
+		transition: background-color var(--transition-fast), gap var(--transition-fast);
 	}
-	.newsletter-contact :global(.btn-primary:hover) {
+	.newsletter-contact__btn:hover:not(:disabled) {
 		background-color: var(--color-green-deep);
-		color: var(--color-lime);
-		border-color: var(--color-green-deep);
+		gap: var(--space-3);
 	}
+	.newsletter-contact__btn:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>

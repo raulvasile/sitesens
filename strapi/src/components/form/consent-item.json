@@ -1,17 +1,33 @@
 {
   "collectionName": "components_form_consent_items",
   "info": {
-    "displayName": "Consimțământ",
-    "icon": "check-square"
+    "displayName": "Element consimțământ",
+    "icon": "check-square",
+    "description": "Un checkbox de consimțământ cu text (ex: GDPR, statut)."
   },
   "attributes": {
     "key": {
       "type": "enumeration",
-      "enum": ["gdpr", "statute", "data_processing", "newsletter"],
+      "enum": [
+        "gdpr",
+        "statute",
+        "data_processing",
+        "newsletter"
+      ],
       "required": true
     },
-    "label": { "type": "text", "required": true, "maxLength": 500 },
-    "required": { "type": "boolean", "default": true },
-    "help_text": { "type": "string", "maxLength": 200 }
+    "label": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "required": {
+      "type": "boolean",
+      "default": true
+    },
+    "help_text": {
+      "type": "string",
+      "maxLength": 200
+    }
   }
 }

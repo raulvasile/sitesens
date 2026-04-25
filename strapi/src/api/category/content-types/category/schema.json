@@ -4,8 +4,8 @@
   "info": {
     "singularName": "category",
     "pluralName": "categories",
-    "displayName": "🏷️ Categorii",
-    "description": "Categorii pentru articole"
+    "displayName": "Categorii articole",
+    "description": "Taxonomie pentru clasificarea articolelor (ex: Comunicat, Analiză). Apare ca chip pe pagina de știre."
   },
   "options": {
     "draftAndPublish": false

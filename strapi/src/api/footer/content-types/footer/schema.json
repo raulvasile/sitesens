@@ -4,8 +4,8 @@
   "info": {
     "singularName": "footer",
     "pluralName": "footers",
-    "displayName": "⚙️ Footer",
-    "description": "Footer-ul site-ului: logo, tagline, linkuri, social media, legal"
+    "displayName": "Footer",
+    "description": "Configurare footer site: logo, tagline, linkuri rapide, social media, legal."
   },
   "options": {
     "draftAndPublish": false
@@ -15,7 +15,9 @@
     "logo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "tagline": {
       "type": "string",

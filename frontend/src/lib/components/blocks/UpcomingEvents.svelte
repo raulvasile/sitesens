@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { getStrapiMediaUrl } from '$lib/strapi';
-
 	interface StrapiEvent {
 		title: string;
 		slug: string;
 		start_date: string;
 		end_date?: string;
 		location_name?: string;
+		venue?: string;
+		city?: string;
 		event_type: string;
-		cover_image?: { url: string; alternativeText?: string };
 	}
 
 	interface Props {
@@ -34,25 +33,30 @@
 	const events = $derived(data._events ?? []);
 	const loaded = $derived(data._events !== undefined);
 
-	function formatEventDate(iso: string) {
-		const d = new Date(iso);
-		return {
-			day: d.getDate().toString().padStart(2, '0'),
-			month: new Intl.DateTimeFormat('ro-RO', { month: 'short' }).format(d).toUpperCase(),
-			time: new Intl.DateTimeFormat('ro-RO', { hour: '2-digit', minute: '2-digit' }).format(d),
-		};
+	const MONTH_RO = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
+	function formatDay(iso: string) { return String(new Date(iso).getDate()).padStart(2, '0'); }
+	function formatMonth(iso: string) { return MONTH_RO[new Date(iso).getMonth()]; }
+	function formatTime(iso: string) {
+		return new Date(iso).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+	}
+
+	function metaLine(ev: StrapiEvent): string {
+		const type = eventTypeLabels[ev.event_type] ?? ev.event_type;
+		const place = ev.city ? ev.city.toUpperCase() : ev.location_name?.toUpperCase();
+		const parts = [type.toUpperCase(), place, ev.venue].filter(Boolean);
+		return parts.join(' · ');
 	}
 </script>
 
-<section class="upcoming-events">
+<section class="ue">
 	<div class="container">
 		{#if data.heading || (data.cta_text && data.cta_link)}
-			<div class="upcoming-events__header">
+			<header class="ue__header">
 				{#if data.heading}
-					<h2 class="upcoming-events__heading">{data.heading}</h2>
+					<h2 class="ue__heading">{data.heading}</h2>
 				{/if}
 				{#if data.cta_text && data.cta_link}
-					<a href={data.cta_link} class="upcoming-events__header-cta">
+					<a href={data.cta_link} class="ue__header-cta">
 						{data.cta_text}
 						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
 							<line x1="5" y1="12" x2="19" y2="12" />
@@ -60,61 +64,44 @@
 						</svg>
 					</a>
 				{/if}
-			</div>
+			</header>
 		{/if}
 
 		{#if !loaded}
-			<div class="upcoming-events__list">
+			<ul class="ue__list">
 				{#each Array(count) as _}
-					<div class="upcoming-events__skeleton">
-						<div class="skeleton skeleton--date"></div>
-						<div class="skeleton-body">
-							<div class="skeleton skeleton--tag" style="width: 90px"></div>
-							<div class="skeleton skeleton--text" style="width: 75%"></div>
-							<div class="skeleton skeleton--text" style="width: 50%"></div>
+					<li class="ue__skel-row">
+						<div class="ue__skel ue__skel--date"></div>
+						<div class="ue__skel ue__skel--chip"></div>
+						<div class="ue__skel-info">
+							<div class="ue__skel ue__skel--text" style="width: 70%"></div>
+							<div class="ue__skel ue__skel--text" style="width: 45%"></div>
 						</div>
-						<div class="skeleton skeleton--cta"></div>
-					</div>
+						<div class="ue__skel ue__skel--time"></div>
+						<div class="ue__skel ue__skel--cta"></div>
+					</li>
 				{/each}
-			</div>
+			</ul>
 		{:else if events.length > 0}
-			<ul class="upcoming-events__list">
+			<ul class="ue__list">
 				{#each events as event}
-					{@const d = formatEventDate(event.start_date)}
 					<li>
-						<a href="/evenimente/{event.slug}" class="upcoming-events__row">
-							<div class="upcoming-events__date">
-								<span class="upcoming-events__day">{d.day}</span>
-								<span class="upcoming-events__month">{d.month}</span>
+						<a href="/evenimente/{event.slug}" class="ue__row">
+							<div class="ue__date">
+								<span class="ue__day">{formatDay(event.start_date)}</span>
+								<span class="ue__month">{formatMonth(event.start_date)}</span>
 							</div>
-
-							<div class="upcoming-events__body">
-								<span class="upcoming-events__tag">
-									{eventTypeLabels[event.event_type] ?? event.event_type}
-								</span>
-								<h3 class="upcoming-events__title">{event.title}</h3>
-								<div class="upcoming-events__meta">
-									{#if event.location_name}
-										<span class="upcoming-events__location">
-											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-												<path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z" />
-												<circle cx="12" cy="9" r="2.5" />
-											</svg>
-											{event.location_name}
-										</span>
-									{/if}
-									<span class="upcoming-events__time">
-										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-											<circle cx="12" cy="12" r="9" />
-											<path d="M12 7v5l3 2" />
-										</svg>
-										{d.time}
-									</span>
-								</div>
+							<span class="ue__chip">
+								{eventTypeLabels[event.event_type] ?? event.event_type}
+							</span>
+							<div class="ue__info">
+								<div class="ue__title">{event.title}</div>
+								<div class="ue__meta">{metaLine(event)}</div>
 							</div>
-
-							<span class="upcoming-events__cta-circle" aria-hidden="true">
-								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+							<div class="ue__time">{formatTime(event.start_date)}</div>
+							<span class="ue__cta">
+								Rezervă
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
 									<line x1="5" y1="12" x2="19" y2="12" />
 									<polyline points="12 5 19 12 12 19" />
 								</svg>
@@ -124,19 +111,18 @@
 				{/each}
 			</ul>
 		{:else}
-			<p class="upcoming-events__empty">Nu sunt evenimente programate momentan.</p>
+			<p class="ue__empty">Nu sunt evenimente programate momentan.</p>
 		{/if}
-
 	</div>
 </section>
 
 <style>
-	.upcoming-events {
+	.ue {
 		padding-block: var(--space-20);
 		background-color: var(--color-paper);
 	}
 
-	.upcoming-events__header {
+	.ue__header {
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-end;
@@ -144,8 +130,7 @@
 		margin-bottom: var(--space-10);
 		flex-wrap: wrap;
 	}
-
-	.upcoming-events__heading {
+	.ue__heading {
 		font-family: var(--font-display);
 		font-size: clamp(2rem, 4vw, 3.5rem);
 		font-weight: 500;
@@ -155,8 +140,7 @@
 		color: var(--color-ink);
 		margin: 0;
 	}
-
-	.upcoming-events__header-cta {
+	.ue__header-cta {
 		display: inline-flex;
 		align-items: center;
 		gap: var(--space-2);
@@ -171,207 +155,181 @@
 		text-decoration: none;
 		transition: gap var(--transition-fast), color var(--transition-fast);
 	}
-
-	.upcoming-events__header-cta:hover {
-		gap: var(--space-3);
-		color: var(--color-green-deep);
+	@media (hover: hover) {
+		.ue__header-cta:hover { gap: var(--space-3); color: var(--color-green-deep); }
 	}
 
-	.upcoming-events__list {
+	.ue__list {
 		list-style: none;
 		padding: 0;
 		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0;
 		border-top: 1px solid rgba(12, 81, 24, 0.15);
 	}
+	.ue__list li { border-bottom: 1px solid rgba(12, 81, 24, 0.15); }
 
-	.upcoming-events__list li {
-		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
-	}
-
-	.upcoming-events__row {
+	/* Mirror /evenimente row layout: date · chip · title+meta · time · cta */
+	.ue__row {
 		display: grid;
-		grid-template-columns: 100px 1fr auto;
-		gap: var(--space-6);
+		grid-template-columns: 90px 130px 1fr auto auto;
+		gap: var(--space-5);
 		align-items: center;
-		width: 100%;
-		padding: var(--space-5) var(--space-4);
-		background-color: transparent;
+		padding: var(--space-5) 0;
 		text-decoration: none;
 		color: inherit;
-		transition: padding-left var(--transition-fast), background-color var(--transition-fast);
+		transition: padding-inline var(--transition-fast), background-color var(--transition-fast);
+	}
+	@media (hover: hover) {
+		.ue__row:hover {
+			background-color: var(--color-cream);
+			padding-inline: var(--space-3);
+		}
 	}
 
-	.upcoming-events__row:hover {
-		background-color: var(--color-cream);
-		padding-left: var(--space-6);
-	}
-
-	.upcoming-events__row:hover .upcoming-events__cta-circle {
-		background-color: var(--color-ink);
-		color: var(--color-lime);
-		transform: translateX(2px);
-	}
-
-	/* ── Date (first column) ── */
-	.upcoming-events__date {
+	.ue__date {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		justify-content: center;
 	}
-
-	.upcoming-events__day {
+	.ue__day {
 		font-family: var(--font-display);
 		font-size: 2rem;
-		font-weight: 500;
 		line-height: 1;
-		color: var(--color-ink);
+		font-weight: 500;
+		color: var(--color-green-deep);
 		letter-spacing: -0.01em;
 	}
-
-	.upcoming-events__month {
+	.ue__month {
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
-		font-weight: 500;
 		letter-spacing: 0.14em;
 		color: var(--color-ink-soft);
 		margin-top: 4px;
 	}
 
-	/* ── Body (title + location) ── */
-	.upcoming-events__body {
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-1);
-	}
-
-	.upcoming-events__tag {
+	.ue__chip {
 		display: inline-flex;
-		align-self: flex-start;
 		align-items: center;
+		justify-self: start;
 		font-family: var(--font-display);
 		font-size: 0.6875rem;
 		font-weight: 500;
-		color: var(--color-ink);
-		background-color: var(--color-lime);
-		padding: 3px 10px;
-		text-transform: uppercase;
 		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		padding: 5px 12px;
+		border: 1.5px solid rgba(12, 81, 24, 0.4);
+		color: var(--color-ink);
+		background: transparent;
 	}
 
-	.upcoming-events__title {
+	.ue__info { min-width: 0; }
+	.ue__title {
 		font-family: var(--font-display);
 		font-size: 1.25rem;
 		font-weight: 500;
 		color: var(--color-ink);
-		line-height: 1.1;
-		letter-spacing: -0.005em;
-		text-transform: uppercase;
+		line-height: 1.15;
 	}
-
-	.upcoming-events__meta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-4);
+	.ue__meta {
 		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		letter-spacing: 0.08em;
-		color: var(--color-ink-soft);
+		font-size: 0.6875rem;
+		letter-spacing: 0.12em;
 		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.7;
+		margin-top: 4px;
 	}
 
-	.upcoming-events__location,
-	.upcoming-events__time {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
+	.ue__time {
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		color: var(--color-ink-soft);
 	}
 
-	/* ── Circle CTA ── */
-	.upcoming-events__cta-circle {
+	.ue__cta {
 		display: inline-flex;
 		align-items: center;
-		justify-content: center;
-		width: 44px;
-		height: 44px;
-		border-radius: 50%;
-		background-color: transparent;
+		gap: var(--space-2);
+		font-family: var(--font-display);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
 		color: var(--color-ink);
-		border: 1.5px solid var(--color-ink);
-		transition: all var(--transition-fast);
-		flex-shrink: 0;
 	}
 
-	/* ── Responsive: stack on small screens ── */
-	@media (max-width: 639px) {
-		.upcoming-events__row {
-			grid-template-columns: 70px 1fr;
-			grid-template-rows: auto auto;
-			gap: var(--space-3) var(--space-4);
-			padding: var(--space-4);
-		}
-
-		.upcoming-events__cta-circle {
-			grid-column: 2;
-			justify-self: flex-start;
-			width: 38px;
-			height: 38px;
-		}
-
-		.upcoming-events__body {
-			grid-column: 2;
-		}
-
-		.upcoming-events__date {
-			grid-row: 1 / span 2;
-		}
-
-		.upcoming-events__day { font-size: 2rem; }
-		.upcoming-events__title { font-size: var(--text-base); }
-	}
-
-	.upcoming-events__empty {
+	.ue__empty {
 		text-align: center;
-		color: var(--color-text-muted);
+		color: var(--color-ink-soft);
 		font-style: italic;
 		padding: var(--space-8);
 	}
 
-	.upcoming-events__cta {
-		text-align: center;
-		margin-top: var(--space-10);
+	/* ── Mobile: compact stacked layout ── */
+	@media (max-width: 767px) {
+		.ue { padding-block: var(--space-10); }
+		.ue__header { margin-bottom: var(--space-6); }
+
+		.ue__row {
+			grid-template-columns: 56px 1fr;
+			grid-template-areas:
+				'date    chip'
+				'date    title'
+				'date    meta'
+				'time    cta';
+			gap: var(--space-2) var(--space-4);
+			padding: var(--space-4) 0;
+			align-items: start;
+		}
+		.ue__date { grid-area: date; }
+		.ue__day { font-size: 1.625rem; }
+		.ue__chip {
+			grid-area: chip;
+			font-size: 0.625rem;
+			padding: 3px 9px;
+			justify-self: start;
+		}
+		.ue__info { grid-area: auto; display: contents; }
+		.ue__title {
+			grid-area: title;
+			font-size: 1rem;
+			line-height: 1.2;
+		}
+		.ue__meta {
+			grid-area: meta;
+			font-size: 0.625rem;
+			margin-top: 0;
+		}
+		.ue__time {
+			grid-area: time;
+			font-size: 0.6875rem;
+			color: var(--color-ink);
+		}
+		.ue__cta {
+			grid-area: cta;
+			justify-self: end;
+		}
 	}
 
 	/* ── Skeleton ── */
-	.upcoming-events__skeleton {
+	.ue__skel-row {
 		display: grid;
-		grid-template-columns: 100px 1fr 44px;
-		gap: var(--space-6);
+		grid-template-columns: 90px 130px 1fr auto auto;
+		gap: var(--space-5);
 		align-items: center;
-		padding: var(--space-5) var(--space-4);
+		padding: var(--space-5) 0;
 		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
 	}
-
-	.skeleton-body {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-	}
-
-	.skeleton {
+	.ue__skel-info { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+	.ue__skel {
 		background: linear-gradient(90deg, var(--color-cream) 25%, var(--color-skeleton) 50%, var(--color-cream) 75%);
 		background-size: 200% 100%;
 		animation: shimmer 1.5s infinite;
 	}
-
-	.skeleton--date { width: 80px; height: 44px; flex-shrink: 0; }
-	.skeleton--tag { height: 18px; }
-	.skeleton--text { height: 14px; }
-	.skeleton--cta { width: 44px; height: 44px; border-radius: 50%; }
+	.ue__skel--date { width: 70px; height: 44px; }
+	.ue__skel--chip { width: 90px; height: 18px; }
+	.ue__skel--text { height: 14px; }
+	.ue__skel--time { width: 50px; height: 14px; }
+	.ue__skel--cta { width: 80px; height: 14px; }
 
 	@keyframes shimmer {
 		0% { background-position: 200% 0; }

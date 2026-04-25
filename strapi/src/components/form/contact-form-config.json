@@ -1,21 +1,70 @@
 {
   "collectionName": "components_form_contact_form_configs",
   "info": {
-    "displayName": "Configurare formular contact",
-    "icon": "envelope"
+    "displayName": "Configurare formular Contact",
+    "icon": "envelope",
+    "description": "Etichete, placeholders și mesaje pentru formularul de contact."
   },
   "attributes": {
-    "name_label": { "type": "string", "default": "Nume", "maxLength": 60 },
-    "name_placeholder": { "type": "string", "default": "Numele tău", "maxLength": 100 },
-    "email_label": { "type": "string", "default": "Email", "maxLength": 60 },
-    "email_placeholder": { "type": "string", "default": "email@exemplu.ro", "maxLength": 100 },
-    "subject_label": { "type": "string", "default": "Subiect", "maxLength": 60 },
-    "subject_placeholder": { "type": "string", "default": "Despre ce vrei să discuți?", "maxLength": 100 },
-    "message_label": { "type": "string", "default": "Mesaj", "maxLength": 60 },
-    "message_placeholder": { "type": "string", "default": "Scrie-ne mesajul tău...", "maxLength": 200 },
-    "submit_text": { "type": "string", "default": "Trimite mesajul", "maxLength": 60 },
-    "submitting_text": { "type": "string", "default": "Se trimite...", "maxLength": 60 },
-    "success_title": { "type": "string", "default": "Mesaj trimis!", "maxLength": 100 },
-    "success_message": { "type": "text", "default": "Mulțumim pentru mesajul tău. Revenim la tine cât de curând.", "maxLength": 300 }
+    "name_label": {
+      "type": "string",
+      "default": "Nume",
+      "maxLength": 60
+    },
+    "name_placeholder": {
+      "type": "string",
+      "default": "Numele tău",
+      "maxLength": 100
+    },
+    "email_label": {
+      "type": "string",
+      "default": "Email",
+      "maxLength": 60
+    },
+    "email_placeholder": {
+      "type": "string",
+      "default": "email@exemplu.ro",
+      "maxLength": 100
+    },
+    "subject_label": {
+      "type": "string",
+      "default": "Subiect",
+      "maxLength": 60
+    },
+    "subject_placeholder": {
+      "type": "string",
+      "default": "Despre ce vrei să discuți?",
+      "maxLength": 100
+    },
+    "message_label": {
+      "type": "string",
+      "default": "Mesaj",
+      "maxLength": 60
+    },
+    "message_placeholder": {
+      "type": "string",
+      "default": "Scrie-ne mesajul tău...",
+      "maxLength": 200
+    },
+    "submit_text": {
+      "type": "string",
+      "default": "Trimite mesajul",
+      "maxLength": 60
+    },
+    "submitting_text": {
+      "type": "string",
+      "default": "Se trimite...",
+      "maxLength": 60
+    },
+    "success_title": {
+      "type": "string",
+      "default": "Mesaj trimis!",
+      "maxLength": 100
+    },
+    "success_message": {
+      "type": "text",
+      "default": "Mulțumim pentru mesajul tău. Revenim la tine cât de curând.",
+      "maxLength": 300
+    }
   }
 }

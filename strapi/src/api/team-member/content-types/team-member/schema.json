@@ -4,8 +4,8 @@
   "info": {
     "singularName": "team-member",
     "pluralName": "team-members",
-    "displayName": "👥 Echipă",
-    "description": "Membri echipă și conducere partid"
+    "displayName": "Echipă",
+    "description": "Membri ai conducerii și echipei SENS. Folosiți și ca autori de articole."
   },
   "options": {
     "draftAndPublish": true
@@ -23,10 +23,15 @@
     "bio": {
       "type": "text"
     },
+    "details": {
+      "type": "blocks"
+    },
     "photo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "social_links": {
       "type": "component",

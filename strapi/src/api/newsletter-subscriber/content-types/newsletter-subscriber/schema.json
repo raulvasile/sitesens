@@ -4,8 +4,8 @@
   "info": {
     "singularName": "newsletter-subscriber",
     "pluralName": "newsletter-subscribers",
-    "displayName": "👥 Abonat Newsletter",
-    "description": "Abonați newsletter — double opt-in, GDPR"
+    "displayName": "Abonați Newsletter",
+    "description": "Lista abonaților newsletter cu confirmare double opt-in (conform GDPR)."
   },
   "options": {
     "draftAndPublish": false
@@ -33,7 +33,11 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["pending", "confirmed", "unsubscribed"],
+      "enum": [
+        "pending",
+        "confirmed",
+        "unsubscribed"
+      ],
       "default": "pending",
       "required": true
     },

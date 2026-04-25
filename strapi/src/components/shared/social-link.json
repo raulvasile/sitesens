@@ -1,13 +1,21 @@
 {
   "collectionName": "components_shared_social_links",
   "info": {
-    "displayName": "Link Social",
-    "icon": "link"
+    "displayName": "Link Social (Membru echipă)",
+    "icon": "link",
+    "description": "Link către un cont social media al unui membru echipă."
   },
   "attributes": {
     "platform": {
       "type": "enumeration",
-      "enum": ["facebook", "instagram", "twitter", "tiktok", "linkedin", "youtube"],
+      "enum": [
+        "facebook",
+        "instagram",
+        "twitter",
+        "tiktok",
+        "linkedin",
+        "youtube"
+      ],
       "required": true
     },
     "url": {

@@ -51,4 +51,9 @@
 		color: var(--color-ink);
 	}
 	.quote__role { color: var(--color-ink-soft); }
+
+	/* mobile-tighten:.quote-block */
+	@media (max-width: 767px) {
+		.quote-block { padding-block: var(--space-10); }
+	}
 </style>

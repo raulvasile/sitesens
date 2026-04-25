@@ -2,7 +2,8 @@
   "collectionName": "components_blocks_contact_forms",
   "info": {
     "displayName": "Formular Contact",
-    "icon": "envelop"
+    "icon": "envelop",
+    "description": "Formular de contact integrat într-o pagină."
   },
   "attributes": {
     "heading": {

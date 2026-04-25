@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_upcoming_events",
   "info": {
-    "displayName": "Evenimente Viitoare",
-    "icon": "calendar"
+    "displayName": "Evenimente viitoare",
+    "icon": "calendar",
+    "description": "Listă auto-populată cu următoarele evenimente din /evenimente."
   },
   "attributes": {
     "heading": {

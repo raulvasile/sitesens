@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_card_grid_items",
   "info": {
-    "displayName": "Element Card",
-    "icon": "apps"
+    "displayName": "Card",
+    "icon": "apps",
+    "description": "Card individual din Grila de carduri."
   },
   "attributes": {
     "icon": {
@@ -29,7 +30,12 @@
     "image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "details": {
+      "type": "blocks"
     }
   }
 }

@@ -25,6 +25,8 @@
 					src={getStrapiMediaUrl(data.images[carouselIndex]?.url)}
 					alt={data.images[carouselIndex]?.alternativeText ?? ''}
 					class="carousel__img"
+					loading="lazy"
+					decoding="async"
 				/>
 				<button class="carousel__btn carousel__btn--prev" onclick={prev} aria-label="Anterior">‹</button>
 				<button class="carousel__btn carousel__btn--next" onclick={next} aria-label="Următor">›</button>

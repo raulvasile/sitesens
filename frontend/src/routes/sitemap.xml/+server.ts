@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { fetchStrapi } from '$lib/strapi';
 
-const SITE_URL = 'https://partidulsens.ro';
+const SITE_URL = 'https://cusens.eu';
 
 interface SlugItem {
 	slug: string;

@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_stats_counters",
   "info": {
-    "displayName": "Contor Statistici",
-    "icon": "chartBubble"
+    "displayName": "Counter Statistici",
+    "icon": "chartBubble",
+    "description": "Bandă cu mai multe statistici (număr mare + etichetă)."
   },
   "attributes": {
     "items": {

@@ -1,0 +1,47 @@
+{
+  "collectionName": "components_blocks_page_headers",
+  "info": {
+    "displayName": "Antet Pagină",
+    "icon": "header",
+    "description": "Antet pentru pagini interioare (Direction C): eyebrow mono + meta dreapta + titlu mare cu accent italic + lead, plus continuare opțională cu evidențiere lime."
+  },
+  "attributes": {
+    "eyebrow": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "meta": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "title_italic": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "lead": {
+      "type": "text",
+      "maxLength": 600
+    },
+    "continuation": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "continuation_highlight": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": [
+        "paper",
+        "cream"
+      ],
+      "default": "paper"
+    }
+  }
+}

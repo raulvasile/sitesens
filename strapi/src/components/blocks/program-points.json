@@ -2,7 +2,8 @@
   "collectionName": "components_blocks_program_points",
   "info": {
     "displayName": "Puncte Program",
-    "icon": "seed"
+    "icon": "seed",
+    "description": "Listă de puncte din programul partidului, cu titlu pentru întreaga secțiune."
   },
   "attributes": {
     "items": {

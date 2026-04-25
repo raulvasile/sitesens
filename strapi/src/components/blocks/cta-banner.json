@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_cta_banners",
   "info": {
-    "displayName": "Banner Acțiune",
-    "icon": "cursor"
+    "displayName": "Bandă CTA",
+    "icon": "cursor",
+    "description": "Bandă cu titlu, descriere și buton — îndemn la acțiune."
   },
   "attributes": {
     "title": {
@@ -22,7 +23,11 @@
     },
     "background_color": {
       "type": "enumeration",
-      "enum": ["green", "orange", "white"],
+      "enum": [
+        "green",
+        "orange",
+        "white"
+      ],
       "default": "orange"
     }
   }

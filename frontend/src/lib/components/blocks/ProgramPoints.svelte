@@ -1,5 +1,8 @@
 <script lang="ts">
-	interface ProgramItem { area: string; text: string; }
+	import { onDestroy } from 'svelte';
+	import { openCard, registerCards, type CardDetail } from '$lib/cardModal';
+
+	interface ProgramItem { id: number; area: string; text: string; details?: unknown[]; }
 	interface Props {
 		data: {
 			items: ProgramItem[];
@@ -9,6 +12,27 @@
 		};
 	}
 	let { data }: Props = $props();
+
+	function hasDetails(it: ProgramItem): boolean {
+		return Array.isArray(it.details) && it.details.length > 0;
+	}
+
+	function toCardDetail(it: ProgramItem): CardDetail {
+		return {
+			id: it.id,
+			title: it.area,
+			details: it.details ?? [],
+			meta: { subtitle: it.text },
+		};
+	}
+
+	let unregister: () => void = () => {};
+	$effect(() => {
+		unregister();
+		const registered = data.items.filter(hasDetails).map(toCardDetail);
+		unregister = registered.length > 0 ? registerCards(registered) : () => {};
+	});
+	onDestroy(() => unregister());
 
 	// Rotate background colors per chapter (Direction C style)
 	const palettes = [
@@ -39,10 +63,22 @@
 		<ul class="program-points__list">
 			{#each data.items as item, i}
 				{@const p = palettes[i % palettes.length]}
+				{@const clickable = hasDetails(item)}
 				<li
 					class="program-points__item"
+					class:program-points__item--clickable={clickable}
 					style="background-color: {p.bg}; color: {p.fg};"
 				>
+					{#if clickable}
+						<button
+							type="button"
+							class="program-points__overlay-btn"
+							aria-label={`Vezi detalii: ${item.area}`}
+							aria-haspopup="dialog"
+							onclick={() => openCard(toCardDetail(item))}
+						></button>
+						<span class="program-points__more" aria-hidden="true">→</span>
+					{/if}
 					<div class="program-points__item-top">
 						<span class="program-points__num" style="color: {p.num};">
 							CAP. {String(i + 1).padStart(2, '0')}
@@ -128,6 +164,7 @@
 	}
 
 	.program-points__item {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-3);
@@ -136,6 +173,45 @@
 		outline: 2px solid transparent;
 		outline-offset: -2px;
 		transition: transform var(--transition-base), outline-color var(--transition-fast);
+	}
+
+	.program-points__item--clickable {
+		cursor: pointer;
+	}
+
+	.program-points__overlay-btn {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 0;
+		margin: 0;
+		z-index: 1;
+	}
+	.program-points__overlay-btn:focus-visible {
+		outline: 2px solid var(--color-lime);
+		outline-offset: -4px;
+	}
+
+	.program-points__more {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		line-height: 1;
+		color: currentColor;
+		opacity: 0.5;
+		transition: transform var(--transition-fast), opacity var(--transition-fast);
+		z-index: 2;
+		pointer-events: none;
+	}
+	.program-points__item--clickable:hover .program-points__more {
+		transform: translate(2px, -2px);
+		opacity: 1;
 	}
 
 	@media (min-width: 768px) {
@@ -210,5 +286,10 @@
 	.program-points__link:hover {
 		gap: var(--space-4);
 		color: var(--color-green-deep);
+	}
+
+	/* mobile-tighten:.program-points */
+	@media (max-width: 767px) {
+		.program-points { padding-block: var(--space-10); }
 	}
 </style>

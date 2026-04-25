@@ -14,8 +14,8 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
       provider: 'sendmail',
       providerOptions: {},
       settings: {
-        defaultFrom: 'noreply@partidulsens.ro',
-        defaultReplyTo: 'contact@partidulsens.ro',
+        defaultFrom: 'noreply@cusens.eu',
+        defaultReplyTo: 'contact@cusens.eu',
       },
     },
   },

@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_video_embeds",
   "info": {
-    "displayName": "Video Încorporat",
-    "icon": "play"
+    "displayName": "Embed video",
+    "icon": "play",
+    "description": "Înglobare video YouTube / Vimeo prin URL."
   },
   "attributes": {
     "url": {

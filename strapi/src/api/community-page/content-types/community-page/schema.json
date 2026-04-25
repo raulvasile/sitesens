@@ -4,8 +4,8 @@
   "info": {
     "singularName": "community-page",
     "pluralName": "community-pages",
-    "displayName": "⚙️ Pagină Comunitate",
-    "description": "Conținut pentru pagina /comunitate"
+    "displayName": "Pagină Comunitate",
+    "description": "Conținutul paginii /comunitate. Construit cu Dynamic Zone."
   },
   "options": {
     "draftAndPublish": true

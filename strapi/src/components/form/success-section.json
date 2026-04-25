@@ -1,21 +1,47 @@
 {
   "collectionName": "components_form_success_sections",
   "info": {
-    "displayName": "Secțiune succes",
-    "icon": "check-circle"
+    "displayName": "Secțiune Succes",
+    "icon": "check-circle",
+    "description": "Mesaj afișat după trimiterea cu succes a unui formular."
   },
   "attributes": {
-    "title": { "type": "string", "required": true, "default": "Cererea ta a fost trimisă!", "maxLength": 120 },
-    "message": { "type": "text", "required": true, "maxLength": 500 },
-    "next_steps_heading": { "type": "string", "default": "Pașii următori:", "maxLength": 100 },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Cererea ta a fost trimisă!",
+      "maxLength": 120
+    },
+    "message": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "next_steps_heading": {
+      "type": "string",
+      "default": "Pașii următori:",
+      "maxLength": 100
+    },
     "next_steps": {
       "type": "component",
       "repeatable": true,
       "component": "form.next-step"
     },
-    "primary_cta_label": { "type": "string", "maxLength": 80 },
-    "primary_cta_url": { "type": "string", "maxLength": 200 },
-    "secondary_cta_label": { "type": "string", "maxLength": 80 },
-    "secondary_cta_url": { "type": "string", "maxLength": 200 }
+    "primary_cta_label": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "primary_cta_url": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "secondary_cta_label": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "secondary_cta_url": {
+      "type": "string",
+      "maxLength": 200
+    }
   }
 }

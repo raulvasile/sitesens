@@ -1,28 +1,105 @@
 {
   "collectionName": "components_form_membership_labels",
   "info": {
-    "displayName": "Etichete formular aderare",
-    "icon": "user-plus"
+    "displayName": "Etichete formular Înscriere",
+    "icon": "user-plus",
+    "description": "Toate etichetele și texte pentru pașii formularului de aderare."
   },
   "attributes": {
-    "first_name_label": { "type": "string", "default": "Prenume", "maxLength": 60 },
-    "first_name_placeholder": { "type": "string", "default": "Prenumele tău", "maxLength": 100 },
-    "last_name_label": { "type": "string", "default": "Nume", "maxLength": 60 },
-    "last_name_placeholder": { "type": "string", "default": "Numele tău", "maxLength": 100 },
-    "email_label": { "type": "string", "default": "Email", "maxLength": 60 },
-    "email_placeholder": { "type": "string", "default": "email@exemplu.ro", "maxLength": 100 },
-    "phone_label": { "type": "string", "default": "Telefon", "maxLength": 60 },
-    "phone_placeholder": { "type": "string", "default": "07xx xxx xxx", "maxLength": 100 },
-    "birth_date_label": { "type": "string", "default": "Data nașterii", "maxLength": 60 },
-    "county_label": { "type": "string", "default": "Județ", "maxLength": 60 },
-    "county_placeholder": { "type": "string", "default": "Alege județul", "maxLength": 100 },
-    "city_label": { "type": "string", "default": "Localitate", "maxLength": 60 },
-    "city_placeholder": { "type": "string", "default": "Orașul sau comuna", "maxLength": 100 },
-    "address_label": { "type": "string", "default": "Adresa completă", "maxLength": 60 },
-    "address_placeholder": { "type": "string", "default": "Strada, număr, bloc, scara, apartament", "maxLength": 200 },
-    "motivation_label": { "type": "string", "default": "Motivație (opțional)", "maxLength": 80 },
-    "motivation_placeholder": { "type": "string", "default": "De ce vrei să te alături mișcării SENS?", "maxLength": 200 },
-    "interests_label": { "type": "string", "default": "Domenii de interes", "maxLength": 80 },
-    "interests_help": { "type": "text", "default": "Alege domeniile în care vrei să te implici. Poți selecta mai multe.", "maxLength": 300 }
+    "first_name_label": {
+      "type": "string",
+      "default": "Prenume",
+      "maxLength": 60
+    },
+    "first_name_placeholder": {
+      "type": "string",
+      "default": "Prenumele tău",
+      "maxLength": 100
+    },
+    "last_name_label": {
+      "type": "string",
+      "default": "Nume",
+      "maxLength": 60
+    },
+    "last_name_placeholder": {
+      "type": "string",
+      "default": "Numele tău",
+      "maxLength": 100
+    },
+    "email_label": {
+      "type": "string",
+      "default": "Email",
+      "maxLength": 60
+    },
+    "email_placeholder": {
+      "type": "string",
+      "default": "email@exemplu.ro",
+      "maxLength": 100
+    },
+    "phone_label": {
+      "type": "string",
+      "default": "Telefon",
+      "maxLength": 60
+    },
+    "phone_placeholder": {
+      "type": "string",
+      "default": "07xx xxx xxx",
+      "maxLength": 100
+    },
+    "birth_date_label": {
+      "type": "string",
+      "default": "Data nașterii",
+      "maxLength": 60
+    },
+    "county_label": {
+      "type": "string",
+      "default": "Județ",
+      "maxLength": 60
+    },
+    "county_placeholder": {
+      "type": "string",
+      "default": "Alege județul",
+      "maxLength": 100
+    },
+    "city_label": {
+      "type": "string",
+      "default": "Localitate",
+      "maxLength": 60
+    },
+    "city_placeholder": {
+      "type": "string",
+      "default": "Orașul sau comuna",
+      "maxLength": 100
+    },
+    "address_label": {
+      "type": "string",
+      "default": "Adresa completă",
+      "maxLength": 60
+    },
+    "address_placeholder": {
+      "type": "string",
+      "default": "Strada, număr, bloc, scara, apartament",
+      "maxLength": 200
+    },
+    "motivation_label": {
+      "type": "string",
+      "default": "Motivație (opțional)",
+      "maxLength": 80
+    },
+    "motivation_placeholder": {
+      "type": "string",
+      "default": "De ce vrei să te alături mișcării SENS?",
+      "maxLength": 200
+    },
+    "interests_label": {
+      "type": "string",
+      "default": "Domenii de interes",
+      "maxLength": 80
+    },
+    "interests_help": {
+      "type": "text",
+      "default": "Alege domeniile în care vrei să te implici. Poți selecta mai multe.",
+      "maxLength": 300
+    }
   }
 }

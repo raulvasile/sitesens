@@ -1,0 +1,47 @@
+{
+  "collectionName": "components_blocks_team_grids",
+  "info": {
+    "displayName": "Grilă Echipă",
+    "icon": "user",
+    "description": "Grilă auto-populată cu membri din colecția Echipă (filtru leadership opțional)."
+  },
+  "attributes": {
+    "kicker": {
+      "type": "string",
+      "default": "Conducere",
+      "maxLength": 80
+    },
+    "heading": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "cta_text": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "cta_link": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "mode": {
+      "type": "enumeration",
+      "enum": ["leadership", "team", "all"],
+      "default": "leadership"
+    },
+    "limit": {
+      "type": "integer",
+      "min": 1,
+      "max": 24,
+      "default": 6
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": [
+        "paper",
+        "cream"
+      ],
+      "default": "paper"
+    }
+  }
+}

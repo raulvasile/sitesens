@@ -4,8 +4,8 @@
   "info": {
     "singularName": "event",
     "pluralName": "events",
-    "displayName": "📝 Evenimente",
-    "description": "Evenimente: dezbateri, acțiuni, marșuri, online"
+    "displayName": "Evenimente",
+    "description": "Dezbateri, acțiuni, marșuri și întâlniri online ale partidului. Afișate la /evenimente."
   },
   "options": {
     "draftAndPublish": true
@@ -42,13 +42,12 @@
       "type": "string",
       "maxLength": 120
     },
-    "location_coords": {
-      "type": "json"
-    },
     "cover_image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "max_participants": {
       "type": "integer"
@@ -65,26 +64,28 @@
       "type": "string",
       "maxLength": 500
     },
-    "ical_url_event": {
-      "type": "string",
-      "private": true
-    },
     "registration_open": {
       "type": "boolean",
       "default": true
     },
     "event_type": {
       "type": "enumeration",
-      "enum": ["dezbatere", "actiune", "mars", "online"],
+      "enum": [
+        "dezbatere",
+        "actiune",
+        "mars",
+        "online"
+      ],
       "required": true
+    },
+    "social_posts_description": {
+      "type": "text",
+      "maxLength": 500
     },
     "social_posts": {
       "type": "component",
       "repeatable": true,
       "component": "event.social-post"
-    },
-    "ical_url": {
-      "type": "string"
     },
     "seo": {
       "type": "component",

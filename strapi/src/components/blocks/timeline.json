@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_blocks_timelines",
+  "info": {
+    "displayName": "Parcurs (Timeline)",
+    "icon": "history",
+    "description": "Listă cronologică verticală — parcursul organizației sau alt timeline."
+  },
+  "attributes": {
+    "kicker": {
+      "type": "string",
+      "default": "Parcursul nostru",
+      "maxLength": 80
+    },
+    "heading": {
+      "type": "string",
+      "required": true,
+      "default": "Șase ani,",
+      "maxLength": 200
+    },
+    "heading_italic": {
+      "type": "string",
+      "default": "fără pauze.",
+      "maxLength": 200
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blocks.timeline-item",
+      "min": 1
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": [
+        "cream",
+        "paper",
+        "green-deep",
+        "green-dark"
+      ],
+      "default": "cream"
+    }
+  }
+}

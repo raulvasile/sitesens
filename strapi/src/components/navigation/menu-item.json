@@ -1,8 +1,9 @@
 {
   "collectionName": "components_navigation_menu_items",
   "info": {
-    "displayName": "Element Meniu",
-    "icon": "layer"
+    "displayName": "Element meniu",
+    "icon": "layer",
+    "description": "Element de nivel 1 din meniul de navigare. Poate avea sub-elemente."
   },
   "attributes": {
     "label": {

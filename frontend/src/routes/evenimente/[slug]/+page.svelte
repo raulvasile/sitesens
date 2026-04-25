@@ -3,49 +3,84 @@
 	import { sanitizeHtml, sanitizeUrl } from '$lib/sanitize';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
+	import Image from '$lib/components/ui/Image.svelte';
+	import SocialIcon from '$lib/components/ui/SocialIcon.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const event = $derived(data.event);
 	const isPast = $derived(data.isPast);
+	const related = $derived(data.relatedEvents);
 
-	function formatDate(dateStr: string) {
+	const MONTH_RO = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
+	const TYPE_LABEL: Record<string, string> = {
+		dezbatere: 'DEZBATERE',
+		actiune: 'ACȚIUNE',
+		mars: 'MARȘ',
+		online: 'ONLINE',
+	};
+
+	function dayParts(dateStr: string) {
+		const d = new Date(dateStr);
+		return {
+			day: String(d.getDate()).padStart(2, '0'),
+			month: MONTH_RO[d.getMonth()],
+			year: d.getFullYear(),
+		};
+	}
+
+	function formatDateLong(dateStr: string) {
 		return new Date(dateStr).toLocaleDateString('ro-RO', {
-			weekday: 'long',
-			day: 'numeric',
-			month: 'long',
-			year: 'numeric'
+			weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
 		});
 	}
 
 	function formatTime(dateStr: string) {
-		return new Date(dateStr).toLocaleTimeString('ro-RO', {
-			hour: '2-digit',
-			minute: '2-digit'
+		return new Date(dateStr).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+	}
+
+	function shareUrl(platform: string) {
+		const url = typeof window !== 'undefined' ? window.location.href : '';
+		const title = event.title;
+		const map: Record<string, string> = {
+			facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+			twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+			linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+			whatsapp: `https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`,
+			email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`,
+		};
+		return map[platform] ?? '#';
+	}
+
+	function generateICalUrl(ev: typeof event) {
+		const start = new Date(ev.start_date).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+		const end = ev.end_date
+			? new Date(ev.end_date).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+			: start;
+		const params = new URLSearchParams({
+			action: 'TEMPLATE',
+			text: ev.title,
+			dates: `${start}/${end}`,
+			location: [ev.venue, ev.city].filter(Boolean).join(', ') || ev.location_name || '',
+			details: 'Eveniment Partidul SENS',
 		});
+		return `https://calendar.google.com/calendar/render?${params.toString()}`;
 	}
 
-	function badgeClass(type: string) {
-		const map: Record<string, string> = {
-			dezbatere: 'badge-green',
-			actiune: 'badge-orange',
-			mars: 'badge-green',
-			online: 'badge-muted'
-		};
-		return map[type] || 'badge-muted';
+	/** Extract first paragraph as a lead, plain text. */
+	function extractLead(blocks: unknown): string {
+		if (!Array.isArray(blocks)) return '';
+		const first = blocks.find((b: any) => b?.type === 'paragraph') as any;
+		if (!first?.children) return '';
+		return (first.children as any[])
+			.map((c: any) => (typeof c?.text === 'string' ? c.text : ''))
+			.join('')
+			.trim();
 	}
 
-	function typeLabel(type: string) {
-		const map: Record<string, string> = {
-			dezbatere: 'Dezbatere',
-			actiune: 'Acțiune',
-			mars: 'Marș',
-			online: 'Online'
-		};
-		return map[type] || type;
-	}
+	const lead = $derived(extractLead(event.description));
 
-	// Simple Strapi Blocks renderer
+	// Strapi Blocks renderer (same scheme as articole)
 	function renderBlocks(blocks: unknown): string {
 		if (!Array.isArray(blocks)) return '';
 		return blocks.map(renderBlock).join('');
@@ -99,369 +134,713 @@
 			.join('');
 	}
 
-	function generateICalUrl(ev: typeof event) {
-		const start = new Date(ev.start_date).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-		const end = ev.end_date
-			? new Date(ev.end_date).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
-			: start;
-		const params = new URLSearchParams({
-			action: 'TEMPLATE',
-			text: ev.title,
-			dates: `${start}/${end}`,
-			location: ev.location_name ?? '',
-			details: `Eveniment Partidul SENS`
-		});
-		return `https://calendar.google.com/calendar/render?${params.toString()}`;
-	}
+	const dp = $derived(dayParts(event.start_date));
+	const spotsLeft = $derived(
+		event.max_participants && event.spots_taken !== null && event.spots_taken !== undefined
+			? Math.max(event.max_participants - event.spots_taken, 0)
+			: null
+	);
 </script>
 
 <SeoHead
 	title={event.seo?.meta_title ?? event.title}
-	description={event.seo?.meta_description ?? `${event.title} — eveniment Partidul SENS`}
+	description={event.seo?.meta_description ?? lead ?? `${event.title} — eveniment Partidul SENS`}
+	ogImage={event.cover_image?.url}
+	type="article"
 />
 
-<!-- ═══════ HERO ═══════ -->
-<section
-	class="event-hero"
-	style={event.cover_image?.url ? `--bg: url('${getStrapiMediaUrl(event.cover_image.url)}')` : ''}
->
-	<div class="event-hero__overlay"></div>
-	<div class="container event-hero__content">
-		<Breadcrumb light items={[
+<article class="event-page">
+	<div class="event-shell">
+		<!-- Breadcrumb: Acasă > Evenimente > [Titlu] -->
+		<Breadcrumb items={[
 			{ label: 'Evenimente', href: '/evenimente' },
 			{ label: event.title }
 		]} />
-		<div class="event-hero__badges">
-			<span class="badge {badgeClass(event.event_type)}">{typeLabel(event.event_type)}</span>
+
+		<!-- Chips row (categorie + status; data e în band-ul de mai jos) -->
+		<div class="event-chips">
+			<a href="/evenimente?type={event.event_type}" class="chip chip--filled">{TYPE_LABEL[event.event_type] ?? event.event_type}</a>
+			{#if event.is_featured}
+				<span class="chip chip--outline">Recomandat</span>
+			{/if}
 			{#if isPast}
-				<span class="badge badge-muted">Încheiat</span>
+				<span class="chip chip--outline chip--muted">Încheiat</span>
+			{:else if !event.registration_open}
+				<span class="chip chip--outline chip--muted">Înscrieri închise</span>
+			{/if}
+			{#if event.city}
+				<span class="chip-meta">{event.city.toUpperCase()}</span>
 			{/if}
 		</div>
-		<h1 class="event-hero__title">{event.title}</h1>
-	</div>
-</section>
 
-<div class="container event-layout">
-	<!-- ═══════ CONȚINUT ═══════ -->
-	<main class="event-content">
+		<!-- Title -->
+		<h1 class="event-title">{event.title}</h1>
+
+		<!-- Lead from first paragraph -->
+		{#if lead}
+			<p class="event-lead">{lead}</p>
+		{/if}
+
+		<!-- Date + place band (canonical date display) -->
+		<aside class="event-band">
+			<div class="event-band__date">
+				<span class="event-band__day">{dp.day}</span>
+				<span class="event-band__month">{dp.month}<br /><span class="event-band__year">{dp.year}</span></span>
+			</div>
+
+			<div class="event-band__details">
+				<div class="event-band__row">
+					<div class="event-band__label">Interval</div>
+					<div class="event-band__value">
+						{formatTime(event.start_date)}{#if event.end_date} – {formatTime(event.end_date)}{/if}
+					</div>
+				</div>
+				{#if event.venue || event.city || event.location_name}
+					<div class="event-band__row">
+						<div class="event-band__label">Locație</div>
+						<div class="event-band__value">
+							{event.venue ?? event.location_name}
+							{#if event.city}<br /><span class="event-band__sub">{event.city}</span>{/if}
+						</div>
+					</div>
+				{/if}
+				{#if event.max_participants}
+					<div class="event-band__row">
+						<div class="event-band__label">Capacitate</div>
+						<div class="event-band__value">
+							{event.max_participants} locuri
+							{#if spotsLeft !== null}
+								<br /><span class="event-band__accent">{spotsLeft} libere</span>
+							{/if}
+						</div>
+					</div>
+				{/if}
+			</div>
+		</aside>
+
+		<!-- Cover image -->
+		{#if event.cover_image?.url}
+			<figure class="event-figure">
+				<Image
+					src={getStrapiMediaUrl(event.cover_image.url)}
+					alt={event.cover_image.alternativeText ?? event.title}
+					aspectRatio="16/9"
+					priority={true}
+					class="event-figure__img"
+				/>
+				{#if event.cover_image.caption || event.cover_image.alternativeText}
+					<figcaption class="event-figure__caption">
+						{event.cover_image.caption ?? event.cover_image.alternativeText}
+					</figcaption>
+				{/if}
+			</figure>
+		{/if}
+
+		<!-- Body -->
 		{#if event.description}
-			<div class="rich-text">
+			<div class="event-body">
 				{@html sanitizeHtml(renderBlocks(event.description))}
 			</div>
 		{/if}
 
-		<!-- Social posts (for past events) -->
-		{#if isPast && event.social_posts?.length}
+		<!-- CTA bar -->
+		{#if !isPast}
+			<aside class="event-cta">
+				<div class="event-cta__copy">
+					<div class="event-cta__kicker">— Participă</div>
+					<div class="event-cta__title">{formatDateLong(event.start_date)}</div>
+				</div>
+				<div class="event-cta__actions">
+					{#if event.registration_open}
+						<a
+							href={event.registration_url ?? `/inscrie-te?event=${event.slug}`}
+							class="btn-primary"
+							target={event.registration_url ? '_blank' : undefined}
+							rel={event.registration_url ? 'noopener noreferrer' : undefined}
+						>
+							Rezervă loc →
+						</a>
+					{:else}
+						<span class="btn-disabled">Înscrieri închise</span>
+					{/if}
+					<a href={generateICalUrl(event)} target="_blank" rel="noopener noreferrer" class="btn-outline">
+						+ Adaugă în calendar
+					</a>
+				</div>
+			</aside>
+		{/if}
+
+		<!-- Social posts (past events) -->
+		{#if event.social_posts?.length}
 			<section class="social-posts">
-				<h2>Postări social media</h2>
+				<div class="social-posts__head">— Pe rețele</div>
+				{#if event.social_posts_description}
+					<p class="social-posts__desc">{event.social_posts_description}</p>
+				{/if}
 				<div class="social-posts__grid">
 					{#each event.social_posts as post}
-						<a href={post.url} target="_blank" rel="noopener" class="social-post-link">
-							<span class="social-post-link__platform">{post.platform}</span>
-							<span>Vezi postarea →</span>
+						<a href={post.url} target="_blank" rel="noopener noreferrer" class="social-posts__item">
+							<span class="social-posts__platform">{post.platform.toUpperCase()}</span>
+							<span class="social-posts__arrow">↗</span>
 						</a>
 					{/each}
 				</div>
 			</section>
 		{/if}
-	</main>
 
-	<!-- ═══════ SIDEBAR INFO ═══════ -->
-	<aside class="event-sidebar">
-		<div class="info-box">
-			<h2>Detalii eveniment</h2>
+		<!-- Share row -->
+		<aside class="share-bar" aria-label="Distribuie evenimentul">
+			<span class="share-bar__label">Distribuie ↗</span>
+			<div class="share-bar__buttons">
+				<a href={shareUrl('facebook')} target="_blank" rel="noopener noreferrer" class="share-btn" aria-label="Share pe Facebook">
+					<SocialIcon platform="facebook" size={18} />
+				</a>
+				<a href={shareUrl('twitter')} target="_blank" rel="noopener noreferrer" class="share-btn" aria-label="Share pe X">
+					<SocialIcon platform="x" size={18} />
+				</a>
+				<a href={shareUrl('linkedin')} target="_blank" rel="noopener noreferrer" class="share-btn" aria-label="Share pe LinkedIn">
+					<SocialIcon platform="linkedin" size={18} />
+				</a>
+				<a href={shareUrl('whatsapp')} target="_blank" rel="noopener noreferrer" class="share-btn" aria-label="Share pe WhatsApp">
+					<SocialIcon platform="whatsapp" size={18} />
+				</a>
+				<a href={shareUrl('email')} class="share-btn" aria-label="Share pe email">
+					<SocialIcon platform="email" size={18} />
+				</a>
+			</div>
+		</aside>
+	</div>
 
-			<div class="info-row">
-				<span class="info-icon">📅</span>
-				<div>
-					<strong>Data</strong>
-					<p>{formatDate(event.start_date)}</p>
+	<!-- Related events -->
+	{#if related.length > 0}
+		<section class="related-section">
+			<div class="container">
+				<h2 class="related-section__title">Alte evenimente</h2>
+				<div class="related-grid">
+					{#each related as ev}
+						{@const rdp = dayParts(ev.start_date)}
+						<article class="related-card">
+							<div class="related-card__date">
+								<span class="related-card__day">{rdp.day}</span>
+								<span class="related-card__month">{rdp.month}</span>
+							</div>
+							<div class="related-card__body">
+								<div class="related-card__meta">
+									<span class="chip chip--outline">{TYPE_LABEL[ev.event_type] ?? ev.event_type}</span>
+									{#if ev.city}<span class="related-card__city">{ev.city.toUpperCase()}</span>{/if}
+								</div>
+								<h3 class="related-card__title">
+									<a href="/evenimente/{ev.slug}">{ev.title}</a>
+								</h3>
+								<a href="/evenimente/{ev.slug}" class="related-card__link">Detalii →</a>
+							</div>
+						</article>
+					{/each}
 				</div>
 			</div>
-
-			<div class="info-row">
-				<span class="info-icon">🕒</span>
-				<div>
-					<strong>Ora</strong>
-					<p>
-						{formatTime(event.start_date)}
-						{#if event.end_date}
-							— {formatTime(event.end_date)}
-						{/if}
-					</p>
-				</div>
-			</div>
-
-			{#if event.location_name}
-				<div class="info-row">
-					<span class="info-icon">📍</span>
-					<div>
-						<strong>Locație</strong>
-						<p>{event.location_name}</p>
-					</div>
-				</div>
-			{/if}
-
-			{#if event.max_participants}
-				<div class="info-row">
-					<span class="info-icon">👥</span>
-					<div>
-						<strong>Capacitate</strong>
-						<p>{event.max_participants} participanți</p>
-					</div>
-				</div>
-			{/if}
-
-			{#if !isPast}
-				<div class="info-actions">
-					{#if event.registration_open}
-						<a href="/inscrie-te?event={event.slug}" class="btn btn-primary btn-block">
-							Înscrie-te
-						</a>
-					{:else}
-						<button class="btn btn-muted btn-block" disabled>
-							Înscrieri închise
-						</button>
-					{/if}
-					<a
-						href={generateICalUrl(event)}
-						target="_blank"
-						rel="noopener"
-						class="btn btn-secondary btn-block"
-					>
-						📅 Adaugă în calendar
-					</a>
-				</div>
-			{/if}
-		</div>
-
-		<!-- Share -->
-		<div class="share-box">
-			<h3>Distribuie evenimentul</h3>
-			<div class="share-icons">
-				<a
-					href="https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(`https://partidulsens.ro/evenimente/${event.slug}`)}"
-					target="_blank"
-					rel="noopener"
-					aria-label="Distribuie pe Facebook"
-					class="share-btn"
-				>FB</a>
-				<a
-					href="https://twitter.com/intent/tweet?url={encodeURIComponent(`https://partidulsens.ro/evenimente/${event.slug}`)}&text={encodeURIComponent(event.title)}"
-					target="_blank"
-					rel="noopener"
-					aria-label="Distribuie pe X"
-					class="share-btn"
-				>X</a>
-				<a
-					href="https://api.whatsapp.com/send?text={encodeURIComponent(`${event.title} https://partidulsens.ro/evenimente/${event.slug}`)}"
-					target="_blank"
-					rel="noopener"
-					aria-label="Distribuie pe WhatsApp"
-					class="share-btn"
-				>WA</a>
-			</div>
-		</div>
-	</aside>
-</div>
+		</section>
+	{/if}
+</article>
 
 <style>
-	/* ── Hero ── */
-	.event-hero {
-		position: relative;
-		min-height: 340px;
+	.event-page {
+		background-color: var(--color-paper);
+		padding-bottom: var(--space-16);
+	}
+
+	.event-shell {
+		max-width: 1000px;
+		margin: 0 auto;
+		padding: var(--space-12) var(--space-6) var(--space-16);
+	}
+
+	/* Chips */
+	.event-chips {
 		display: flex;
-		align-items: flex-end;
-		background-color: var(--color-green-dark);
-		background-image: var(--bg);
-		background-size: cover;
-		background-position: center;
-		padding-block: var(--space-16) var(--space-10);
-		margin-top: calc(-1 * var(--navbar-height));
-		padding-top: calc(var(--navbar-height) + var(--space-8));
+		align-items: center;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+		margin-bottom: var(--space-6);
 	}
-	.event-hero__overlay {
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(to top, rgba(0, 56, 39, 0.92) 0%, rgba(0, 56, 39, 0.5) 100%);
+
+	.chip {
+		display: inline-flex;
+		align-items: center;
+		font-family: var(--font-display);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		padding: 5px 12px;
+		line-height: 1.4;
+		text-decoration: none;
+		border: 1.5px solid transparent;
+		transition: all var(--transition-fast);
 	}
-	.event-hero__content {
-		position: relative;
-		z-index: 1;
-		color: var(--color-white);
+	.chip--filled {
+		background-color: var(--color-green-deep);
+		color: var(--color-lime);
+		text-decoration: none;
 	}
-	.event-hero__badges {
+	a.chip--filled:hover {
+		background-color: var(--color-ink);
+	}
+	.chip--outline {
+		background-color: transparent;
+		color: var(--color-ink);
+		border-color: rgba(12, 81, 24, 0.4);
+	}
+	.chip--muted { opacity: 0.6; }
+
+	.chip-meta {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.65;
+		margin-left: auto;
+	}
+
+	/* Title */
+	.event-title {
+		font-family: var(--font-display);
+		font-size: clamp(2.25rem, 6vw, 4.5rem);
+		line-height: 1;
+		letter-spacing: -0.02em;
+		font-weight: 500;
+		color: var(--color-ink);
+		margin: 0 0 var(--space-6);
+	}
+
+	/* Lead */
+	.event-lead {
+		font-family: var(--font-display);
+		font-size: clamp(1.125rem, 1.7vw, 1.375rem);
+		line-height: 1.5;
+		font-weight: 400;
+		color: var(--color-ink-soft);
+		margin: 0 0 var(--space-10);
+		max-width: 760px;
+	}
+
+	/* Date + place band */
+	.event-band {
+		display: grid;
+		grid-template-columns: minmax(160px, 220px) 1fr;
+		gap: var(--space-12);
+		padding: var(--space-8) 0;
+		margin: var(--space-2) 0 var(--space-10);
+		border-top: 2px solid var(--color-ink);
+		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
+		align-items: center;
+	}
+	.event-band__date {
 		display: flex;
-		gap: var(--space-2);
-		margin-bottom: var(--space-3);
-		margin-top: var(--space-4);
+		align-items: baseline;
+		gap: var(--space-3);
+		color: var(--color-green-deep);
 	}
-	.event-hero__title {
-		font-size: var(--text-2xl);
+	.event-band__day {
+		font-family: var(--font-display);
+		font-size: clamp(4.5rem, 11vw, 7.5rem);
+		line-height: 0.85;
+		font-weight: 500;
+		letter-spacing: -0.03em;
+	}
+	.event-band__month {
+		font-family: var(--font-mono);
+		font-size: 0.875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink);
 		line-height: 1.2;
 	}
-	@media (min-width: 768px) {
-		.event-hero__title { font-size: var(--text-4xl); }
+	.event-band__year {
+		opacity: 0.55;
 	}
-
-	/* ── Layout ── */
-	.event-layout {
+	.event-band__details {
 		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--space-10);
-		padding-block: var(--space-10) var(--space-16);
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: var(--space-6);
 	}
-	@media (min-width: 768px) {
-		.event-layout { grid-template-columns: 1fr 340px; }
-	}
-
-	/* ── Content ── */
-	.event-content {
-		min-width: 0;
-	}
-	.rich-text :global(p) {
-		margin-bottom: var(--space-4);
-		line-height: 1.7;
-		color: var(--color-text);
-	}
-	.rich-text :global(h2) {
-		font-size: var(--text-xl);
-		margin-top: var(--space-8);
-		margin-bottom: var(--space-4);
-		color: var(--color-green-dark);
-	}
-	.rich-text :global(ul),
-	.rich-text :global(ol) {
-		padding-left: 1.5rem;
-		margin-bottom: var(--space-4);
-	}
-	.rich-text :global(li) {
+	.event-band__label {
+		font-family: var(--font-mono);
+		font-size: 0.625rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.6;
 		margin-bottom: var(--space-2);
-		line-height: 1.6;
 	}
-	.rich-text :global(blockquote) {
-		border-left: 4px solid var(--color-green-leaf);
-		padding-left: var(--space-4);
-		margin-block: var(--space-6);
-		color: var(--color-text-muted);
-		font-style: italic;
+	.event-band__value {
+		font-family: var(--font-display);
+		font-size: 1.0625rem;
+		color: var(--color-ink);
+		line-height: 1.35;
+	}
+	.event-band__sub {
+		font-size: 0.875rem;
+		color: var(--color-ink-soft);
+	}
+	.event-band__accent {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--color-green-deep);
+	}
+	@media (max-width: 720px) {
+		/* Mobile: stack date row → interval → locație clean & vertical. */
+		.event-band {
+			grid-template-columns: 1fr;
+			gap: var(--space-5);
+			padding: var(--space-6) 0;
+			margin: var(--space-2) 0 var(--space-8);
+		}
+		.event-band__date {
+			align-items: baseline;
+			gap: var(--space-2);
+		}
+		.event-band__day {
+			font-size: 3.5rem;
+			line-height: 0.9;
+		}
+		.event-band__month {
+			font-size: 0.75rem;
+			line-height: 1.3;
+		}
+		.event-band__details {
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-4);
+		}
+		.event-band__row {
+			display: grid;
+			grid-template-columns: 90px 1fr;
+			gap: var(--space-3);
+			align-items: baseline;
+			padding-top: var(--space-3);
+			border-top: 1px solid rgba(12, 81, 24, 0.12);
+		}
+		.event-band__label {
+			margin-bottom: 0;
+		}
+		.event-band__value {
+			font-size: 0.9375rem;
+		}
 	}
 
-	/* ── Social posts ── */
-	.social-posts {
+	/* Figure */
+	.event-figure {
+		margin: 0 0 var(--space-12);
+	}
+	:global(.event-figure__img) {
+		width: 100%;
+		max-height: 520px;
+		border: 1px solid rgba(12, 81, 24, 0.15);
+	}
+	.event-figure__caption {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.7;
+		margin-top: var(--space-3);
+	}
+
+	/* Body */
+	.event-body {
+		max-width: 720px;
+		margin-bottom: var(--space-12);
+	}
+	.event-body :global(p) {
+		font-size: 1.125rem;
+		line-height: 1.7;
+		margin-bottom: var(--space-6);
+	}
+	.event-body :global(h2),
+	.event-body :global(h3) {
+		font-family: var(--font-display);
+		font-weight: 500;
+		letter-spacing: -0.01em;
 		margin-top: var(--space-10);
-	}
-	.social-posts h2 {
-		font-size: var(--text-xl);
 		margin-bottom: var(--space-4);
-		color: var(--color-green-dark);
 	}
-	.social-posts__grid {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-3);
+	.event-body :global(h2) { font-size: clamp(1.75rem, 3vw, 2.25rem); line-height: 1.1; }
+	.event-body :global(h3) { font-size: clamp(1.375rem, 2.2vw, 1.75rem); line-height: 1.15; }
+	.event-body :global(ul),
+	.event-body :global(ol) {
+		font-size: 1.125rem;
+		line-height: 1.7;
+		padding-left: 1.5rem;
+		margin-bottom: var(--space-6);
 	}
-	.social-post-link {
+	.event-body :global(li) { margin-bottom: var(--space-3); }
+	.event-body :global(blockquote) {
+		border-left: 3px solid var(--color-lime);
+		padding-left: var(--space-4);
+		margin: var(--space-6) 0;
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		line-height: 1.5;
+		color: var(--color-ink);
+	}
+
+	/* CTA bar */
+	.event-cta {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: var(--space-4);
-		background-color: var(--color-bg);
-		border-radius: var(--radius-md);
+		gap: var(--space-6);
+		padding: var(--space-8);
+		background-color: var(--color-green-deep);
+		color: var(--color-cream);
+		margin: var(--space-4) 0 var(--space-10);
+		flex-wrap: wrap;
+	}
+	.event-cta__kicker {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		opacity: 0.6;
+		margin-bottom: var(--space-3);
+	}
+	.event-cta__title {
+		font-family: var(--font-display);
+		font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		line-height: 1.2;
+	}
+	.event-cta__actions {
+		display: flex;
+		gap: var(--space-3);
+		flex-wrap: wrap;
+	}
+	.btn-primary,
+	.btn-outline,
+	.btn-disabled {
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		padding: 12px 22px;
 		text-decoration: none;
-		color: var(--color-text);
+		border: 1.5px solid transparent;
 		transition: all var(--transition-fast);
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
 	}
-	.social-post-link:hover {
-		background-color: var(--color-white);
-		box-shadow: var(--shadow-sm);
-		color: var(--color-green-dark);
+	.btn-primary {
+		background-color: var(--color-lime);
+		color: var(--color-ink);
 	}
-	.social-post-link__platform {
-		font-weight: 600;
-		text-transform: capitalize;
+	.btn-primary:hover { background-color: var(--color-green-bright); }
+	.btn-outline {
+		background-color: transparent;
+		color: var(--color-cream);
+		border-color: var(--color-cream);
 	}
-
-	/* ── Sidebar ── */
-	.info-box {
-		background-color: var(--color-bg);
-		border-radius: var(--radius-md);
-		padding: var(--space-6);
-		margin-bottom: var(--space-6);
+	.btn-outline:hover {
+		background-color: var(--color-cream);
+		color: var(--color-green-deep);
 	}
-	.info-box h2 {
-		font-size: var(--text-lg);
-		color: var(--color-green-dark);
-		margin-bottom: var(--space-5);
-	}
-	.info-row {
-		display: flex;
-		gap: var(--space-3);
-		align-items: flex-start;
-		margin-bottom: var(--space-4);
-	}
-	.info-icon {
-		font-size: var(--text-lg);
-		flex-shrink: 0;
-		margin-top: 2px;
-	}
-	.info-row strong {
-		display: block;
-		font-size: var(--text-sm);
-		color: var(--color-text);
-		margin-bottom: 2px;
-	}
-	.info-row p {
-		font-size: var(--text-sm);
-		color: var(--color-text-muted);
-	}
-	.info-actions {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-3);
-		margin-top: var(--space-6);
-		padding-top: var(--space-6);
-		border-top: 1px solid var(--color-border);
-	}
-	.btn-block { width: 100%; text-align: center; }
-	.btn-muted {
-		background-color: var(--color-bg);
-		color: var(--color-text-muted);
-		border: 1px solid var(--color-border);
+	.btn-disabled {
+		background-color: transparent;
+		color: rgba(245, 241, 232, 0.5);
+		border-color: rgba(245, 241, 232, 0.25);
 		cursor: not-allowed;
 	}
 
-	/* ── Share ── */
-	.share-box {
-		background-color: var(--color-bg);
-		border-radius: var(--radius-md);
-		padding: var(--space-6);
+	/* Social posts */
+	.social-posts {
+		margin: var(--space-12) 0;
+		padding: var(--space-8) 0;
+		border-top: 1px solid rgba(12, 81, 24, 0.15);
 	}
-	.share-box h3 {
-		font-size: var(--text-base);
-		color: var(--color-green-dark);
-		margin-bottom: var(--space-4);
+	.social-posts__head {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		opacity: 0.55;
+		margin-bottom: var(--space-3);
 	}
-	.share-icons {
-		display: flex;
+	.social-posts__desc {
+		font-family: var(--font-body);
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		color: var(--color-ink);
+		margin: 0 0 var(--space-5);
+		max-width: 60ch;
+	}
+	.social-posts__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 		gap: var(--space-3);
 	}
-	.share-btn {
-		width: 40px;
-		height: 40px;
+	.social-posts__item {
 		display: flex;
+		justify-content: space-between;
 		align-items: center;
-		justify-content: center;
-		border-radius: var(--radius-md);
-		background-color: var(--color-white);
-		color: var(--color-text-muted);
-		font-weight: 700;
-		font-size: var(--text-xs);
+		padding: var(--space-4) var(--space-5);
+		background-color: var(--color-cream);
+		border: 1px solid rgba(12, 81, 24, 0.15);
 		text-decoration: none;
+		color: var(--color-ink);
 		transition: all var(--transition-fast);
 	}
-	.share-btn:hover {
-		background-color: var(--color-green-dark);
-		color: var(--color-white);
+	.social-posts__item:hover {
+		background-color: var(--color-ink);
+		color: var(--color-lime);
+		border-color: var(--color-ink);
 	}
+	.social-posts__platform {
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		letter-spacing: 0.1em;
+		font-weight: 500;
+	}
+
+	/* Share */
+	.share-bar {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-3);
+		padding: var(--space-6) 0 0;
+		border-top: 1px solid rgba(12, 81, 24, 0.15);
+	}
+	.share-bar__label {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.7;
+	}
+	.share-bar__buttons {
+		display: flex;
+		gap: var(--space-2);
+	}
+	.share-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
+		border: 1.5px solid var(--color-ink);
+		background-color: transparent;
+		color: var(--color-ink);
+		text-decoration: none;
+		transition: background-color var(--transition-fast), color var(--transition-fast);
+	}
+	.share-btn:hover {
+		background-color: var(--color-ink);
+		color: var(--color-lime);
+	}
+
+	/* Related */
+	.related-section {
+		padding-block: var(--space-16);
+		background-color: var(--color-cream);
+		border-top: 1px solid rgba(12, 81, 24, 0.15);
+		margin-top: var(--space-16);
+	}
+	.related-section__title {
+		font-family: var(--font-display);
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		line-height: 1;
+		margin-bottom: var(--space-8);
+		color: var(--color-ink);
+	}
+	.related-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-6);
+	}
+	@media (min-width: 768px) {
+		.related-grid { grid-template-columns: repeat(3, 1fr); }
+	}
+	.related-card {
+		background-color: var(--color-paper);
+		border: 1px solid rgba(12, 81, 24, 0.12);
+		padding: var(--space-6);
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: var(--space-5);
+		align-items: start;
+	}
+	.related-card__date {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		min-width: 56px;
+	}
+	.related-card__day {
+		font-family: var(--font-display);
+		font-size: 2.5rem;
+		line-height: 1;
+		font-weight: 500;
+		color: var(--color-green-deep);
+	}
+	.related-card__month {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		margin-top: var(--space-1);
+	}
+	.related-card__body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+	}
+	.related-card__meta {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		flex-wrap: wrap;
+	}
+	.related-card__city {
+		font-family: var(--font-mono);
+		font-size: 0.625rem;
+		letter-spacing: 0.14em;
+		color: var(--color-ink-soft);
+		opacity: 0.6;
+	}
+	.related-card__title {
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		line-height: 1.15;
+		font-weight: 500;
+		margin: 0;
+	}
+	.related-card__title a {
+		color: var(--color-ink);
+		text-decoration: none;
+	}
+	.related-card__title a:hover { color: var(--color-green-deep); }
+	.related-card__link {
+		font-family: var(--font-display);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink);
+		text-decoration: none;
+		margin-top: auto;
+		transition: color var(--transition-fast);
+	}
+	.related-card__link:hover { color: var(--color-green-deep); }
 </style>

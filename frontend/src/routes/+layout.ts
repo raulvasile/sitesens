@@ -34,6 +34,33 @@ export interface FooterData {
 	privacy_link_url: string;
 }
 
+export interface SiteThemeData {
+	brand?: {
+		green_deep?: string | null;
+		green_dark?: string | null;
+		green_mid?: string | null;
+		green_soft?: string | null;
+		green_bright?: string | null;
+		lime?: string | null;
+		pastel_green?: string | null;
+	} | null;
+	surfaces?: {
+		paper?: string | null;
+		cream?: string | null;
+		ink?: string | null;
+		ink_soft?: string | null;
+	} | null;
+	accents?: {
+		rose?: string | null;
+		error?: string | null;
+	} | null;
+	typography?: {
+		font_display?: string | null;
+		font_body?: string | null;
+		font_mono?: string | null;
+	} | null;
+}
+
 /**
  * Universal layout load — consumes server data from +layout.server.ts.
  *
@@ -80,5 +107,7 @@ export const load: LayoutLoad = async ({ data }) => {
 		privacy_link_url: '/politica-confidentialitate',
 	};
 
-	return { navigation, footer };
+	const themeCss = (data as { _themeCss?: string })?._themeCss ?? '';
+
+	return { navigation, footer, themeCss };
 };

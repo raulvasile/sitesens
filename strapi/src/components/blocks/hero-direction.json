@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_blocks_hero_directions",
+  "info": {
+    "displayName": "Direcție Hero (Editorial)",
+    "icon": "list",
+    "description": "Un punct din lista de 4 direcții afișată în Hero varianta Editorial (cod + nume + descriere scurtă)."
+  },
+  "attributes": {
+    "code": {
+      "type": "string",
+      "required": true,
+      "maxLength": 4
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 60
+    },
+    "body": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    }
+  }
+}

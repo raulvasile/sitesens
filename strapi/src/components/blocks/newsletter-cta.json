@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_newsletter_ctas",
   "info": {
-    "displayName": "Abonare Newsletter",
-    "icon": "envelop"
+    "displayName": "CTA Newsletter",
+    "icon": "envelop",
+    "description": "Bloc cu formular abonare la newsletter (înregistrează în Abonați Newsletter)."
   },
   "attributes": {
     "title": {

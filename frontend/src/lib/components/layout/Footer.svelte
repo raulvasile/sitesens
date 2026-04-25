@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
+	import SocialIcon from '$lib/components/ui/SocialIcon.svelte';
 	import type { FooterData, NavigationData } from '../../../routes/+layout';
 
 	interface Props {
@@ -30,7 +31,7 @@
 <footer class="footer">
 	<div class="container footer__inner">
 		<div class="footer__brand">
-			<img src={logoUrl} alt="Partidul SENS" height="40" class="footer__logo" />
+			<img src={logoUrl} alt="Partidul SENS" height="40" class="footer__logo" loading="lazy" decoding="async" />
 			<p class="footer__tagline">{tagline}</p>
 			{#if euText}
 				<p class="footer__eu">{euText}</p>
@@ -59,7 +60,7 @@
 							rel="noopener noreferrer"
 							class="footer__social-link"
 						>
-							{social.label}
+							<SocialIcon platform={social.platform} size={20} />
 						</a>
 					{/each}
 				</div>
@@ -164,22 +165,26 @@
 
 	.footer__social-links {
 		display: flex;
-		flex-direction: column;
-		gap: var(--space-3);
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: var(--space-2);
 	}
 
 	.footer__social-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
 		color: var(--color-cream);
-		font-family: var(--font-display);
-		font-size: 0.8125rem;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		transition: color var(--transition-fast), padding-left var(--transition-fast);
+		border: 1.5px solid rgba(245, 241, 232, 0.4);
+		transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
 	}
 
 	.footer__social-link:hover {
-		color: var(--color-lime);
-		padding-left: 6px;
+		color: var(--color-ink);
+		background-color: var(--color-lime);
+		border-color: var(--color-lime);
 	}
 
 	.footer__bottom {

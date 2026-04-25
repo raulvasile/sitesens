@@ -27,6 +27,36 @@ export async function enrichDynamicZone(content: Block[], fetchFn: typeof fetch 
 			}
 		}
 
+		if (block.__component === 'blocks.team-grid') {
+			const limit = (block.limit as number) ?? 6;
+			// Backwards compat: old `leadership_only` boolean → new `mode` enum.
+			let mode = (block.mode as string) ?? null;
+			if (!mode) {
+				mode = (block.leadership_only as boolean) === false ? 'all' : 'leadership';
+			}
+			try {
+				// No `fields[]` filter — we need all scalar fields (including
+				// `details` which is a rich text `blocks` type). `populate[photo]`
+				// just adds the media relation on top.
+				const params: Record<string, string> = {
+					'pagination[pageSize]': String(limit),
+					'sort[0]': 'display_order:asc',
+					'sort[1]': 'name:asc',
+					'populate[photo]': 'true',
+				};
+				if (mode === 'leadership') {
+					params['filters[is_leadership][$eq]'] = 'true';
+				} else if (mode === 'team') {
+					params['filters[is_leadership][$eq]'] = 'false';
+				}
+				// mode === 'all' → no filter
+				const res = await fetchStrapi<unknown[]>('/team-members', params, undefined, fetchFn);
+				enriched[i] = { ...block, _members: res.data ?? [] };
+			} catch {
+				enriched[i] = { ...block, _members: [] };
+			}
+		}
+
 		if (block.__component === 'blocks.upcoming-events') {
 			const count = (block.count as number) ?? 3;
 			const now = new Date().toISOString();

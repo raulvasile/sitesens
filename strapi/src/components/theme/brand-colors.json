@@ -1,0 +1,52 @@
+{
+  "collectionName": "components_theme_brand_colors",
+  "info": {
+    "displayName": "Culori Brand",
+    "icon": "paint",
+    "description": "Paleta principală de verzi a brandului SENS. Aceste culori dau identitatea vizuală — modificările afectează tot site-ul."
+  },
+  "attributes": {
+    "green_deep": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#0C5118",
+      "description": "Verde închis principal — folosit pentru titluri italice accent, butoane principale, iconuri brand"
+    },
+    "green_dark": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#103229",
+      "description": "Verde foarte închis — folosit pentru fundalul footer-ului, secțiuni hero pe închis, hartă filiale"
+    },
+    "green_mid": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#00BF63",
+      "description": "Verde mediu — accent secundar"
+    },
+    "green_soft": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#5AB782",
+      "description": "Verde pastel — folosit pentru emerald accents"
+    },
+    "green_bright": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#6FD025",
+      "description": "Verde aprins — folosit pentru hover pe butoane lime"
+    },
+    "lime": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#91FF00",
+      "description": "Lime/verde neon — culoarea de accent semnătură. Folosită pentru evidențieri (highlight rotit), butoane principale, link-uri active. Schimbarea ei modifică drastic aspectul"
+    },
+    "pastel_green": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#CCFFCC",
+      "description": "Verde pastel foarte deschis — fundaluri delicate"
+    }
+  }
+}

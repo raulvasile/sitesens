@@ -1,9 +1,9 @@
 {
   "collectionName": "components_blocks_next_events",
   "info": {
-    "displayName": "Următorul eveniment",
+    "displayName": "Următorul eveniment (Hero)",
     "icon": "calendar-check",
-    "description": "Card care afișează automat următorul eveniment viitor"
+    "description": "Sub-componentă Hero care afișează automat următorul eveniment viitor."
   },
   "attributes": {
     "label": {

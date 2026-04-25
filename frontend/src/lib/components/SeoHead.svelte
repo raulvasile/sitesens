@@ -20,7 +20,7 @@
 	}: Props = $props();
 
 	const siteName = 'Partidul SENS';
-	const siteUrl = 'https://partidulsens.ro';
+	const siteUrl = 'https://cusens.eu';
 	const fullTitle = $derived(title.includes('SENS') ? title : `${title} — SENS`);
 	const ogImgUrl = $derived(ogImage ? getStrapiMediaUrl(ogImage) : `${siteUrl}/og-default.jpg`);
 	const canonical = $derived(canonicalUrl ?? (typeof window !== 'undefined' ? window.location.href : ''));

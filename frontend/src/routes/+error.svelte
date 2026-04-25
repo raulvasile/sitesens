@@ -6,74 +6,215 @@
 
 	async function retry() {
 		retrying = true;
-		await invalidateAll();
-		retrying = false;
+		try {
+			await invalidateAll();
+		} finally {
+			retrying = false;
+		}
 	}
+
+	type Variant = {
+		title: string;
+		eyebrow: string;
+		quip: string;
+		message: string;
+	};
+
+	const VARIANTS: Record<string, Variant> = {
+		'404': {
+			eyebrow: 'Pagină dispărută',
+			title: 'Pagina nu a fost găsită',
+			quip: 'Am căutat-o peste tot. Și tot peste tot. Nimic.',
+			message: 'Linkul pe care l-ai accesat nu mai există sau s-a schimbat. Hai înapoi acasă, e mai cald.',
+		},
+		'503': {
+			eyebrow: 'Pauză tehnică',
+			title: 'Serverul a luat o pauză.',
+			quip: 'Probabil bea cafea. Sau așteaptă autobuzul.',
+			message: 'Serviciul revine în câteva momente. Mulțumim pentru răbdare — nu e tu, suntem noi.',
+		},
+		'500': {
+			eyebrow: 'A picat ceva',
+			title: 'Ceva nu a mers bine.',
+			quip: 'Programatorii au căzut la datorie. Cafeaua se reumple.',
+			message: 'A apărut o eroare neașteptată. Încearcă să reîmprospătezi pagina sau revino mai târziu.',
+		},
+	};
+
+	const FALLBACK: Variant = {
+		eyebrow: 'Eroare',
+		title: 'A apărut o eroare.',
+		quip: 'Și nici nu am reușit să dăm vina pe pisică.',
+		message: 'Ceva neașteptat s-a întâmplat. Reîncearcă sau revino la pagina principală.',
+	};
+
+	const variant = $derived(VARIANTS[String($page.status)] ?? FALLBACK);
+	const showRetry = $derived($page.status !== 404);
 </script>
 
 <svelte:head>
-	<title>
-		{$page.status === 404 ? 'Pagina nu a fost găsită' : 'Eroare'} — SENS
-	</title>
+	<title>{$page.status} — {variant.title} — SENS</title>
 </svelte:head>
 
-<div class="container error-page">
-	<div class="error-page__content">
-		<span class="error-page__code">{$page.status}</span>
-		{#if $page.status === 404}
-			<h1>Pagina nu a fost găsită</h1>
-			<p>Ne pare rău, dar pagina pe care o cauți nu există sau a fost mutată.</p>
-		{:else if $page.status === 503}
-			<h1>Serviciu temporar indisponibil</h1>
-			<p>{$page.error?.message ?? 'Serverul nu este disponibil momentan. Încearcă din nou în câteva momente.'}</p>
-		{:else}
-			<h1>A apărut o eroare</h1>
-			<p>{$page.error?.message ?? 'Ne pare rău, ceva nu a funcționat corect. Încearcă din nou mai târziu.'}</p>
+<section class="errp">
+	<div class="container errp__inner">
+		<span class="errp__eyebrow">— {variant.eyebrow}</span>
+		<div class="errp__code" aria-hidden="true">{$page.status}</div>
+		<h1 class="errp__title">{variant.title}</h1>
+		<p class="errp__quip">{variant.quip}</p>
+		<p class="errp__message">{variant.message}</p>
+
+		{#if $page.error?.message && $page.error.message !== variant.title}
+			<details class="errp__details">
+				<summary>Detalii tehnice</summary>
+				<code>{$page.error.message}</code>
+			</details>
 		{/if}
-		<div class="error-page__actions">
-			{#if $page.status !== 404}
-				<button class="btn btn-primary" onclick={retry} disabled={retrying}>
-					{retrying ? 'Se reîncearcă...' : 'Reîncearcă'}
+
+		<div class="errp__actions">
+			{#if showRetry}
+				<button type="button" class="errp__btn errp__btn--primary" onclick={retry} disabled={retrying}>
+					{retrying ? 'Se reîncearcă…' : 'Reîncearcă'}
+					<span aria-hidden="true">↻</span>
 				</button>
 			{/if}
-			<a href="/" class="btn btn-secondary">Pagina principală</a>
+			<a href="/" class="errp__btn errp__btn--secondary">
+				Pagina principală
+				<span aria-hidden="true">→</span>
+			</a>
 		</div>
 	</div>
-</div>
+</section>
 
 <style>
-	.error-page {
+	.errp {
+		background-color: var(--color-paper);
+		color: var(--color-ink);
+		min-height: 70dvh;
 		display: flex;
-		justify-content: center;
 		align-items: center;
-		min-height: 60vh;
+		padding-block: var(--space-16);
+	}
+
+	.errp__inner {
+		max-width: 720px;
 		text-align: center;
 	}
-	.error-page__content {
-		max-width: 480px;
+
+	.errp__eyebrow {
+		display: inline-block;
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.65;
+		margin-bottom: var(--space-6);
 	}
-	.error-page__code {
-		display: block;
-		font-size: 5rem;
-		font-weight: 800;
-		color: var(--color-green-leaf);
-		line-height: 1;
-		margin-bottom: var(--space-4);
+
+	.errp__code {
 		font-family: var(--font-display);
+		font-size: clamp(7rem, 22vw, 16rem);
+		font-weight: 500;
+		line-height: 0.85;
+		letter-spacing: -0.04em;
+		color: var(--color-green-deep);
+		margin-bottom: var(--space-6);
 	}
-	.error-page h1 {
-		font-size: var(--text-2xl);
-		margin-bottom: var(--space-3);
+
+	.errp__title {
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 4.5vw, 3.5rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		line-height: 1.05;
+		margin: 0 0 var(--space-4);
 	}
-	.error-page p {
-		color: var(--color-text-muted);
-		line-height: 1.6;
+
+	.errp__quip {
+		font-family: var(--font-display);
+		font-style: italic;
+		font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+		color: var(--color-green-deep);
+		margin: 0 0 var(--space-5);
+	}
+
+	.errp__message {
+		font-family: var(--font-body);
+		font-size: clamp(1rem, 1.4vw, 1.125rem);
+		line-height: 1.55;
+		color: var(--color-ink-soft);
+		max-width: 540px;
+		margin: 0 auto var(--space-8);
+	}
+
+	.errp__details {
+		display: inline-block;
+		text-align: left;
 		margin-bottom: var(--space-8);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--color-ink-soft);
+		opacity: 0.7;
 	}
-	.error-page__actions {
-		display: flex;
-		justify-content: center;
+	.errp__details summary {
+		cursor: pointer;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		padding: var(--space-2) 0;
+	}
+	.errp__details code {
+		display: block;
+		margin-top: var(--space-2);
+		padding: var(--space-3);
+		background-color: var(--color-cream);
+		border-left: 2px solid var(--color-lime);
+		max-width: 540px;
+		overflow-x: auto;
+		white-space: pre-wrap;
+		word-break: break-word;
+		text-transform: none;
+		letter-spacing: 0;
+	}
+
+	.errp__actions {
+		display: inline-flex;
 		gap: var(--space-3);
 		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.errp__btn {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: 0.875rem 1.5rem;
+		font-family: var(--font-display);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		text-decoration: none;
+		border: 1.5px solid var(--color-ink);
+		cursor: pointer;
+		transition: background-color var(--transition-fast), color var(--transition-fast), gap var(--transition-fast);
+	}
+	.errp__btn--primary {
+		background-color: var(--color-ink);
+		color: var(--color-lime);
+	}
+	.errp__btn--primary:hover:not(:disabled) {
+		background-color: var(--color-green-deep);
+		gap: var(--space-3);
+	}
+	.errp__btn--primary:disabled { opacity: 0.5; cursor: not-allowed; }
+	.errp__btn--secondary {
+		background-color: transparent;
+		color: var(--color-ink);
+	}
+	.errp__btn--secondary:hover {
+		background-color: var(--color-ink);
+		color: var(--color-lime);
+		gap: var(--space-3);
 	}
 </style>

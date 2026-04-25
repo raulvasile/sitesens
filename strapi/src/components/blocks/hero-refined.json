@@ -1,0 +1,53 @@
+{
+  "collectionName": "components_blocks_hero_refineds",
+  "info": {
+    "displayName": "Hero — Refined",
+    "icon": "picture",
+    "description": "Hero cu fotografie pe tot ecranul, text alb, accent verde-lime. Titlu mare în stânga, descriere și butoane în dreapta. Inspirat din Direction A (Refined & Confident)."
+  },
+  "attributes": {
+    "background_image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "top_meta_left": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "top_meta_right": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "title_italic_accent": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 400
+    },
+    "cta_text": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "cta_link": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "cta_secondary_text": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "cta_secondary_link": {
+      "type": "string",
+      "maxLength": 200
+    }
+  }
+}

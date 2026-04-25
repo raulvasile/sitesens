@@ -2,22 +2,79 @@
   "collectionName": "components_form_validation_messages",
   "info": {
     "displayName": "Mesaje validare",
-    "icon": "exclamation-triangle"
+    "icon": "exclamation-triangle",
+    "description": "Texte pentru erori comune de validare (câmp obligatoriu, email invalid etc.)."
   },
   "attributes": {
-    "required_generic": { "type": "string", "default": "Acest câmp este obligatoriu", "maxLength": 150 },
-    "email_required": { "type": "string", "default": "Email-ul este obligatoriu", "maxLength": 150 },
-    "email_invalid": { "type": "string", "default": "Email invalid", "maxLength": 150 },
-    "phone_required": { "type": "string", "default": "Telefonul este obligatoriu", "maxLength": 150 },
-    "phone_invalid": { "type": "string", "default": "Număr de telefon invalid", "maxLength": 150 },
-    "first_name_required": { "type": "string", "default": "Prenumele este obligatoriu", "maxLength": 150 },
-    "last_name_required": { "type": "string", "default": "Numele este obligatoriu", "maxLength": 150 },
-    "birth_date_required": { "type": "string", "default": "Data nașterii este obligatorie", "maxLength": 150 },
-    "county_required": { "type": "string", "default": "Județul este obligatoriu", "maxLength": 150 },
-    "city_required": { "type": "string", "default": "Localitatea este obligatorie", "maxLength": 150 },
-    "address_required": { "type": "string", "default": "Adresa este obligatorie", "maxLength": 150 },
-    "consent_required": { "type": "string", "default": "Trebuie să accepți această condiție pentru a continua", "maxLength": 200 },
-    "duplicate_error": { "type": "string", "default": "Există deja o cerere cu acest email", "maxLength": 200 },
-    "generic_error": { "type": "string", "default": "A apărut o eroare. Încearcă din nou în câteva momente.", "maxLength": 200 }
+    "required_generic": {
+      "type": "string",
+      "default": "Acest câmp este obligatoriu",
+      "maxLength": 150
+    },
+    "email_required": {
+      "type": "string",
+      "default": "Email-ul este obligatoriu",
+      "maxLength": 150
+    },
+    "email_invalid": {
+      "type": "string",
+      "default": "Email invalid",
+      "maxLength": 150
+    },
+    "phone_required": {
+      "type": "string",
+      "default": "Telefonul este obligatoriu",
+      "maxLength": 150
+    },
+    "phone_invalid": {
+      "type": "string",
+      "default": "Număr de telefon invalid",
+      "maxLength": 150
+    },
+    "first_name_required": {
+      "type": "string",
+      "default": "Prenumele este obligatoriu",
+      "maxLength": 150
+    },
+    "last_name_required": {
+      "type": "string",
+      "default": "Numele este obligatoriu",
+      "maxLength": 150
+    },
+    "birth_date_required": {
+      "type": "string",
+      "default": "Data nașterii este obligatorie",
+      "maxLength": 150
+    },
+    "county_required": {
+      "type": "string",
+      "default": "Județul este obligatoriu",
+      "maxLength": 150
+    },
+    "city_required": {
+      "type": "string",
+      "default": "Localitatea este obligatorie",
+      "maxLength": 150
+    },
+    "address_required": {
+      "type": "string",
+      "default": "Adresa este obligatorie",
+      "maxLength": 150
+    },
+    "consent_required": {
+      "type": "string",
+      "default": "Trebuie să accepți această condiție pentru a continua",
+      "maxLength": 200
+    },
+    "duplicate_error": {
+      "type": "string",
+      "default": "Există deja o cerere cu acest email",
+      "maxLength": 200
+    },
+    "generic_error": {
+      "type": "string",
+      "default": "A apărut o eroare. Încearcă din nou în câteva momente.",
+      "maxLength": 200
+    }
   }
 }

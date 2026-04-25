@@ -1,18 +1,24 @@
 {
   "collectionName": "components_blocks_image_galleries",
   "info": {
-    "displayName": "Galerie Imagini",
-    "icon": "picture"
+    "displayName": "Galerie de imagini",
+    "icon": "picture",
+    "description": "Galerie cu mai multe imagini."
   },
   "attributes": {
     "images": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "layout": {
       "type": "enumeration",
-      "enum": ["grid", "carousel"],
+      "enum": [
+        "grid",
+        "carousel"
+      ],
       "default": "grid"
     },
     "caption": {

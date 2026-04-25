@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_latest_articles",
   "info": {
-    "displayName": "Ultimele Articole",
-    "icon": "file"
+    "displayName": "Ultimele articole",
+    "icon": "file",
+    "description": "Listă auto-populată cu cele mai recente articole din /stiri."
   },
   "attributes": {
     "heading": {

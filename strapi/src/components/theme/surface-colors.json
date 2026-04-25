@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_theme_surface_colors",
+  "info": {
+    "displayName": "Culori Suprafețe",
+    "icon": "stack",
+    "description": "Culorile pentru fundaluri și suprafețe — paper (fundal principal), cream (carduri/secțiuni alternate), ink (text închis)."
+  },
+  "attributes": {
+    "paper": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#FAF7F0",
+      "description": "Fundal principal al site-ului (off-white cu nuanță caldă)"
+    },
+    "cream": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#F5F1E8",
+      "description": "Fundal alternativ pentru carduri și secțiuni — puțin mai gălbui decât paper"
+    },
+    "ink": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#0A1F10",
+      "description": "Verde foarte închis — folosit pentru text principal, borduri puternice"
+    },
+    "ink_soft": {
+      "type": "string",
+      "regex": "^#[0-9A-Fa-f]{6}$",
+      "default": "#2A3B30",
+      "description": "Variantă mai deschisă a ink — folosit pentru text secundar, meta, captions"
+    }
+  }
+}

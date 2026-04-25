@@ -1,8 +1,9 @@
 {
   "collectionName": "components_navigation_menu_sub_items",
   "info": {
-    "displayName": "Sub-element Meniu",
-    "icon": "arrowRight"
+    "displayName": "Sub-element meniu",
+    "icon": "arrowRight",
+    "description": "Element de nivel 2 (dropdown) dintr-un Element meniu."
   },
   "attributes": {
     "label": {

@@ -1,4 +1,5 @@
 import type { PageLoad } from './$types';
+import { error } from '@sveltejs/kit';
 import { fetchStrapi } from '$lib/strapi';
 
 export interface PrivacyPolicyPageData {
@@ -19,7 +20,8 @@ export const load: PageLoad = async ({ fetch }) => {
 			'populate[seo]': 'true',
 		}, undefined, fetch);
 		return { page: res.data ?? null };
-	} catch {
-		return { page: null };
+	} catch (err) {
+		const status = (err as { status?: number })?.status;
+		throw error(status && status >= 500 ? 503 : 500, 'Nu putem încărca politica de confidențialitate momentan.');
 	}
 };

@@ -14,4 +14,4 @@
 	noIndex={hp?.seo?.no_index ?? false}
 />
 
-<DynamicZone content={hp?.content ?? []} />
+<DynamicZone content={hp?.content ?? []} zebra={true} />

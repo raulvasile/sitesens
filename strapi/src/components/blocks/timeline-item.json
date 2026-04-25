@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_blocks_timeline_items",
+  "info": {
+    "displayName": "Element parcurs",
+    "icon": "calendar",
+    "description": "Un moment din Parcurs (an + descriere). Marchează ultimul cu is_current pentru evidențiere."
+  },
+  "attributes": {
+    "year": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "body": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "is_current": {
+      "type": "boolean",
+      "default": false
+    },
+    "current_label": {
+      "type": "string",
+      "default": "ACUM",
+      "maxLength": 30
+    }
+  }
+}

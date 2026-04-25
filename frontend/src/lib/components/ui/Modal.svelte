@@ -5,10 +5,11 @@
 		open: boolean;
 		onClose: () => void;
 		title?: string;
+		size?: 'small' | 'large';
 		children: Snippet;
 	}
 
-	let { open, onClose, title, children }: Props = $props();
+	let { open, onClose, title, size = 'small', children }: Props = $props();
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') onClose();
@@ -29,7 +30,7 @@
 {#if open}
 	<div class="modal-backdrop" role="presentation" onclick={onClose}></div>
 	<div
-		class="modal"
+		class="modal modal--{size}"
 		role="dialog"
 		aria-modal="true"
 		aria-label={title}
@@ -52,7 +53,7 @@
 	.modal-backdrop {
 		position: fixed;
 		inset: 0;
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(10, 31, 16, 0.55);
 		backdrop-filter: blur(4px);
 		z-index: 300;
 	}
@@ -60,8 +61,9 @@
 	.modal {
 		position: fixed;
 		z-index: 301;
-		background-color: var(--color-white);
-		border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+		background-color: var(--color-paper);
+		color: var(--color-ink);
+		border: 1.5px solid var(--color-ink);
 		box-shadow: var(--shadow-lg);
 		max-height: 90dvh;
 		overflow-y: auto;
@@ -79,14 +81,18 @@
 
 	@media (min-width: 640px) {
 		.modal {
-			border-radius: var(--radius-lg);
 			max-width: 560px;
 			width: calc(100% - var(--space-8));
 			bottom: auto;
 			top: 50%;
 			left: 50%;
+			right: auto;
 			transform: translate(-50%, -50%);
 			animation: modal-fade-in var(--transition-base) ease;
+		}
+
+		.modal--large {
+			max-width: 900px;
 		}
 
 		@keyframes modal-fade-in {
@@ -99,28 +105,41 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: var(--space-6);
-		border-bottom: 1px solid var(--color-border);
+		gap: var(--space-4);
+		padding: var(--space-5) var(--space-6);
+		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
+		position: sticky;
+		top: 0;
+		background-color: var(--color-paper);
+		z-index: 1;
 	}
 
 	.modal__title {
-		font-size: var(--text-xl);
-		font-weight: 700;
+		font-family: var(--font-display);
+		font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		line-height: 1.15;
+		color: var(--color-ink);
+		margin: 0;
 	}
 
 	.modal__close {
-		background: none;
-		border: none;
+		background: transparent;
+		border: 1.5px solid var(--color-ink);
 		cursor: pointer;
-		color: var(--color-text-muted);
+		color: var(--color-ink);
 		padding: var(--space-2);
-		border-radius: var(--radius-md);
+		flex-shrink: 0;
 		transition: all var(--transition-fast);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.modal__close:hover {
-		background-color: var(--color-border);
-		color: var(--color-text);
+		background-color: var(--color-ink);
+		color: var(--color-lime);
 	}
 
 	.modal__body {

@@ -35,6 +35,15 @@ export default {
     // ── Migration: schimbă background_color 'green' → 'lime' pe word-carousel ──
     await migrateWordCarouselBackground(strapi);
 
+    // ── Migration: tab Echipa din /despre-noi — card-grid static → TeamGrid ──
+    await migrateAboutTeamSection(strapi);
+
+    // ── Migration: article.body (blocks) → article.content (dynamic zone) ──
+    await migrateArticleBodyToContent(strapi);
+
+    // ── Migration: rebrand partidulsens.ro → cusens.eu pentru câmpurile defaults ──
+    await migrateContactRebrand(strapi);
+
     // ── Admin: etichete câmpuri în română ──
     await configureAdminLabels(strapi);
   },
@@ -178,6 +187,7 @@ async function setupPublicPermissions(strapi: Core.Strapi) {
     { controller: 'api::community-page.community-page', actions: ['find'] },
     { controller: 'api::privacy-policy-page.privacy-policy-page', actions: ['find'] },
     { controller: 'api::events-page.events-page', actions: ['find'] },
+    { controller: 'api::site-theme.site-theme', actions: ['find'] },
     // Newsletter — doar create (subscribe)
     { controller: 'api::newsletter-subscriber.newsletter-subscriber', actions: ['create'] },
     // Membership — doar create (înscriere)
@@ -698,7 +708,7 @@ async function seedData(strapi: Core.Strapi) {
     data: {
       title: 'Contact',
       subtitle: 'Ai o întrebare, o propunere sau vrei să te implici? Scrie-ne!',
-      email: 'contact@partidulsens.ro',
+      email: 'contact@cusens.eu',
       address: 'Str. Exemplu nr. 42, Sector 1, București, 010101',
       schedule: 'Luni – Vineri: 09:00 – 18:00',
       newsletter_title: 'Nu rata nicio veste',
@@ -967,13 +977,14 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       title: 'Titlu',
       slug: 'URL (slug)',
       excerpt: 'Rezumat',
-      body: 'Conținut',
+      content: 'Conținut (text, galerii, citate, video, statistici)',
       cover_image: 'Imagine copertă',
       category: 'Categorie',
       author: 'Autor',
       tags: 'Etichete',
       seo: 'SEO',
       reading_time: 'Timp de citire (min)',
+      featured_stat: 'Statistică evidențiată (apare deasupra conținutului)',
     },
     'api::category.category': {
       name: 'Nume',
@@ -1006,6 +1017,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       registration_url: 'URL înregistrare (opțional)',
       registration_open: 'Înscrieri deschise',
       event_type: 'Tip eveniment',
+      social_posts_description: 'Descriere secțiune „Pe rețele" (apare deasupra postărilor)',
       social_posts: 'Postări social media',
       ical_url: 'Link calendar iCal',
       seo: 'SEO',
@@ -1014,6 +1026,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       name: 'Nume',
       role: 'Funcție',
       bio: 'Biografie',
+      details: 'Detalii extinse (apar într-un modal când se dă click pe card)',
       photo: 'Fotografie',
       social_links: 'Rețele sociale',
       display_order: 'Ordine afișare',
@@ -1146,40 +1159,103 @@ async function configureAdminLabels(strapi: Core.Strapi) {
     },
     'api::contact-page.contact-page': {
       title: 'Titlu',
-      subtitle: 'Subtitlu',
+      subtitle: 'Subtitlu (lead sub titlu)',
+      header_eyebrow: 'Eyebrow header (text mic deasupra titlului)',
+      form_kicker: 'Kicker formular (text mic deasupra titlului formularului)',
       email: 'Email contact',
       address: 'Adresă sediu',
       schedule: 'Program',
       newsletter_title: 'Titlu newsletter',
       newsletter_description: 'Descriere newsletter',
+      form_title: 'Titlu formular',
+      info_heading: 'Titlu secțiune date contact',
+      social_heading: 'Titlu secțiune rețele sociale',
+      form: 'Configurare formular',
+      validation: 'Mesaje validare',
       seo: 'SEO',
     },
     'api::donate-page.donate-page': {
       title: 'Titlu',
+      header_eyebrow: 'Eyebrow header (mic, mono, deasupra titlului)',
       description: 'Descriere',
-      preset_amounts: 'Sume predefinite',
+      amounts_kicker: 'Kicker secțiune sume (ex: „Pasul 1")',
+      amounts_heading: 'Titlu secțiune sume',
+      preset_amounts_json: 'Sume predefinite (legacy JSON)',
+      amounts: 'Sume predefinite (recomandat)',
+      custom_amount_label: 'Etichetă „altă sumă"',
+      donate_button_text: 'Text buton donează',
+      iban: 'IBAN',
+      bank_name: 'Nume bancă',
+      transfer_kicker: 'Kicker secțiune transfer (ex: „Pasul 2")',
+      transfer_heading: 'Titlu secțiune transfer',
+      transfer_notes: 'Note transfer (afișate sub IBAN)',
+      transparency_kicker: 'Kicker secțiune transparență',
+      transparency_heading: 'Titlu secțiune transparență',
+      transparency: 'Elemente transparență (procentaj alocare)',
+      cmf_kicker: 'Kicker mandatar financiar',
       cmf_text: 'Text mandatar CMF',
-      transparency_items: 'Elemente transparență',
       seo: 'SEO',
+    },
+    'api::site-theme.site-theme': {
+      brand: 'Culori Brand',
+      surfaces: 'Culori Suprafețe',
+      accents: 'Culori Accent & Stare',
+      typography: 'Tipografie',
     },
   };
 
   const componentLabels: Record<string, Record<string, string>> = {
     'blocks.hero': {
-      title: 'Titlu (folosește {{rotating}} ca placeholder pentru cuvintele ce se rotesc)',
-      subtitle: 'Subtitlu',
-      cta_text: 'Text buton',
-      cta_link: 'Link buton',
+      title: 'Titlu (folosește {{rotating}} ca placeholder pentru cuvintele rotative)',
+      subtitle: 'Subtitlu / lead',
+      cta_text: 'Text buton principal',
+      cta_link: 'Link buton principal',
       cta_secondary_text: 'Text buton secundar',
       cta_secondary_link: 'Link buton secundar',
-      background_image: 'Imagine fundal',
-      variant: 'Variantă',
+      background_image: 'Imagine fundal (opțional)',
+      variant: 'Variantă (default / compact)',
       rotating_words: 'Cuvinte rotative',
       featured_link: 'Link evidențiat (legacy)',
       next_event: 'Următorul eveniment (auto)',
-      meta_text: 'Text meta (ex: Live · manifest 2026)',
+      meta_text: 'Text meta cu dot live (ex: LIVE · MANIFEST 2026)',
       chip_text: 'Text chip foto',
       chip_visible: 'Afișează chip foto',
+    },
+    'blocks.hero-refined': {
+      background_image: 'Imagine fundal (obligatoriu — acoperă tot heroul)',
+      top_meta_left: 'Meta sus stânga (ex: ADUNAREA GENERALĂ 2026 · CLUJ-NAPOCA)',
+      top_meta_right: 'Meta sus dreapta (ex: N 46°46\' · E 23°35\')',
+      title: 'Titlu mare (uppercase)',
+      title_italic_accent: 'Accent italic verde-lime (linie nouă în titlu, ex: „educată,")',
+      description: 'Descriere coloana dreaptă',
+      cta_text: 'Text buton principal (ex: Înscrie-te acum)',
+      cta_link: 'Link buton principal',
+      cta_secondary_text: 'Text buton secundar (ex: Donează)',
+      cta_secondary_link: 'Link buton secundar',
+    },
+    'blocks.hero-editorial': {
+      top_meta_left: 'Meta sus stânga (ex: NR. 07 / EDIȚIA DE PRIMĂVARĂ)',
+      top_meta_center: 'Meta sus centru (ex: MANIFEST SENS · 2026)',
+      top_meta_right: 'Meta sus dreapta (ex: ROMÂNIA · EUROPA · PLANETA)',
+      title: 'Titlu enorm (uppercase, până la 200px)',
+      title_emphasis: 'Cuvânt evidențiat cu fundal lime și rotire (ex: „construim.")',
+      manifesto_kicker: 'Kicker manifest (default: „Manifest")',
+      manifesto_lead: 'Lead manifest (paragraf mare)',
+      cta_text: 'Text buton principal',
+      cta_link: 'Link buton principal',
+      cta_secondary_text: 'Text buton secundar',
+      cta_secondary_link: 'Link buton secundar',
+      directions_kicker: 'Kicker direcții (default: „Patru direcții")',
+      directions: 'Direcții (lista numerotată sub titlu)',
+      pull_quote_text: 'Text citat (coloana dreaptă)',
+      pull_quote_author_name: 'Autor citat',
+      pull_quote_author_meta: 'Detalii autor (ex: CLUJ · FONDATOR FILIALĂ)',
+      pull_quote_author_photo: 'Fotografie autor citat',
+    },
+    'blocks.hero-direction': {
+      code: 'Cod (ex: 01, 02)',
+      name: 'Nume (ex: SĂNĂTATE)',
+      body: 'Descriere scurtă (1 frază)',
     },
     'blocks.word-rotation': {
       words: 'Cuvinte (array JSON, ex: ["Sănătate", "Educație"])',
@@ -1300,12 +1376,6 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       amount: 'Sumă (RON)',
       label: 'Etichetă opțională',
     },
-    'shared.newsletter-section': {
-      title: 'Titlu',
-      description: 'Descriere',
-      placeholder: 'Placeholder email',
-      submit_text: 'Text buton',
-    },
     'blocks.text-block': {
       body: 'Conținut',
       alignment: 'Aliniere',
@@ -1355,6 +1425,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
     'blocks.program-item': {
       area: 'Domeniu',
       text: 'Descriere',
+      details: 'Detalii extinse (apar într-un modal când se dă click pe card)',
     },
     'blocks.newsletter-cta': {
       title: 'Titlu',
@@ -1372,22 +1443,12 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       platform: 'Platformă',
       url: 'Link',
     },
-    'homepage.value-card': {
-      title: 'Titlu',
-      short_text: 'Text scurt',
-      description: 'Descriere',
-      points: 'Puncte cheie',
-      link_text: 'Text link',
-      link_url: 'URL link',
-    },
     'homepage.value-point': {
       text: 'Text',
     },
     'event.social-post': {
       platform: 'Platformă',
-      post_url: 'Link postare',
-      embed_text: 'Text',
-      media: 'Media',
+      url: 'Link postare',
     },
     'navigation.menu-item': {
       label: 'Etichetă',
@@ -1413,6 +1474,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       link_text: 'Text link',
       link_url: 'URL link',
       image: 'Imagine',
+      details: 'Detalii extinse (apar într-un modal când se dă click pe card; are precedență față de link)',
     },
     'blocks.latest-articles': {
       heading: 'Titlu secțiune',
@@ -1443,6 +1505,106 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       posts_heading: 'Titlu secțiune postări',
       embed_fallback_text: 'Text fallback embed (folosește {platform})',
       variant: 'Variantă (full/compact)',
+    },
+
+    // ─── Componente nou create (Direction C) ───
+    'blocks.page-header': {
+      eyebrow: 'Eyebrow (text mic deasupra titlului, stânga)',
+      meta: 'Meta (text mic deasupra titlului, dreapta)',
+      title: 'Titlu',
+      title_italic: 'Parte italică din titlu (accent verde)',
+      lead: 'Lead (paragraf scurt sub titlu)',
+      continuation: 'Continuare titlu (linie nouă, opțional)',
+      continuation_highlight: 'Cuvânt evidențiat lime din continuare',
+      background_color: 'Culoare fundal',
+    },
+    'blocks.mission-band': {
+      kicker: 'Kicker (text mic deasupra titlului)',
+      heading: 'Titlu',
+      heading_italic: 'Parte italică din titlu (accent lime)',
+      paragraphs: 'Paragrafe (folosește **cuvânt** pentru evidențiere lime)',
+      background_color: 'Culoare fundal',
+    },
+    'blocks.mission-paragraph': {
+      text: 'Text paragraf (marchează cuvinte cu **cuvânt**)',
+    },
+    'blocks.timeline': {
+      kicker: 'Kicker',
+      heading: 'Titlu',
+      heading_italic: 'Parte italică din titlu',
+      items: 'Momente parcurs',
+      background_color: 'Culoare fundal',
+    },
+    'blocks.timeline-item': {
+      year: 'An (sau perioadă, ex: 2024)',
+      body: 'Descriere moment',
+      is_current: 'Marchează ca momentul curent (apare evidențiat)',
+      current_label: 'Etichetă pentru momentul curent (default: ACUM)',
+    },
+    'blocks.team-grid': {
+      kicker: 'Kicker',
+      heading: 'Titlu',
+      cta_text: 'Text link (opțional)',
+      cta_link: 'URL link (opțional)',
+      mode: 'Cine apare: leadership (doar conducere) / team (doar non-conducere) / all (toți)',
+      limit: 'Număr maxim de membri afișați',
+      background_color: 'Culoare fundal',
+    },
+    'blocks.chapters-grid': {
+      kicker: 'Kicker',
+      heading: 'Titlu',
+      cta_text: 'Text link (opțional)',
+      cta_link: 'URL link (opțional)',
+      items: 'Filiale',
+      background_color: 'Culoare fundal',
+    },
+    'blocks.chapter-item': {
+      name: 'Nume oraș / filială',
+      code: 'Cod (ex: FIL.01) — opțional, generat automat dacă lipsește',
+      url: 'URL pagină filială (opțional)',
+    },
+    'blocks.romania-map': {
+      kicker: 'Kicker',
+      heading: 'Titlu',
+      subheading: 'Subtitlu (descriere)',
+      chapters: 'Filiale (cod ISO județ + URL filială pentru click)',
+      background_color: 'Culoare fundal',
+    },
+    'blocks.county-chapter': {
+      code: 'Cod ISO județ (ex: B pentru București, CJ pentru Cluj, TM pentru Timiș)',
+      name: 'Nume filială (opțional, default folosește numele județului)',
+      url: 'URL filială (unde duce click-ul pe județ)',
+    },
+    'blocks.article-stat': {
+      value: 'Valoare (ex: 76%, 1.2M)',
+      label: 'Etichetă scurtă',
+      context: 'Paragraf de context (opțional)',
+    },
+
+    // ─── Tema site ───
+    'theme.brand-colors': {
+      green_deep: 'Verde închis principal (titluri, butoane)',
+      green_dark: 'Verde foarte închis (footer, fundaluri)',
+      green_mid: 'Verde mediu',
+      green_soft: 'Verde pastel',
+      green_bright: 'Verde aprins (hover butoane)',
+      lime: 'Lime / accent semnătură',
+      pastel_green: 'Verde foarte deschis',
+    },
+    'theme.surface-colors': {
+      paper: 'Fundal principal site',
+      cream: 'Fundal alternativ (carduri, secțiuni)',
+      ink: 'Text principal (verde foarte închis)',
+      ink_soft: 'Text secundar (mai deschis)',
+    },
+    'theme.accent-colors': {
+      rose: 'Roz pentru chip-uri și accente',
+      error: 'Roșu pentru erori formulare',
+    },
+    'theme.typography': {
+      font_display: 'Font titluri (display)',
+      font_body: 'Font text curent (body)',
+      font_mono: 'Font monospace (eyebrow, meta)',
     },
   };
 
@@ -1771,7 +1933,7 @@ async function topUpPrivacyPolicyPage(strapi: Core.Strapi) {
       { type: 'heading', level: 2, children: [{ type: 'text', text: 'Scopul prelucrării' }] },
       { type: 'paragraph', children: [{ type: 'text', text: 'Folosim datele pentru: procesarea cererilor de aderare, trimiterea newsletter-ului (dacă ai consimțit), comunicare cu tine, statistici anonime.' }] },
       { type: 'heading', level: 2, children: [{ type: 'text', text: 'Drepturile tale' }] },
-      { type: 'paragraph', children: [{ type: 'text', text: 'Ai dreptul de acces, rectificare, ștergere, portabilitate și opoziție la prelucrare. Pentru a exercita aceste drepturi, contactează-ne la contact@partidulsens.ro.' }] },
+      { type: 'paragraph', children: [{ type: 'text', text: 'Ai dreptul de acces, rectificare, ștergere, portabilitate și opoziție la prelucrare. Pentru a exercita aceste drepturi, contactează-ne la contact@cusens.eu.' }] },
       { type: 'heading', level: 2, children: [{ type: 'text', text: 'Cookies' }] },
       { type: 'paragraph', children: [{ type: 'text', text: 'Site-ul folosește cookies strict necesare și, cu consimțământul tău, cookies de analiză (Google Analytics). Poți refuza cookies non-esențiale.' }] },
       { type: 'paragraph', children: [{ type: 'text', text: 'Ultima actualizare: ' + new Date().toLocaleDateString('ro-RO') }] },
@@ -1920,6 +2082,188 @@ async function migrateWordCarouselBackground(strapi: Core.Strapi) {
     }
   } catch (err) {
     strapi.log.warn(`WordCarousel migration failed: ${err}`);
+  }
+}
+
+/**
+ * Migration: pe /despre-noi → tab "Echipa", înlocuiește cele 2 card-grid-uri
+ * statice (care duplică datele din colecția team-member) cu 2 blocuri TeamGrid
+ * care fetch-uiesc dinamic. Sursa unică de adevăr devine colecția Echipă.
+ *
+ * 1. Creează team-members lipsă (Mihai Georgescu, Ana Radu — existau doar în
+ *    cardurile statice, nu și în colecție).
+ * 2. Înlocuiește card-grid-urile cu TeamGrid (mode: leadership / team).
+ *
+ * Idempotent: skip dacă secțiunea nu mai conține card-grid-uri.
+ */
+async function migrateAboutTeamSection(strapi: Core.Strapi) {
+  const missingMembers = [
+    {
+      name: 'Mihai Georgescu',
+      role: 'Director Comunicare',
+      bio: 'Jurnalist cu 10 ani de experiență în media independentă, specializat pe investigații de mediu.',
+      display_order: 6,
+      is_leadership: false,
+    },
+    {
+      name: 'Ana Radu',
+      role: 'Director Organizare',
+      bio: 'Sociolog cu experiență în mobilizare comunitară și dezvoltarea rețelelor de voluntari.',
+      display_order: 7,
+      is_leadership: false,
+    },
+  ];
+
+  try {
+    // ── 1. Creează membrii lipsă (idempotent) ──
+    for (const data of missingMembers) {
+      const existing = await strapi.documents('api::team-member.team-member').findMany({
+        filters: { name: { $eq: data.name } } as any,
+      });
+      if (existing.length > 0) continue;
+      await strapi.documents('api::team-member.team-member').create({
+        data: data as any,
+        status: 'published',
+      });
+      strapi.log.info(`👥 Created team-member: ${data.name}`);
+    }
+
+    // ── 2. Găsește secțiunea Echipa din /despre-noi ──
+    const pages = await strapi.documents('api::page.page').findMany({
+      filters: { slug: { $eq: 'despre-noi' } } as any,
+      populate: { sections: { populate: { content: { populate: '*' } } } as any } as any,
+    });
+    const page = pages[0] as any;
+    if (!page) return;
+    const echipa = (page.sections as any[] | undefined)?.find((s: any) => s.title === 'Echipa');
+    if (!echipa) return;
+
+    const oldContent = (echipa.content || []) as any[];
+    const cardGridCount = oldContent.filter((c) => c.__component === 'blocks.card-grid').length;
+    if (cardGridCount === 0) return; // already migrated
+
+    // ── 3. Reconstruiește content: keep text-blocks/cta-banner, replace card-grids ──
+    const stripId = (c: any) => {
+      const { id, ...rest } = c;
+      return rest;
+    };
+
+    const newContent: any[] = [];
+    let cardGridIndex = 0;
+    for (const block of oldContent) {
+      if (block.__component === 'blocks.card-grid') {
+        cardGridIndex++;
+        newContent.push({
+          __component: 'blocks.team-grid',
+          kicker: cardGridIndex === 1 ? 'Conducere' : 'Echipa operațională',
+          heading: cardGridIndex === 1 ? 'Conducerea SENS' : 'Directori și coordonatori',
+          mode: cardGridIndex === 1 ? 'leadership' : 'team',
+          limit: 12,
+          background_color: 'paper',
+        });
+      } else {
+        newContent.push(stripId(block));
+      }
+    }
+
+    await strapi.documents('api::section.section').update({
+      documentId: echipa.documentId,
+      data: { content: newContent } as any,
+      status: 'published',
+    });
+    strapi.log.info(
+      `👥 About → Echipa: replaced ${cardGridIndex} static card-grid(s) with TeamGrid blocks (single source of truth: team-member collection)`
+    );
+  } catch (err) {
+    strapi.log.warn(`About team section migration failed: ${err}`);
+  }
+}
+
+/**
+ * Migration: înlocuiește email-ul vechi (contact@partidulsens.ro) cu cel nou
+ * (contact@cusens.eu) doar dacă utilizatorul nu l-a personalizat. Idempotentă.
+ */
+async function migrateContactRebrand(strapi: Core.Strapi) {
+  const OLD_EMAIL = 'contact@partidulsens.ro';
+  const NEW_EMAIL = 'contact@cusens.eu';
+  try {
+    const cp = (await strapi.documents('api::contact-page.contact-page' as any).findFirst()) as any;
+    if (!cp) return;
+    const patch: Record<string, unknown> = {};
+    if (cp.email === OLD_EMAIL) patch.email = NEW_EMAIL;
+    // Backfill kicker fields if the singleton was created before the schema added them.
+    if (!cp.header_eyebrow) patch.header_eyebrow = 'Vorbește cu noi';
+    if (!cp.form_kicker) patch.form_kicker = 'Mesaj direct';
+    if (Object.keys(patch).length === 0) return;
+
+    await strapi.documents('api::contact-page.contact-page' as any).update({
+      documentId: cp.documentId,
+      data: patch as any,
+      status: 'published',
+    });
+    if (patch.email) strapi.log.info(`✉️  Contact email rebranded: ${OLD_EMAIL} → ${NEW_EMAIL}`);
+    if (patch.header_eyebrow || patch.form_kicker) strapi.log.info('✉️  Contact page kickers backfilled');
+  } catch (err) {
+    strapi.log.warn(`Contact rebrand migration failed: ${err}`);
+  }
+}
+
+/**
+ * Migration: pentru articolele care au `body` (rich text legacy, deja scos
+ * din schemă dar coloana mai există în DB) dar nu au `content` (dynamic zone
+ * nou), copiază body-ul într-un `blocks.text-block` la începutul lui `content`.
+ *
+ * Folosește un query raw pe DB pentru `body` pentru că field-ul nu mai e în
+ * schemă; documents().findMany nu mai returnează coloana. Idempotent — sare
+ * peste articolele care au deja content populat sau body gol.
+ */
+async function migrateArticleBodyToContent(strapi: Core.Strapi) {
+  try {
+    // Raw read of the legacy `body` column (Strapi blocks-format JSON).
+    // The column may not exist on fresh installs — guard with a try/catch.
+    let rows: Array<{ document_id: string; body: unknown }>;
+    try {
+      rows = (await strapi.db.connection
+        .from('articles')
+        .select('document_id', 'body')
+        .whereNotNull('body')) as Array<{ document_id: string; body: unknown }>;
+    } catch {
+      return; // column doesn't exist (fresh DB) — nothing to migrate
+    }
+
+    let migrated = 0;
+    for (const row of rows) {
+      // body in Postgres jsonb comes back parsed; in SQLite it's a string.
+      let body: unknown = row.body;
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch { continue; }
+      }
+      if (!Array.isArray(body) || body.length === 0) continue;
+
+      const article = await strapi.documents('api::article.article').findFirst({
+        filters: { documentId: { $eq: row.document_id } } as any,
+        populate: { content: true } as any,
+      });
+      if (!article) continue;
+      const hasContent = Array.isArray((article as any).content) && (article as any).content.length > 0;
+      if (hasContent) continue;
+
+      await strapi.documents('api::article.article').update({
+        documentId: row.document_id,
+        data: {
+          content: [
+            { __component: 'blocks.text-block', body, alignment: 'left' },
+          ],
+        } as any,
+        status: 'published',
+      });
+      migrated++;
+    }
+    if (migrated > 0) {
+      strapi.log.info(`📝 Migrated ${migrated} article(s): body → content (text-block)`);
+    }
+  } catch (err) {
+    strapi.log.warn(`Article body→content migration failed: ${err}`);
   }
 }
 

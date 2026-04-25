@@ -1,8 +1,9 @@
 {
   "collectionName": "components_homepage_value_points",
   "info": {
-    "displayName": "Punct Valoare",
-    "icon": "check"
+    "displayName": "Punct valoare",
+    "icon": "check",
+    "description": "Un sub-punct din cardurile de valori sau din carduri program."
   },
   "attributes": {
     "text": {

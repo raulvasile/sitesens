@@ -220,6 +220,7 @@
 							alt={article.cover_image.alternativeText ?? article.title}
 							class="article-card__img"
 							loading="lazy"
+							decoding="async"
 						/>
 					{:else}
 						<div class="article-card__img article-card__img--placeholder"></div>

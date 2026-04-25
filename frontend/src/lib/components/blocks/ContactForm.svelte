@@ -162,4 +162,9 @@
 		color: var(--color-green-dark);
 		font-weight: 600;
 	}
+
+	/* mobile-tighten:.contact-form-block */
+	@media (max-width: 767px) {
+		.contact-form-block { padding-block: var(--space-10); }
+	}
 </style>

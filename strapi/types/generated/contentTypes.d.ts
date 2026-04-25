@@ -433,8 +433,8 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   collectionName: 'articles';
   info: {
-    description: '\u0218tiri, comunicate de pres\u0103, analize';
-    displayName: '\uD83D\uDCDD \u0218tiri';
+    description: '\u0218tiri, comunicate de pres\u0103 \u0219i analize publicate \u00EEn sec\u021Biunea /stiri.';
+    displayName: 'Articole';
     pluralName: 'articles';
     singularName: 'article';
   };
@@ -446,8 +446,19 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::team-member.team-member'
     >;
-    body: Schema.Attribute.Blocks;
     category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
+    content: Schema.Attribute.DynamicZone<
+      [
+        'blocks.text-block',
+        'blocks.image-gallery',
+        'blocks.quote',
+        'blocks.video-embed',
+        'blocks.stats-counter',
+        'blocks.cta-banner',
+        'blocks.spacer',
+        'blocks.article-stat',
+      ]
+    >;
     cover_image: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -456,6 +467,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 300;
       }>;
+    featured_stat: Schema.Attribute.Component<'blocks.article-stat', false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -484,8 +496,8 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
-    description: 'Categorii pentru articole';
-    displayName: '\uD83C\uDFF7\uFE0F Categorii';
+    description: 'Taxonomie pentru clasificarea articolelor (ex: Comunicat, Analiz\u0103). Apare ca chip pe pagina de \u0219tire.';
+    displayName: 'Categorii articole';
     pluralName: 'categories';
     singularName: 'category';
   };
@@ -524,8 +536,8 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
 export interface ApiCommunityPageCommunityPage extends Struct.SingleTypeSchema {
   collectionName: 'community_pages';
   info: {
-    description: 'Con\u021Binut pentru pagina /comunitate';
-    displayName: '\u2699\uFE0F Pagin\u0103 Comunitate';
+    description: 'Con\u021Binutul paginii /comunitate. Construit cu Dynamic Zone.';
+    displayName: 'Pagin\u0103 Comunitate';
     pluralName: 'community-pages';
     singularName: 'community-page';
   };
@@ -581,8 +593,8 @@ export interface ApiCommunityPageCommunityPage extends Struct.SingleTypeSchema {
 export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
   collectionName: 'contact_pages';
   info: {
-    description: 'Pagina de contact \u2014 date, formular, newsletter';
-    displayName: '\u2699\uFE0F Contact';
+    description: 'Con\u021Binutul paginii /contact: date de contact, formular \u0219i newsletter.';
+    displayName: 'Pagin\u0103 Contact';
     pluralName: 'contact-pages';
     singularName: 'contact-page';
   };
@@ -595,13 +607,23 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email &
-      Schema.Attribute.DefaultTo<'contact@partidulsens.ro'>;
+      Schema.Attribute.DefaultTo<'contact@cusens.eu'>;
     form: Schema.Attribute.Component<'form.contact-form-config', false>;
+    form_kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Mesaj direct'>;
     form_title: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 120;
       }> &
       Schema.Attribute.DefaultTo<'Trimite-ne un mesaj'>;
+    header_eyebrow: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Vorbe\u0219te cu noi'>;
     info_heading: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 120;
@@ -637,8 +659,8 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
 export interface ApiCountyCounty extends Struct.CollectionTypeSchema {
   collectionName: 'counties';
   info: {
-    description: 'Jude\u021Bele Rom\u00E2niei pentru formularul de \u00EEnscriere';
-    displayName: '\uD83D\uDDFA\uFE0F Jude\u021Be';
+    description: 'Lista jude\u021Belor Rom\u00E2niei. Folosit\u0103 ca op\u021Biuni \u00EEn formularul de \u00EEnscriere.';
+    displayName: 'Jude\u021Be';
     pluralName: 'counties';
     singularName: 'county';
   };
@@ -673,8 +695,8 @@ export interface ApiCountyCounty extends Struct.CollectionTypeSchema {
 export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
   collectionName: 'donate_pages';
   info: {
-    description: 'Pagina de dona\u021Bii \u2014 sume, CMF, transparen\u021B\u0103';
-    displayName: '\u2699\uFE0F Doneaz\u0103';
+    description: 'Con\u021Binutul paginii /doneaza: sume preset, date CMF \u0219i informa\u021Bii despre transparen\u021B\u0103.';
+    displayName: 'Pagin\u0103 Dona\u021Bii';
     pluralName: 'donate-pages';
     singularName: 'donate-page';
   };
@@ -688,10 +710,20 @@ export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
         maxLength: 120;
       }> &
       Schema.Attribute.DefaultTo<'Alege suma dona\u021Biei'>;
+    amounts_kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Pasul 1'>;
     bank_name: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 120;
       }>;
+    cmf_kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Mandatar financiar'>;
     cmf_text: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
@@ -715,6 +747,11 @@ export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
         maxLength: 60;
       }> &
       Schema.Attribute.DefaultTo<'Doneaz\u0103 acum'>;
+    header_eyebrow: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Sus\u021Bine mi\u0219carea'>;
     iban: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 60;
@@ -741,6 +778,11 @@ export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
         maxLength: 120;
       }> &
       Schema.Attribute.DefaultTo<'Transfer bancar'>;
+    transfer_kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Pasul 2'>;
     transfer_notes: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
@@ -752,6 +794,11 @@ export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
         maxLength: 120;
       }> &
       Schema.Attribute.DefaultTo<'Unde merg banii t\u0103i'>;
+    transparency_kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }> &
+      Schema.Attribute.DefaultTo<'Transparen\u021B\u0103'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -761,8 +808,8 @@ export interface ApiDonatePageDonatePage extends Struct.SingleTypeSchema {
 export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   collectionName: 'events';
   info: {
-    description: 'Evenimente: dezbateri, ac\u021Biuni, mar\u0219uri, online';
-    displayName: '\uD83D\uDCDD Evenimente';
+    description: 'Dezbateri, ac\u021Biuni, mar\u0219uri \u0219i \u00EEnt\u00E2lniri online ale partidului. Afi\u0219ate la /evenimente.';
+    displayName: 'Evenimente';
     pluralName: 'events';
     singularName: 'event';
   };
@@ -784,13 +831,10 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
       ['dezbatere', 'actiune', 'mars', 'online']
     > &
       Schema.Attribute.Required;
-    ical_url: Schema.Attribute.String;
-    ical_url_event: Schema.Attribute.String & Schema.Attribute.Private;
     is_featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::event.event'> &
       Schema.Attribute.Private;
-    location_coords: Schema.Attribute.JSON;
     location_name: Schema.Attribute.String;
     max_participants: Schema.Attribute.Integer;
     publishedAt: Schema.Attribute.DateTime;
@@ -803,6 +847,10 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     social_posts: Schema.Attribute.Component<'event.social-post', true>;
+    social_posts_description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
     spots_taken: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     start_date: Schema.Attribute.DateTime & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -819,8 +867,8 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
 export interface ApiEventsPageEventsPage extends Struct.SingleTypeSchema {
   collectionName: 'events_pages';
   info: {
-    description: 'Con\u021Binut pentru pagina /evenimente';
-    displayName: '\u2699\uFE0F Pagin\u0103 Evenimente';
+    description: 'Con\u021Binutul paginii index /evenimente (\u00EEnainte de list\u0103).';
+    displayName: 'Pagin\u0103 Evenimente';
     pluralName: 'events-pages';
     singularName: 'events-page';
   };
@@ -941,8 +989,8 @@ export interface ApiEventsPageEventsPage extends Struct.SingleTypeSchema {
 export interface ApiFooterFooter extends Struct.SingleTypeSchema {
   collectionName: 'footers';
   info: {
-    description: 'Footer-ul site-ului: logo, tagline, linkuri, social media, legal';
-    displayName: '\u2699\uFE0F Footer';
+    description: 'Configurare footer site: logo, tagline, linkuri rapide, social media, legal.';
+    displayName: 'Footer';
     pluralName: 'footers';
     singularName: 'footer';
   };
@@ -982,8 +1030,8 @@ export interface ApiFooterFooter extends Struct.SingleTypeSchema {
 export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
   collectionName: 'homepages';
   info: {
-    description: 'Con\u021Binutul paginii principale \u2014 page builder cu Dynamic Zone';
-    displayName: '\u2699\uFE0F Homepage';
+    description: 'Con\u021Binutul paginii / (homepage). Construit\u0103 cu Dynamic Zone.';
+    displayName: 'Pagin\u0103 Principal\u0103';
     pluralName: 'homepages';
     singularName: 'homepage';
   };
@@ -994,6 +1042,8 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
     content: Schema.Attribute.DynamicZone<
       [
         'blocks.hero',
+        'blocks.hero-refined',
+        'blocks.hero-editorial',
         'blocks.text-block',
         'blocks.cta-banner',
         'blocks.image-gallery',
@@ -1010,6 +1060,12 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
         'blocks.spacer',
         'blocks.social-feed',
         'blocks.word-carousel',
+        'blocks.timeline',
+        'blocks.mission-band',
+        'blocks.chapters-grid',
+        'blocks.team-grid',
+        'blocks.page-header',
+        'blocks.romania-map',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -1033,8 +1089,8 @@ export interface ApiInscriptionPageInscriptionPage
   extends Struct.SingleTypeSchema {
   collectionName: 'inscription_pages';
   info: {
-    description: 'Con\u021Binut pentru pagina /inscrie-te';
-    displayName: '\u2699\uFE0F Pagin\u0103 \u00CEnscriere';
+    description: 'Con\u021Binutul paginii /inscrie-te (text introductiv, etichete formular).';
+    displayName: 'Pagin\u0103 \u00CEnscriere';
     pluralName: 'inscription-pages';
     singularName: 'inscription-page';
   };
@@ -1109,8 +1165,8 @@ export interface ApiInterestAreaInterestArea
   extends Struct.CollectionTypeSchema {
   collectionName: 'interest_areas';
   info: {
-    description: 'Domenii de interes pentru formularul de \u00EEnscriere';
-    displayName: '\uD83C\uDFAF Domenii de interes';
+    description: 'Lista domeniilor de interes folosite ca op\u021Biuni \u00EEn formularul de \u00EEnscriere.';
+    displayName: 'Domenii de Interes';
     pluralName: 'interest-areas';
     singularName: 'interest-area';
   };
@@ -1154,8 +1210,8 @@ export interface ApiMembershipRequestMembershipRequest
   extends Struct.CollectionTypeSchema {
   collectionName: 'membership_requests';
   info: {
-    description: 'Cereri de aderare la Partidul SENS';
-    displayName: '\uD83D\uDC65 Cerere Aderare';
+    description: 'Cereri primite din formularul /inscrie-te. Read-only din admin (\u00EEnregistrate prin POST).';
+    displayName: 'Cereri de Aderare';
     pluralName: 'membership-requests';
     singularName: 'membership-request';
   };
@@ -1245,8 +1301,8 @@ export interface ApiMembershipRequestMembershipRequest
 export interface ApiNavigationNavigation extends Struct.SingleTypeSchema {
   collectionName: 'navigations';
   info: {
-    description: 'Header-ul site-ului: logo, meniu principal, meniu secundar (dreapta), meniu mobil';
-    displayName: '\u2699\uFE0F Header';
+    description: 'Configurare header site: logo, meniu principal, meniu secundar (dreapta), meniu mobil.';
+    displayName: 'Header';
     pluralName: 'navigations';
     singularName: 'navigation';
   };
@@ -1291,8 +1347,8 @@ export interface ApiNewsletterPageNewsletterPage
   extends Struct.SingleTypeSchema {
   collectionName: 'newsletter_pages';
   info: {
-    description: 'Con\u021Binut pentru pagina /newsletter';
-    displayName: '\u2699\uFE0F Pagin\u0103 Newsletter';
+    description: 'Con\u021Binutul paginii /newsletter (text introductiv, formular).';
+    displayName: 'Pagin\u0103 Newsletter';
     pluralName: 'newsletter-pages';
     singularName: 'newsletter-page';
   };
@@ -1339,8 +1395,8 @@ export interface ApiNewsletterSubscriberNewsletterSubscriber
   extends Struct.CollectionTypeSchema {
   collectionName: 'newsletter_subscribers';
   info: {
-    description: 'Abona\u021Bi newsletter \u2014 double opt-in, GDPR';
-    displayName: '\uD83D\uDC65 Abonat Newsletter';
+    description: 'Lista abona\u021Bilor newsletter cu confirmare double opt-in (conform GDPR).';
+    displayName: 'Abona\u021Bi Newsletter';
     pluralName: 'newsletter-subscribers';
     singularName: 'newsletter-subscriber';
   };
@@ -1393,8 +1449,8 @@ export interface ApiNewsletterSubscriberNewsletterSubscriber
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
-    description: 'Pagini statice cu layout flexibil (Dynamic Zone)';
-    displayName: '\uD83D\uDCDD Pagini';
+    description: 'Pagini statice cu layout flexibil prin Dynamic Zone, accesibile la /[slug] (ex: /despre-noi).';
+    displayName: 'Pagini';
     pluralName: 'pages';
     singularName: 'page';
   };
@@ -1405,6 +1461,8 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     content: Schema.Attribute.DynamicZone<
       [
         'blocks.hero',
+        'blocks.hero-refined',
+        'blocks.hero-editorial',
         'blocks.text-block',
         'blocks.cta-banner',
         'blocks.image-gallery',
@@ -1419,6 +1477,12 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'blocks.upcoming-events',
         'blocks.contact-form',
         'blocks.spacer',
+        'blocks.timeline',
+        'blocks.mission-band',
+        'blocks.chapters-grid',
+        'blocks.team-grid',
+        'blocks.page-header',
+        'blocks.romania-map',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -1442,8 +1506,8 @@ export interface ApiPrivacyPolicyPagePrivacyPolicyPage
   extends Struct.SingleTypeSchema {
   collectionName: 'privacy_policy_pages';
   info: {
-    description: 'Con\u021Binut pentru pagina /politica-confidentialitate';
-    displayName: '\u2699\uFE0F Politica de Confiden\u021Bialitate';
+    description: 'Con\u021Binutul paginii /politica-confidentialitate.';
+    displayName: 'Pagin\u0103 Politic\u0103 Confiden\u021Bialitate';
     pluralName: 'privacy-policy-pages';
     singularName: 'privacy-policy-page';
   };
@@ -1488,8 +1552,8 @@ export interface ApiPrivacyPolicyPagePrivacyPolicyPage
 export interface ApiSectionSection extends Struct.CollectionTypeSchema {
   collectionName: 'sections';
   info: {
-    description: 'Sec\u021Biuni cu Dynamic Zone pentru paginile cu tab-uri';
-    displayName: '\uD83D\uDCDD Sec\u021Biuni';
+    description: 'Sec\u021Biuni cu tab-uri pentru paginile interioare (ata\u0219ate unei Pagini). Fiecare are Dynamic Zone propriu.';
+    displayName: 'Sec\u021Biuni';
     pluralName: 'sections';
     singularName: 'section';
   };
@@ -1500,6 +1564,8 @@ export interface ApiSectionSection extends Struct.CollectionTypeSchema {
     content: Schema.Attribute.DynamicZone<
       [
         'blocks.hero',
+        'blocks.hero-refined',
+        'blocks.hero-editorial',
         'blocks.text-block',
         'blocks.cta-banner',
         'blocks.image-gallery',
@@ -1514,6 +1580,12 @@ export interface ApiSectionSection extends Struct.CollectionTypeSchema {
         'blocks.upcoming-events',
         'blocks.contact-form',
         'blocks.spacer',
+        'blocks.timeline',
+        'blocks.mission-band',
+        'blocks.chapters-grid',
+        'blocks.team-grid',
+        'blocks.page-header',
+        'blocks.romania-map',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -1535,11 +1607,43 @@ export interface ApiSectionSection extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiSiteThemeSiteTheme extends Struct.SingleTypeSchema {
+  collectionName: 'site_themes';
+  info: {
+    description: 'Variabilele CSS globale (culori, tipografie). Modific\u0103rile aici se aplic\u0103 pe tot site-ul. Las\u0103 c\u00E2mpuri goale pentru a folosi valorile implicite.';
+    displayName: 'Tema Site';
+    pluralName: 'site-themes';
+    singularName: 'site-theme';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    accents: Schema.Attribute.Component<'theme.accent-colors', false>;
+    brand: Schema.Attribute.Component<'theme.brand-colors', false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::site-theme.site-theme'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    surfaces: Schema.Attribute.Component<'theme.surface-colors', false>;
+    typography: Schema.Attribute.Component<'theme.typography', false>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTagTag extends Struct.CollectionTypeSchema {
   collectionName: 'tags';
   info: {
-    description: 'Taguri pentru articole \u0219i evenimente';
-    displayName: '\uD83C\uDFF7\uFE0F Etichete';
+    description: 'Taguri pentru articole. Apar ca chip-uri pe pagina de \u0219tire \u0219i permit filtrare.';
+    displayName: 'Etichete';
     pluralName: 'tags';
     singularName: 'tag';
   };
@@ -1568,8 +1672,8 @@ export interface ApiTagTag extends Struct.CollectionTypeSchema {
 export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
   collectionName: 'team_members';
   info: {
-    description: 'Membri echip\u0103 \u0219i conducere partid';
-    displayName: '\uD83D\uDC65 Echip\u0103';
+    description: 'Membri ai conducerii \u0219i echipei SENS. Folosi\u021Bi \u0219i ca autori de articole.';
+    displayName: 'Echip\u0103';
     pluralName: 'team-members';
     singularName: 'team-member';
   };
@@ -1582,6 +1686,7 @@ export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    details: Schema.Attribute.Blocks;
     display_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     is_leadership: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -2131,6 +2236,7 @@ declare module '@strapi/strapi' {
       'api::page.page': ApiPagePage;
       'api::privacy-policy-page.privacy-policy-page': ApiPrivacyPolicyPagePrivacyPolicyPage;
       'api::section.section': ApiSectionSection;
+      'api::site-theme.site-theme': ApiSiteThemeSiteTheme;
       'api::tag.tag': ApiTagTag;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'plugin::content-releases.release': PluginContentReleasesRelease;

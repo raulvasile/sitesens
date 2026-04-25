@@ -4,8 +4,8 @@
   "info": {
     "singularName": "navigation",
     "pluralName": "navigations",
-    "displayName": "⚙️ Header",
-    "description": "Header-ul site-ului: logo, meniu principal, meniu secundar (dreapta), meniu mobil"
+    "displayName": "Header",
+    "description": "Configurare header site: logo, meniu principal, meniu secundar (dreapta), meniu mobil."
   },
   "options": {
     "draftAndPublish": false
@@ -15,7 +15,9 @@
     "logo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "main_menu": {
       "type": "component",

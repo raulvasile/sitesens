@@ -1,9 +1,9 @@
 {
   "collectionName": "components_blocks_social_feeds",
   "info": {
-    "displayName": "Social Feed",
+    "displayName": "Feed Social",
     "icon": "globe",
-    "description": "Secțiune urmărește-ne cu link-uri către rețele sociale"
+    "description": "Feed cu postări sau linkuri din social media."
   },
   "options": {},
   "attributes": {
@@ -37,24 +37,11 @@
     },
     "variant": {
       "type": "enumeration",
-      "enum": ["full", "compact"],
+      "enum": [
+        "full",
+        "compact"
+      ],
       "default": "full"
-    },
-    "facebook_url": {
-      "type": "string",
-      "private": true
-    },
-    "instagram_url": {
-      "type": "string",
-      "private": true
-    },
-    "show_facebook": {
-      "type": "boolean",
-      "private": true
-    },
-    "show_instagram": {
-      "type": "boolean",
-      "private": true
     }
   }
 }

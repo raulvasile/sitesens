@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_blocks_mission_bands",
+  "info": {
+    "displayName": "Bandă Misiune",
+    "icon": "compass",
+    "description": "Bandă cu fundal verde: kicker mono + titlu cu accent italic + paragrafe (cuvintele între ** devin lime)."
+  },
+  "attributes": {
+    "kicker": {
+      "type": "string",
+      "default": "Misiune",
+      "maxLength": 80
+    },
+    "heading": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "heading_italic": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "paragraphs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blocks.mission-paragraph",
+      "min": 1
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": [
+        "green-deep",
+        "green-dark",
+        "ink"
+      ],
+      "default": "green-deep"
+    }
+  }
+}

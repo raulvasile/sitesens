@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_card_grids",
   "info": {
-    "displayName": "Grilă Carduri",
-    "icon": "apps"
+    "displayName": "Grilă de carduri",
+    "icon": "apps",
+    "description": "Grilă cu 2-4 coloane. Fiecare card are titlu, descriere, listă opțională și link."
   },
   "attributes": {
     "heading": {
@@ -10,7 +11,11 @@
     },
     "columns": {
       "type": "enumeration",
-      "enum": ["2", "3", "4"],
+      "enum": [
+        "2",
+        "3",
+        "4"
+      ],
       "default": "3"
     },
     "cards": {

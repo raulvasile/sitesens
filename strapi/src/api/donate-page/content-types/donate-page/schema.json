@@ -4,8 +4,8 @@
   "info": {
     "singularName": "donate-page",
     "pluralName": "donate-pages",
-    "displayName": "⚙️ Donează",
-    "description": "Pagina de donații — sume, CMF, transparență"
+    "displayName": "Pagină Donații",
+    "description": "Conținutul paginii /doneaza: sume preset, date CMF și informații despre transparență."
   },
   "options": {
     "draftAndPublish": true
@@ -18,10 +18,20 @@
       "default": "Donează pentru SENS",
       "maxLength": 150
     },
+    "header_eyebrow": {
+      "type": "string",
+      "default": "Susține mișcarea",
+      "maxLength": 80
+    },
     "description": {
       "type": "text",
       "default": "Fiecare leu contează. Donația ta ne ajută să construim o Românie verde, echitabilă și modernă.",
       "maxLength": 500
+    },
+    "amounts_kicker": {
+      "type": "string",
+      "default": "Pasul 1",
+      "maxLength": 60
     },
     "amounts_heading": {
       "type": "string",
@@ -30,7 +40,12 @@
     },
     "preset_amounts_json": {
       "type": "json",
-      "default": [25, 50, 100, 200]
+      "default": [
+        25,
+        50,
+        100,
+        200
+      ]
     },
     "amounts": {
       "type": "component",
@@ -56,6 +71,11 @@
       "type": "string",
       "maxLength": 120
     },
+    "transfer_kicker": {
+      "type": "string",
+      "default": "Pasul 2",
+      "maxLength": 60
+    },
     "transfer_heading": {
       "type": "string",
       "default": "Transfer bancar",
@@ -66,6 +86,11 @@
       "default": "Menționează \"Donație SENS\" în detaliile transferului.",
       "maxLength": 500
     },
+    "transparency_kicker": {
+      "type": "string",
+      "default": "Transparență",
+      "maxLength": 60
+    },
     "transparency_heading": {
       "type": "string",
       "default": "Unde merg banii tăi",
@@ -75,6 +100,11 @@
       "type": "component",
       "repeatable": true,
       "component": "donate.transparency-item"
+    },
+    "cmf_kicker": {
+      "type": "string",
+      "default": "Mandatar financiar",
+      "maxLength": 60
     },
     "cmf_text": {
       "type": "text",

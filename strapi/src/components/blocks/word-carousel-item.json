@@ -1,8 +1,9 @@
 {
   "collectionName": "components_blocks_word_carousel_items",
   "info": {
-    "displayName": "Element carusel cuvinte",
-    "icon": "cursor"
+    "displayName": "Cuvânt carusel",
+    "icon": "cursor",
+    "description": "Un cuvânt din Carusel cuvinte."
   },
   "attributes": {
     "text": {

@@ -4,8 +4,8 @@
   "info": {
     "singularName": "contact-page",
     "pluralName": "contact-pages",
-    "displayName": "⚙️ Contact",
-    "description": "Pagina de contact — date, formular, newsletter"
+    "displayName": "Pagină Contact",
+    "description": "Conținutul paginii /contact: date de contact, formular și newsletter."
   },
   "options": {
     "draftAndPublish": true
@@ -22,7 +22,7 @@
     },
     "email": {
       "type": "email",
-      "default": "contact@partidulsens.ro"
+      "default": "contact@cusens.eu"
     },
     "address": {
       "type": "text"
@@ -35,6 +35,16 @@
     },
     "newsletter_description": {
       "type": "text"
+    },
+    "header_eyebrow": {
+      "type": "string",
+      "default": "Vorbește cu noi",
+      "maxLength": 80
+    },
+    "form_kicker": {
+      "type": "string",
+      "default": "Mesaj direct",
+      "maxLength": 80
     },
     "form_title": {
       "type": "string",

@@ -1,0 +1,43 @@
+{
+  "collectionName": "components_blocks_chapters_grids",
+  "info": {
+    "displayName": "Grilă Filiale",
+    "icon": "globe",
+    "description": "Grilă orașe / filiale active pe fundal verde închis (stil Direction C)."
+  },
+  "attributes": {
+    "kicker": {
+      "type": "string",
+      "default": "Filiale active",
+      "maxLength": 80
+    },
+    "heading": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "cta_text": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "cta_link": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blocks.chapter-item",
+      "min": 1
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": [
+        "green-dark",
+        "green-deep",
+        "ink"
+      ],
+      "default": "green-dark"
+    }
+  }
+}

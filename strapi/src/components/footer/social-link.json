@@ -1,13 +1,22 @@
 {
   "collectionName": "components_footer_social_links",
   "info": {
-    "displayName": "Link Social",
-    "icon": "link"
+    "displayName": "Link Social (Footer)",
+    "icon": "link",
+    "description": "Link către un cont social media afișat în footer (cu etichetă vizibilă)."
   },
   "attributes": {
     "platform": {
       "type": "enumeration",
-      "enum": ["facebook", "instagram", "twitter", "tiktok", "youtube", "linkedin", "threads"],
+      "enum": [
+        "facebook",
+        "instagram",
+        "twitter",
+        "tiktok",
+        "youtube",
+        "linkedin",
+        "threads"
+      ],
       "required": true
     },
     "label": {

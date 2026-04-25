@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_theme_typography",
+  "info": {
+    "displayName": "Tipografie",
+    "icon": "typhon",
+    "description": "Familii de fonturi folosite în site. Acestea sunt nume CSS (font-family) — fonturile efective trebuie să fie încărcate din Google Fonts în app.html."
+  },
+  "attributes": {
+    "font_display": {
+      "type": "string",
+      "default": "'Oswald', 'Arial Narrow', sans-serif",
+      "maxLength": 200,
+      "description": "Font pentru titluri mari (display). Default: Oswald — condensat, vintage, cu personalitate"
+    },
+    "font_body": {
+      "type": "string",
+      "default": "'League Spartan', 'Inter', system-ui, sans-serif",
+      "maxLength": 200,
+      "description": "Font pentru text curent (paragraf, lead). Default: League Spartan"
+    },
+    "font_mono": {
+      "type": "string",
+      "default": "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+      "maxLength": 200,
+      "description": "Font monospace pentru eyebrow, meta-text, coduri. Default: JetBrains Mono"
+    }
+  }
+}

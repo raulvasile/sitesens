@@ -4,8 +4,8 @@
   "info": {
     "singularName": "tag",
     "pluralName": "tags",
-    "displayName": "🏷️ Etichete",
-    "description": "Taguri pentru articole și evenimente"
+    "displayName": "Etichete",
+    "description": "Taguri pentru articole. Apar ca chip-uri pe pagina de știre și permit filtrare."
   },
   "options": {
     "draftAndPublish": false

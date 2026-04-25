@@ -1,11 +1,19 @@
 {
   "collectionName": "components_donate_preset_amounts",
   "info": {
-    "displayName": "Sumă presetată",
-    "icon": "coins"
+    "displayName": "Sumă predefinită",
+    "icon": "coins",
+    "description": "Una dintre sumele preset (ex: 10, 25, 50 RON) afișate pe pagina de donații."
   },
   "attributes": {
-    "amount": { "type": "integer", "required": true, "min": 1 },
-    "label": { "type": "string", "maxLength": 40 }
+    "amount": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    },
+    "label": {
+      "type": "string",
+      "maxLength": 40
+    }
   }
 }

@@ -163,7 +163,13 @@
 				<div class="hero__right">
 					<div class="hero__photo">
 						{#if photoUrl}
-							<img src={photoUrl} alt={data.background_image?.alternativeText ?? ''} />
+							<img
+								src={photoUrl}
+								alt={data.background_image?.alternativeText ?? ''}
+								loading="eager"
+								decoding="async"
+								fetchpriority="high"
+							/>
 							<div class="hero__photo-wash" aria-hidden="true"></div>
 						{:else}
 							<div class="hero__photo-placeholder photo-placeholder photo-placeholder--dark">
@@ -224,12 +230,14 @@
 	.hero {
 		position: relative;
 		background-color: var(--color-paper);
-		padding-block: calc(var(--navbar-height) + var(--space-2)) var(--space-12);
+		/* The page wrapper already offsets var(--navbar-height) from the top,
+		   so we only need a small breathing space here, not a full navbar push. */
+		padding-block: var(--space-6) var(--space-12);
 		overflow: hidden;
 	}
 
 	.hero--compact {
-		padding-block: calc(var(--navbar-height) + var(--space-2)) var(--space-8);
+		padding-block: var(--space-4) var(--space-8);
 	}
 
 	.hero__inner {

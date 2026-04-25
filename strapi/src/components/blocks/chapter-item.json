@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_blocks_chapter_items",
+  "info": {
+    "displayName": "Filială",
+    "icon": "pin",
+    "description": "Un oraș/filială cu cod opțional și URL. Folosit în Grilă Filiale."
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 80
+    },
+    "code": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 200
+    }
+  }
+}

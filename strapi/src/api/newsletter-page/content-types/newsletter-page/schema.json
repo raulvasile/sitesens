@@ -4,8 +4,8 @@
   "info": {
     "singularName": "newsletter-page",
     "pluralName": "newsletter-pages",
-    "displayName": "⚙️ Pagină Newsletter",
-    "description": "Conținut pentru pagina /newsletter"
+    "displayName": "Pagină Newsletter",
+    "description": "Conținutul paginii /newsletter (text introductiv, formular)."
   },
   "options": {
     "draftAndPublish": true

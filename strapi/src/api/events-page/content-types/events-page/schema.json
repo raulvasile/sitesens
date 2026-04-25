@@ -4,8 +4,8 @@
   "info": {
     "singularName": "events-page",
     "pluralName": "events-pages",
-    "displayName": "⚙️ Pagină Evenimente",
-    "description": "Conținut pentru pagina /evenimente"
+    "displayName": "Pagină Evenimente",
+    "description": "Conținutul paginii index /evenimente (înainte de listă)."
   },
   "options": {
     "draftAndPublish": true
