@@ -3,6 +3,13 @@ node_modules
 .cache
 build
 dist
+.git
+.gitignore
 .env
 .env.*
 !.env.example
+*.log
+README.md
+Dockerfile
+.dockerignore
+public/uploads

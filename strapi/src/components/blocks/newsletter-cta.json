@@ -6,6 +6,10 @@
     "description": "Bloc cu formular abonare la newsletter (înregistrează în Abonați Newsletter)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "title": {
       "type": "string",
       "required": true

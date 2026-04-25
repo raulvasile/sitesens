@@ -6,6 +6,10 @@
     "description": "Grilă auto-populată cu membri din colecția Echipă (filtru leadership opțional)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "kicker": {
       "type": "string",
       "default": "Conducere",
@@ -26,7 +30,11 @@
     },
     "mode": {
       "type": "enumeration",
-      "enum": ["leadership", "team", "all"],
+      "enum": [
+        "leadership",
+        "team",
+        "all"
+      ],
       "default": "leadership"
     },
     "limit": {

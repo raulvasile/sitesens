@@ -6,6 +6,10 @@
     "description": "Grilă orașe / filiale active pe fundal verde închis (stil Direction C)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "kicker": {
       "type": "string",
       "default": "Filiale active",

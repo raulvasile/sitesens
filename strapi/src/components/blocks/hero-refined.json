@@ -6,11 +6,17 @@
     "description": "Hero cu fotografie pe tot ecranul, text alb, accent verde-lime. Titlu mare în stânga, descriere și butoane în dreapta. Inspirat din Direction A (Refined & Confident)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "background_image": {
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "top_meta_left": {
       "type": "string",

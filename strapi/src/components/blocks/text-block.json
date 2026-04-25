@@ -6,6 +6,10 @@
     "description": "Conținut text formatat (rich text) cu paragrafe, heading-uri, listă, citat."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "body": {
       "type": "blocks"
     },

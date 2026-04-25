@@ -6,6 +6,10 @@
     "description": "Grilă cu 2-4 coloane. Fiecare card are titlu, descriere, listă opțională și link."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "heading": {
       "type": "string"
     },

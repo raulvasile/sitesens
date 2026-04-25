@@ -6,6 +6,10 @@
     "description": "Antet pentru pagini interioare (Direction C): eyebrow mono + meta dreapta + titlu mare cu accent italic + lead, plus continuare opțională cu evidențiere lime."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "eyebrow": {
       "type": "string",
       "maxLength": 120

@@ -6,6 +6,10 @@
     "description": "Formular de contact integrat într-o pagină."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "heading": {
       "type": "string",
       "default": "Contactează-ne"

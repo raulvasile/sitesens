@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { sanitizeHtml, sanitizeUrl } from '$lib/sanitize';
+	import { sanitizeHtml } from '$lib/sanitize';
+	import { renderStrapiBlocks } from '$lib/strapiBlocks';
 
 	interface Props {
 		data: {
@@ -9,66 +10,13 @@
 	}
 
 	let { data }: Props = $props();
-
-	// Strapi Blocks renderer simplu — suportă paragraphs, headings, lists
-	function renderBlocks(blocks: unknown): string {
-		if (!Array.isArray(blocks)) return '';
-		return blocks.map(renderBlock).join('');
-	}
-
-	function renderBlock(block: Record<string, unknown>): string {
-		switch (block.type) {
-			case 'paragraph':
-				return `<p>${renderInline(block.children as unknown[])}</p>`;
-			case 'heading': {
-				const level = Math.min(Math.max(Number(block.level) || 2, 1), 6);
-				return `<h${level}>${renderInline(block.children as unknown[])}</h${level}>`;
-			}
-			case 'list': {
-				const tag = block.format === 'ordered' ? 'ol' : 'ul';
-				return `<${tag}>${(block.children as unknown[]).map((item) => `<li>${renderInline((item as Record<string, unknown>).children as unknown[])}</li>`).join('')}</${tag}>`;
-			}
-			case 'quote':
-				return `<blockquote>${renderInline(block.children as unknown[])}</blockquote>`;
-			default:
-				return '';
-		}
-	}
-
-	function escapeHtml(str: string): string {
-		return str
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;');
-	}
-
-	function renderInline(children: unknown[]): string {
-		if (!Array.isArray(children)) return '';
-		return children
-			.map((child) => {
-				const c = child as Record<string, unknown>;
-				if (c.type === 'link') {
-					const href = sanitizeUrl(c.url as string);
-					if (!href) return renderInline(c.children as unknown[]);
-					return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${renderInline(c.children as unknown[])}</a>`;
-				}
-				let text = escapeHtml(c.text as string || '');
-				if (c.bold) text = `<strong>${text}</strong>`;
-				if (c.italic) text = `<em>${text}</em>`;
-				if (c.underline) text = `<u>${text}</u>`;
-				if (c.code) text = `<code>${text}</code>`;
-				return text;
-			})
-			.join('');
-	}
 </script>
 
 <section class="text-block text-align-{data.alignment ?? 'left'}">
 	<div class="container">
 		<div class="text-block__content prose">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html sanitizeHtml(renderBlocks(data.body))}
+			{@html sanitizeHtml(renderStrapiBlocks(data.body))}
 		</div>
 	</div>
 </section>

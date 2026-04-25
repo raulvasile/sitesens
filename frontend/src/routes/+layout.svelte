@@ -40,11 +40,29 @@
 	import PreviewBanner from '$lib/components/PreviewBanner.svelte';
 	import Analytics from '$lib/components/Analytics.svelte';
 	import { page } from '$app/stores';
+	import { afterNavigate } from '$app/navigation';
 	import type { Snippet } from 'svelte';
 
 	interface Props { children: Snippet; data: any; }
 	let { children, data }: Props = $props();
 	const isPreview = $derived($page.url.searchParams.get('status') === 'draft');
+
+	// SvelteKit's client router doesn't auto-scroll to URL hashes (it preserves
+	// scroll position across navigations). After every navigation, if the URL
+	// has a #anchor, look up the matching DOM id and scroll there. The two-rAF
+	// wait ensures the new route's DOM is mounted and the layout has settled.
+	afterNavigate(() => {
+		if (typeof window === 'undefined') return;
+		const hash = window.location.hash;
+		if (!hash || hash.length < 2) return;
+		const id = decodeURIComponent(hash.slice(1));
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				const el = document.getElementById(id);
+				if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			});
+		});
+	});
 </script>
 
 <svelte:head>

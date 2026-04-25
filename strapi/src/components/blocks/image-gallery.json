@@ -6,6 +6,10 @@
     "description": "Galerie cu mai multe imagini."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "images": {
       "type": "media",
       "multiple": true,

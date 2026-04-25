@@ -6,6 +6,10 @@
     "description": "Bandă cu fundal verde: kicker mono + titlu cu accent italic + paragrafe (cuvintele între ** devin lime)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "kicker": {
       "type": "string",
       "default": "Misiune",

@@ -6,6 +6,10 @@
     "description": "Carusel orizontal cu cuvinte mari care se rotesc (efect ticker)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "items": {
       "type": "component",
       "repeatable": true,

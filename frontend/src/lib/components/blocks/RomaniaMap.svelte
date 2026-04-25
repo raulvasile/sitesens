@@ -11,6 +11,17 @@
 		code: string;
 		name?: string;
 		url: string;
+		/** Default true (existing behaviour). When false, navigation stays in the same tab. */
+		open_in_new_tab?: boolean;
+	}
+
+	function openChapterUrl(chapter: CountyChapter): void {
+		if (!chapter.url) return;
+		if (chapter.open_in_new_tab === false) {
+			window.location.href = chapter.url;
+		} else {
+			window.open(chapter.url, '_blank', 'noopener');
+		}
 	}
 
 	interface Props {
@@ -195,7 +206,7 @@
 					e.preventDefault();
 					if (selectedCode === code) {
 						// Tapping the same county again navigates immediately.
-						if (chapter.url) window.open(chapter.url, '_blank', 'noopener');
+						openChapterUrl(chapter);
 						return;
 					}
 					selectedCode = code;
@@ -203,12 +214,12 @@
 					return;
 				}
 				// Mouse / keyboard: navigate immediately.
-				if (chapter.url) window.open(chapter.url, '_blank', 'noopener');
+				openChapterUrl(chapter);
 			};
 			const onKey = (e: KeyboardEvent) => {
 				if (e.key === 'Enter' || e.key === ' ') {
 					e.preventDefault();
-					if (chapter.url) window.open(chapter.url, '_blank', 'noopener');
+					openChapterUrl(chapter);
 				}
 			};
 			const meta = COUNTY_BY_CODE.get(code);
@@ -350,6 +361,7 @@
 			</div>
 
 			{#if tooltipPos && visibleCountyMeta && visibleChapter}
+				{@const inNewTab = visibleChapter.open_in_new_tab !== false}
 				<div
 					class="rmap__tooltip"
 					style="left: {tooltipPos.x}px; top: {tooltipPos.y}px;"
@@ -358,8 +370,8 @@
 					<span class="rmap__tooltip-name">{visibleChapter.name ?? visibleCountyMeta.name}</span>
 					<a
 						href={visibleChapter.url}
-						target="_blank"
-						rel="noopener noreferrer"
+						target={inNewTab ? '_blank' : undefined}
+						rel={inNewTab ? 'noopener noreferrer' : undefined}
 						class="rmap__tooltip-cta"
 					>Du-te la filiala →</a>
 				</div>

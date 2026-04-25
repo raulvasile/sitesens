@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
-	import { sanitizeHtml, sanitizeUrl } from '$lib/sanitize';
+	import { sanitizeHtml } from '$lib/sanitize';
+	import { renderStrapiBlocks } from '$lib/strapiBlocks';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import Image from '$lib/components/ui/Image.svelte';
@@ -79,60 +80,6 @@
 	}
 
 	const lead = $derived(extractLead(event.description));
-
-	// Strapi Blocks renderer (same scheme as articole)
-	function renderBlocks(blocks: unknown): string {
-		if (!Array.isArray(blocks)) return '';
-		return blocks.map(renderBlock).join('');
-	}
-
-	function renderBlock(block: Record<string, unknown>): string {
-		switch (block.type) {
-			case 'paragraph':
-				return `<p>${renderInline(block.children as unknown[])}</p>`;
-			case 'heading': {
-				const level = Math.min(Math.max(Number(block.level) || 2, 1), 6);
-				return `<h${level}>${renderInline(block.children as unknown[])}</h${level}>`;
-			}
-			case 'list': {
-				const tag = block.format === 'ordered' ? 'ol' : 'ul';
-				const items = (block.children as unknown[])
-					.map((li: any) => `<li>${renderInline(li.children)}</li>`)
-					.join('');
-				return `<${tag}>${items}</${tag}>`;
-			}
-			case 'quote':
-				return `<blockquote>${renderInline(block.children as unknown[])}</blockquote>`;
-			default:
-				return '';
-		}
-	}
-
-	function escapeHtml(str: string): string {
-		return str
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;');
-	}
-
-	function renderInline(children: unknown[]): string {
-		if (!Array.isArray(children)) return '';
-		return children
-			.map((child: any) => {
-				if (child.type === 'link') {
-					const href = sanitizeUrl(child.url as string);
-					if (!href) return renderInline(child.children);
-					return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${renderInline(child.children)}</a>`;
-				}
-				let text: string = escapeHtml(child.text ?? '');
-				if (child.bold) text = `<strong>${text}</strong>`;
-				if (child.italic) text = `<em>${text}</em>`;
-				if (child.underline) text = `<u>${text}</u>`;
-				return text;
-			})
-			.join('');
-	}
 
 	const dp = $derived(dayParts(event.start_date));
 	const spotsLeft = $derived(
@@ -239,7 +186,7 @@
 		<!-- Body -->
 		{#if event.description}
 			<div class="event-body">
-				{@html sanitizeHtml(renderBlocks(event.description))}
+				{@html sanitizeHtml(renderStrapiBlocks(event.description))}
 			</div>
 		{/if}
 

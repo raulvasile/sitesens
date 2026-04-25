@@ -27,12 +27,29 @@
 	import RomaniaMap from './blocks/RomaniaMap.svelte';
 
 	interface Props {
-		content: Array<{ __component: string; [key: string]: unknown }>;
+		content: Array<{ __component: string; anchor_id?: string | null; [key: string]: unknown }>;
 		/** Alternate paper/cream background between consecutive blocks (homepage). */
 		zebra?: boolean;
 	}
 
 	let { content = [], zebra = false }: Props = $props();
+
+	/**
+	 * Sanitize a user-supplied anchor id into a safe HTML id token.
+	 * Lowercase, alphanum + dash/underscore, no leading digit, max 60 chars.
+	 * Returns undefined for empty/invalid input so the wrapper omits the attribute.
+	 */
+	function sanitizeAnchor(raw: unknown): string | undefined {
+		if (typeof raw !== 'string') return undefined;
+		const cleaned = raw
+			.trim()
+			.toLowerCase()
+			.replace(/\s+/g, '-')
+			.replace(/[^a-z0-9_-]/g, '')
+			.slice(0, 60)
+			.replace(/^[^a-z_]+/, ''); // HTML ids can't start with digit
+		return cleaned || undefined;
+	}
 
 	/**
 	 * Blocks that own a strong, opinionated background (dark green, lime, etc.)
@@ -87,10 +104,12 @@
 		{#if componentMap[block.__component]}
 			{@const BlockComponent = componentMap[block.__component]}
 			{@const ownsBg = HAS_OWN_BG.has(block.__component)}
+			{@const anchor = sanitizeAnchor(block.anchor_id)}
 			<div
 				class="dz-slot"
 				class:dz-slot--cream={!ownsBg && i % 2 === 1}
 				class:dz-slot--paper={!ownsBg && i % 2 === 0}
+				id={anchor}
 			>
 				<BlockComponent data={block} />
 			</div>
@@ -100,7 +119,14 @@
 	{#each content as block (block.__component + JSON.stringify(block))}
 		{#if componentMap[block.__component]}
 			{@const BlockComponent = componentMap[block.__component]}
-			<BlockComponent data={block} />
+			{@const anchor = sanitizeAnchor(block.anchor_id)}
+			{#if anchor}
+				<div id={anchor} class="dz-anchor-wrap">
+					<BlockComponent data={block} />
+				</div>
+			{:else}
+				<BlockComponent data={block} />
+			{/if}
 		{/if}
 	{/each}
 {/if}
@@ -117,5 +143,10 @@
 	.dz-slot--cream :global(> section),
 	.dz-slot--paper :global(> section) {
 		background-color: transparent !important;
+	}
+	/* Compensate for the fixed navbar so #anchor jumps don't hide content. */
+	.dz-slot,
+	.dz-anchor-wrap {
+		scroll-margin-top: calc(var(--navbar-height, 64px) + var(--space-4, 16px));
 	}
 </style>

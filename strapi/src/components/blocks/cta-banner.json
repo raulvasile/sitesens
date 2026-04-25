@@ -6,6 +6,10 @@
     "description": "Bandă cu titlu, descriere și buton — îndemn la acțiune."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "title": {
       "type": "string",
       "required": true

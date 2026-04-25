@@ -6,6 +6,10 @@
     "description": "Înglobare video YouTube / Vimeo prin URL."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "url": {
       "type": "string",
       "required": true

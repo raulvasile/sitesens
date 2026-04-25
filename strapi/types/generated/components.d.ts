@@ -8,6 +8,10 @@ export interface BlocksAccordion extends Struct.ComponentSchema {
     icon: 'bulletList';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     heading: Schema.Attribute.String;
     items: Schema.Attribute.Component<'blocks.accordion-item', true>;
   };
@@ -59,6 +63,10 @@ export interface BlocksCardGrid extends Struct.ComponentSchema {
     icon: 'apps';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     cards: Schema.Attribute.Component<'blocks.card-grid-item', true>;
     columns: Schema.Attribute.Enumeration<['2', '3', '4']> &
       Schema.Attribute.DefaultTo<'3'>;
@@ -117,6 +125,10 @@ export interface BlocksChaptersGrid extends Struct.ComponentSchema {
     icon: 'globe';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_color: Schema.Attribute.Enumeration<
       ['green-dark', 'green-deep', 'ink']
     > &
@@ -157,6 +169,10 @@ export interface BlocksContactForm extends Struct.ComponentSchema {
     icon: 'envelop';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     description: Schema.Attribute.Text;
     heading: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Contacteaz\u0103-ne'>;
@@ -182,6 +198,8 @@ export interface BlocksCountyChapter extends Struct.ComponentSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 80;
       }>;
+    open_in_new_tab: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
     url: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -198,6 +216,10 @@ export interface BlocksCtaBanner extends Struct.ComponentSchema {
     icon: 'cursor';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_color: Schema.Attribute.Enumeration<
       ['green', 'orange', 'white']
     > &
@@ -242,6 +264,10 @@ export interface BlocksHero extends Struct.ComponentSchema {
     icon: 'landscape';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_image: Schema.Attribute.Media<'images'>;
     chip_text: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
@@ -300,6 +326,10 @@ export interface BlocksHeroEditorial extends Struct.ComponentSchema {
     icon: 'feather';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     cta_link: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 200;
@@ -382,6 +412,10 @@ export interface BlocksHeroRefined extends Struct.ComponentSchema {
     icon: 'picture';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_image: Schema.Attribute.Media<'images'> &
       Schema.Attribute.Required;
     cta_link: Schema.Attribute.String &
@@ -432,6 +466,10 @@ export interface BlocksImageGallery extends Struct.ComponentSchema {
     icon: 'picture';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     caption: Schema.Attribute.String;
     images: Schema.Attribute.Media<'images', true>;
     layout: Schema.Attribute.Enumeration<['grid', 'carousel']> &
@@ -447,6 +485,10 @@ export interface BlocksLatestArticles extends Struct.ComponentSchema {
     icon: 'file';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     count: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -473,6 +515,10 @@ export interface BlocksMissionBand extends Struct.ComponentSchema {
     icon: 'compass';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_color: Schema.Attribute.Enumeration<
       ['green-deep', 'green-dark', 'ink']
     > &
@@ -525,6 +571,10 @@ export interface BlocksNewsletterCta extends Struct.ComponentSchema {
     icon: 'envelop';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     description: Schema.Attribute.Text;
     placeholder_text: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'email@exemplu.ro'>;
@@ -578,6 +628,10 @@ export interface BlocksPageHeader extends Struct.ComponentSchema {
     icon: 'header';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
       Schema.Attribute.DefaultTo<'paper'>;
     continuation: Schema.Attribute.String &
@@ -634,6 +688,10 @@ export interface BlocksProgramPoints extends Struct.ComponentSchema {
     icon: 'seed';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     items: Schema.Attribute.Component<'blocks.program-item', true>;
     link_text: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Vezi programul complet'>;
@@ -651,6 +709,10 @@ export interface BlocksQuote extends Struct.ComponentSchema {
     icon: 'quote';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     author: Schema.Attribute.String;
     role: Schema.Attribute.String;
     text: Schema.Attribute.Text & Schema.Attribute.Required;
@@ -665,6 +727,10 @@ export interface BlocksRomaniaMap extends Struct.ComponentSchema {
     icon: 'globe';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
       Schema.Attribute.DefaultTo<'paper'>;
     chapters: Schema.Attribute.Component<'blocks.county-chapter', true>;
@@ -694,6 +760,10 @@ export interface BlocksSocialFeed extends Struct.ComponentSchema {
     icon: 'globe';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     embed_fallback_text: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
@@ -728,6 +798,10 @@ export interface BlocksSpacer extends Struct.ComponentSchema {
     icon: 'arrowDown';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     height: Schema.Attribute.Enumeration<['sm', 'md', 'lg', 'xl']> &
       Schema.Attribute.DefaultTo<'md'>;
   };
@@ -754,6 +828,10 @@ export interface BlocksStatsCounter extends Struct.ComponentSchema {
     icon: 'chartBubble';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     items: Schema.Attribute.Component<'blocks.stat-item', true>;
   };
 }
@@ -766,6 +844,10 @@ export interface BlocksTeamGrid extends Struct.ComponentSchema {
     icon: 'user';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
       Schema.Attribute.DefaultTo<'paper'>;
     cta_link: Schema.Attribute.String &
@@ -810,6 +892,10 @@ export interface BlocksTextBlock extends Struct.ComponentSchema {
   attributes: {
     alignment: Schema.Attribute.Enumeration<['left', 'center', 'right']> &
       Schema.Attribute.DefaultTo<'left'>;
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     body: Schema.Attribute.Blocks;
   };
 }
@@ -822,6 +908,10 @@ export interface BlocksTimeline extends Struct.ComponentSchema {
     icon: 'history';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_color: Schema.Attribute.Enumeration<
       ['cream', 'paper', 'green-deep', 'green-dark']
     > &
@@ -887,6 +977,10 @@ export interface BlocksUpcomingEvents extends Struct.ComponentSchema {
     icon: 'calendar';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     count: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -913,6 +1007,10 @@ export interface BlocksVideoEmbed extends Struct.ComponentSchema {
     icon: 'play';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     caption: Schema.Attribute.String;
     url: Schema.Attribute.String & Schema.Attribute.Required;
   };
@@ -926,6 +1024,10 @@ export interface BlocksWordCarousel extends Struct.ComponentSchema {
     icon: 'arrowRight';
   };
   attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
     background_color: Schema.Attribute.Enumeration<
       ['green', 'dark', 'white', 'lime']
     > &

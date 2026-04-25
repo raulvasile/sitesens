@@ -28,10 +28,13 @@
 		return map;
 	});
 
-	/** Resolve tab index from URL ?tab= param or loader initialTab */
+	/**
+	 * Resolve tab index from URL hash (#slug) — preferred — or legacy ?tab=
+	 * query param — kept for backwards compatibility with old links.
+	 */
 	const resolvedTab = $derived.by(() => {
-		// Use $app/state for live URL reactivity, fallback to loader data
-		const tabParam = pageState.url?.searchParams.get('tab') ?? data.initialTab;
+		const hash = pageState.url?.hash?.replace(/^#/, '') ?? '';
+		const tabParam = hash || pageState.url?.searchParams.get('tab') || data.initialTab;
 		if (tabParam) {
 			const idx = tabSlugMap[tabParam];
 			if (idx !== undefined) return idx;
@@ -41,10 +44,32 @@
 
 	let activeTab = $state(0);
 
-	// Sync activeTab whenever URL param changes
+	// Sync activeTab whenever URL hash/param changes
 	$effect(() => {
 		activeTab = resolvedTab;
 	});
+
+	/**
+	 * Reverse lookup: index → slug, used to update the URL hash on tab click
+	 * without a full navigation (history.replaceState — preserves scroll).
+	 */
+	const slugForIndex = $derived.by(() => {
+		const reverse: Record<number, string> = {};
+		for (const [slug, idx] of Object.entries(tabSlugMap)) reverse[idx] = slug;
+		return reverse;
+	});
+
+	function selectTab(i: number) {
+		activeTab = i;
+		if (typeof window === 'undefined') return;
+		const slug = slugForIndex[i];
+		if (!slug) return;
+		const url = new URL(window.location.href);
+		url.hash = slug;
+		// Strip the legacy ?tab= param so the new hash-based URL is canonical.
+		url.searchParams.delete('tab');
+		window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
+	}
 </script>
 
 <SeoHead
@@ -71,7 +96,7 @@
 				<button
 					class="tab-nav__btn"
 					class:active={activeTab === i}
-					onclick={() => (activeTab = i)}
+					onclick={() => selectTab(i)}
 					role="tab"
 					aria-selected={activeTab === i}
 				>{section.title}</button>

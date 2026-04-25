@@ -6,6 +6,10 @@
     "description": "Listă auto-populată cu cele mai recente articole din /stiri."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "heading": {
       "type": "string",
       "default": "Ultimele știri"

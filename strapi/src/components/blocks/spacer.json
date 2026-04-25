@@ -6,6 +6,10 @@
     "description": "Spațiu vertical configurabil între blocuri."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "height": {
       "type": "enumeration",
       "enum": [

@@ -6,6 +6,10 @@
     "description": "Listă de întrebări frecvente sau secțiuni expandabile."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "heading": {
       "type": "string"
     },

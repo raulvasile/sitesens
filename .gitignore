@@ -2,6 +2,11 @@ node_modules/
 .npm
 .claude
 
+# Root-level .env consumed by docker-compose
+.env
+.env.*
+!.env.example
+
 frontend/.svelte-kit/
 frontend/build/
 frontend/.env

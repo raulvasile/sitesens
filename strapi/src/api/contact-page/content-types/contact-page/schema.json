@@ -38,7 +38,6 @@
     },
     "header_eyebrow": {
       "type": "string",
-      "default": "Vorbește cu noi",
       "maxLength": 80
     },
     "form_kicker": {

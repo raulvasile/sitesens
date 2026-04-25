@@ -60,9 +60,6 @@
 		{/if}
 		<div class="card-grid__grid card-grid--cols-{cols}">
 			{#each data.cards as card, i}
-				{@const total = String(data.cards.length).padStart(2, '0')}
-				{@const idx = String(i + 1).padStart(2, '0')}
-				{@const abbr = card.title.slice(0, 3).toUpperCase()}
 				{@const clickable = hasDetails(card)}
 				<article class="card-grid__card" class:card-grid__card--clickable={clickable} style={`--card-index: ${i}`}>
 					{#if clickable}
@@ -75,12 +72,6 @@
 						></button>
 						<span class="card-grid__more" aria-hidden="true">→</span>
 					{/if}
-					<div class="card-grid__kicker">
-						<span>{idx} / {total}</span>
-						<span>{abbr}</span>
-					</div>
-
-					<span class="card-grid__letter" aria-hidden="true">{card.title.charAt(0)}</span>
 
 					{#if card.image?.url}
 						<img
@@ -263,43 +254,6 @@
 		color: var(--color-cream);
 	}
 
-	/* Mono kicker row (0X / 04  ·  ABB) — design C style */
-	.card-grid__kicker {
-		/* Hidden on mobile to declutter; appears on tablet/desktop. */
-		display: none;
-		justify-content: space-between;
-		align-items: center;
-		font-family: var(--font-mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: currentColor;
-		opacity: 0.6;
-		margin-bottom: var(--space-2);
-	}
-
-	.card-grid__letter {
-		display: none; /* hidden on mobile to free space for a bigger title */
-		font-family: var(--font-display);
-		font-weight: 500;
-		font-size: 3.5rem;
-		line-height: 0.85;
-		color: currentColor;
-		letter-spacing: -0.02em;
-		text-transform: uppercase;
-		margin-top: auto;
-		margin-bottom: var(--space-2);
-	}
-
-	@media (min-width: 768px) {
-		.card-grid__kicker { display: flex; }
-		.card-grid__letter {
-			display: block;
-			font-size: 13.75rem; /* 220px */
-			margin-bottom: var(--space-4);
-		}
-	}
-
 	.card-grid__icon {
 		display: flex;
 		align-items: center;
@@ -311,7 +265,8 @@
 		color: currentColor;
 		font-size: 1.125rem;
 		flex-shrink: 0;
-		margin-top: var(--space-3);
+		/* Pin icon to the bottom of the card (cards have min-height set). */
+		margin-top: auto;
 	}
 
 	.card-grid__card:nth-child(4n+3) .card-grid__icon,
@@ -347,25 +302,24 @@
 
 	.card-grid__title {
 		font-family: var(--font-display);
-		font-size: 1.75rem; /* 28px mobile — bigger now that the giant letter is hidden */
+		font-size: 1.75rem; /* 28px mobile */
 		font-weight: 500;
 		letter-spacing: -0.01em;
 		text-transform: uppercase;
 		line-height: 1.05;
-		margin-top: auto;
 		color: currentColor;
-		margin-bottom: 10px;
+		margin-bottom: var(--space-3);
 	}
 
 	.card-grid__desc {
 		font-family: var(--font-body);
 		font-size: 0.8125rem; /* 13px mobile */
-		line-height: 1.4;
+		line-height: 1.5;
 		opacity: 0.85;
 		margin-bottom: var(--space-3);
 	}
 	@media (min-width: 768px) {
-		.card-grid__title { font-size: 1.375rem; }
+		.card-grid__title { font-size: 2rem; line-height: 1.05; margin-bottom: var(--space-4); }
 		.card-grid__desc { font-size: 0.875rem; margin-bottom: var(--space-4); }
 	}
 
@@ -394,6 +348,7 @@
 	.card-grid__link {
 		display: inline-flex;
 		align-items: center;
+		align-self: flex-start;
 		gap: var(--space-2);
 		font-family: var(--font-display);
 		font-size: 0.8125rem;
@@ -401,6 +356,8 @@
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
 		color: currentColor;
+		/* Pin link to the bottom of the card. */
+		margin-top: auto;
 		transition: gap var(--transition-fast);
 	}
 

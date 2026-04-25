@@ -27,11 +27,28 @@ export interface StrapiPage {
 export const load: PageLoad = async ({ params, url, fetch }) => {
 	const { params: previewParams } = getPreviewStatus(url);
 
+	// Same per-block populate as homepage: in Strapi v5 a generic `populate=*`
+	// on a DynamicZone returns blocks but does NOT deep-populate their nested
+	// components (e.g. card-grid items, accordion items, hero rotating_words).
+	// Keep this list in sync with `page.schema.json#/attributes/content/components`.
+	const blockPopulate: Record<string, string> = {};
+	const blockTypes = [
+		'hero', 'hero-refined', 'hero-editorial', 'text-block', 'cta-banner',
+		'image-gallery', 'accordion', 'quote', 'video-embed', 'stats-counter',
+		'program-points', 'newsletter-cta', 'card-grid', 'latest-articles',
+		'upcoming-events', 'contact-form', 'spacer', 'social-feed',
+		'word-carousel', 'timeline', 'mission-band', 'chapters-grid',
+		'team-grid', 'page-header', 'romania-map',
+	];
+	for (const t of blockTypes) {
+		blockPopulate[`populate[content][on][blocks.${t}][populate]`] = '*';
+		blockPopulate[`populate[sections][populate][content][on][blocks.${t}][populate]`] = '*';
+	}
+
 	const res = await fetchStrapi<StrapiPage[]>('/pages', {
 		'filters[slug][$eq]': params.slug,
-		'populate[content][populate]': '*',
+		...blockPopulate,
 		'populate[seo][populate]': '*',
-		'populate[sections][populate][content][populate]': '*',
 		'populate[sections][sort][0]': 'display_order:asc',
 		...previewParams,
 	}, undefined, fetch);

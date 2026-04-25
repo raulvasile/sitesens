@@ -92,6 +92,13 @@
 		params.set('page', String(p));
 		goto(`/stiri?${params.toString()}`, { replaceState: true });
 	}
+
+	function clearTag() {
+		const params = new URLSearchParams($page.url.searchParams);
+		params.delete('tag');
+		params.delete('page');
+		goto(`/stiri?${params.toString()}`, { replaceState: true });
+	}
 </script>
 
 <SeoHead
@@ -202,6 +209,13 @@
 		</nav>
 	{/if}
 
+	{#if data.currentTag}
+		<p class="search-info">
+			Etichetă activă: <strong>#{data.currentTag}</strong>
+			<button class="search-clear" onclick={clearTag}>✕ Șterge eticheta</button>
+		</p>
+	{/if}
+
 	{#if data.currentSearch}
 		<p class="search-info">
 			Rezultate pentru „<strong>{data.currentSearch}</strong>"
@@ -280,7 +294,7 @@
 		{/if}
 	{:else}
 		<div class="empty-state">
-			<p>Nu am găsit articole{data.currentCategory ? ' în această categorie' : ''}{data.currentSearch ? ` pentru „${data.currentSearch}"` : ''}.</p>
+			<p>Nu am găsit articole{data.currentCategory ? ' în această categorie' : ''}{data.currentTag ? ` cu eticheta „${data.currentTag}"` : ''}{data.currentSearch ? ` pentru „${data.currentSearch}"` : ''}.</p>
 			<a href="/stiri" class="btn btn-secondary">Vezi toate știrile</a>
 		</div>
 	{/if}

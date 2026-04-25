@@ -6,6 +6,10 @@
     "description": "Hero editorial cu titlu enorm tipografic, fără fotografie. Sub titlu: lead+CTA, listă numerotată cu direcții și citat tilted. Inspirat din Direction B (Manifesto / Editorial)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "top_meta_left": {
       "type": "string",
       "maxLength": 120
@@ -78,7 +82,9 @@
     "pull_quote_author_photo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }

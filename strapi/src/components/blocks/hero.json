@@ -6,6 +6,10 @@
     "description": "Hero principal (Direction C — paper, fotografie dreapta). Pentru alte stiluri folosește 'Hero — Refined' (foto full-bg) sau 'Hero — Manifesto' (titlu enorm editorial)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "title": {
       "type": "string",
       "required": true
@@ -28,11 +32,16 @@
     "background_image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "variant": {
       "type": "enumeration",
-      "enum": ["default", "compact"],
+      "enum": [
+        "default",
+        "compact"
+      ],
       "default": "default"
     },
     "rotating_words": {

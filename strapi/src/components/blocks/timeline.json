@@ -6,6 +6,10 @@
     "description": "Listă cronologică verticală — parcursul organizației sau alt timeline."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "kicker": {
       "type": "string",
       "default": "Parcursul nostru",

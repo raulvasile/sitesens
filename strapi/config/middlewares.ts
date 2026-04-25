@@ -15,7 +15,11 @@ const config: Core.Config.Middlewares = [
   {
     name: 'strapi::cors',
     config: {
-      origin: '*',
+      // CORS_ORIGIN is a comma-separated list (e.g. "https://cusens.eu").
+      // Defaults to "*" so dev/local stays unblocked; production must set it.
+      origin: process.env.CORS_ORIGIN
+        ? process.env.CORS_ORIGIN.split(',').map((s) => s.trim())
+        : '*',
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization'],
     },

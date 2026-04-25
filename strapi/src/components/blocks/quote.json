@@ -6,6 +6,10 @@
     "description": "Bloc cu un citat mare și autor opțional."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "text": {
       "type": "text",
       "required": true

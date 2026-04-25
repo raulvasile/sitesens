@@ -1,0 +1,50 @@
+# Global options
+{
+	email {$ACME_EMAIL}
+
+	# To test the deploy without burning Let's Encrypt rate-limits, swap to
+	# the staging CA by uncommenting the next line. Browsers will warn —
+	# that's expected.
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# ─────────── Public site ───────────
+{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	# SvelteKit serves both static assets (with hashed filenames) and SSR
+	# routes. The reverse_proxy passes everything through; long cache for
+	# /_app/immutable/ is set by adapter-node.
+	reverse_proxy frontend:3000 {
+		header_up X-Real-IP {remote_host}
+	}
+
+	header {
+		X-Frame-Options DENY
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		# HSTS (1 year). Remove `preload` if you don't intend to submit.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	}
+}
+
+# ─────────── Strapi (CMS + API) ───────────
+{$STRAPI_DOMAIN} {
+	encode zstd gzip
+
+	# Larger uploads (images, PDFs) — Strapi defaults around 200MB; bump
+	# Caddy to match so it doesn't truncate the request body.
+	request_body {
+		max_size 200MB
+	}
+
+	reverse_proxy strapi:1337 {
+		header_up X-Real-IP {remote_host}
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	}
+}

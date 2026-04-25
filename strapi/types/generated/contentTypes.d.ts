@@ -622,8 +622,7 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
     header_eyebrow: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 80;
-      }> &
-      Schema.Attribute.DefaultTo<'Vorbe\u0219te cu noi'>;
+      }>;
     info_heading: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 120;

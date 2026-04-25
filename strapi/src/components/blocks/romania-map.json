@@ -6,6 +6,10 @@
     "description": "Hartă interactivă cu cele 42 județe. Județele cu filială setată mai jos devin clickable și se colorează verde; celelalte rămân gri. Click pe un județ activ deschide URL-ul filialei."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "kicker": {
       "type": "string",
       "default": "Filiale",
@@ -28,7 +32,10 @@
     },
     "background_color": {
       "type": "enumeration",
-      "enum": ["paper", "cream"],
+      "enum": [
+        "paper",
+        "cream"
+      ],
       "default": "paper"
     }
   }

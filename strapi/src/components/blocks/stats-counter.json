@@ -6,6 +6,10 @@
     "description": "Bandă cu mai multe statistici (număr mare + etichetă)."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "items": {
       "type": "component",
       "repeatable": true,

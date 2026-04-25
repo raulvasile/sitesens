@@ -1206,6 +1206,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
 
   const componentLabels: Record<string, Record<string, string>> = {
     'blocks.hero': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       title: 'Titlu (folosește {{rotating}} ca placeholder pentru cuvintele rotative)',
       subtitle: 'Subtitlu / lead',
       cta_text: 'Text buton principal',
@@ -1222,6 +1223,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       chip_visible: 'Afișează chip foto',
     },
     'blocks.hero-refined': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       background_image: 'Imagine fundal (obligatoriu — acoperă tot heroul)',
       top_meta_left: 'Meta sus stânga (ex: ADUNAREA GENERALĂ 2026 · CLUJ-NAPOCA)',
       top_meta_right: 'Meta sus dreapta (ex: N 46°46\' · E 23°35\')',
@@ -1234,6 +1236,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       cta_secondary_link: 'Link buton secundar',
     },
     'blocks.hero-editorial': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       top_meta_left: 'Meta sus stânga (ex: NR. 07 / EDIȚIA DE PRIMĂVARĂ)',
       top_meta_center: 'Meta sus centru (ex: MANIFEST SENS · 2026)',
       top_meta_right: 'Meta sus dreapta (ex: ROMÂNIA · EUROPA · PLANETA)',
@@ -1278,6 +1281,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       hide_when_empty: 'Ascunde cardul dacă nu există eveniment',
     },
     'blocks.word-carousel': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       items: 'Elemente',
       speed_seconds: 'Viteză (secunde pentru un ciclu complet)',
       background_color: 'Culoare fundal',
@@ -1377,10 +1381,12 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       label: 'Etichetă opțională',
     },
     'blocks.text-block': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       body: 'Conținut',
       alignment: 'Aliniere',
     },
     'blocks.cta-banner': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       title: 'Titlu',
       description: 'Descriere',
       button_text: 'Text buton',
@@ -1388,11 +1394,13 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       background_color: 'Culoare fundal',
     },
     'blocks.image-gallery': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       images: 'Imagini',
       layout: 'Aranjament',
       caption: 'Legendă',
     },
     'blocks.accordion': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       heading: 'Titlu secțiune',
       items: 'Elemente',
     },
@@ -1401,15 +1409,18 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       content: 'Conținut',
     },
     'blocks.quote': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       text: 'Citat',
       author: 'Autor',
       role: 'Funcție',
     },
     'blocks.video-embed': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       url: 'Link video (YouTube/Vimeo)',
       caption: 'Legendă',
     },
     'blocks.stats-counter': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       items: 'Statistici',
     },
     'blocks.stat-item': {
@@ -1417,6 +1428,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       label: 'Etichetă',
     },
     'blocks.program-points': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       items: 'Puncte program',
       show_link: 'Afișează link',
       link_text: 'Text link',
@@ -1428,6 +1440,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       details: 'Detalii extinse (apar într-un modal când se dă click pe card)',
     },
     'blocks.newsletter-cta': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       title: 'Titlu',
       description: 'Descriere',
       placeholder_text: 'Text placeholder',
@@ -1462,6 +1475,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       url: 'URL',
     },
     'blocks.card-grid': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       heading: 'Titlu secțiune',
       columns: 'Coloane',
       cards: 'Carduri',
@@ -1477,6 +1491,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       details: 'Detalii extinse (apar într-un modal când se dă click pe card; are precedență față de link)',
     },
     'blocks.latest-articles': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       heading: 'Titlu secțiune',
       count: 'Număr articole',
       show_category: 'Afișează categoria',
@@ -1484,20 +1499,24 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       cta_link: 'Link buton',
     },
     'blocks.upcoming-events': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       heading: 'Titlu secțiune',
       count: 'Număr evenimente',
       cta_text: 'Text buton',
       cta_link: 'Link buton',
     },
     'blocks.contact-form': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       heading: 'Titlu',
       description: 'Descriere',
       success_message: 'Mesaj de succes',
     },
     'blocks.spacer': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       height: 'Înălțime',
     },
     'blocks.social-feed': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       title: 'Titlu',
       subtitle: 'Subtitlu',
       platforms: 'Platforme sociale',
@@ -1509,6 +1528,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
 
     // ─── Componente nou create (Direction C) ───
     'blocks.page-header': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       eyebrow: 'Eyebrow (text mic deasupra titlului, stânga)',
       meta: 'Meta (text mic deasupra titlului, dreapta)',
       title: 'Titlu',
@@ -1519,6 +1539,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       background_color: 'Culoare fundal',
     },
     'blocks.mission-band': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       kicker: 'Kicker (text mic deasupra titlului)',
       heading: 'Titlu',
       heading_italic: 'Parte italică din titlu (accent lime)',
@@ -1529,6 +1550,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       text: 'Text paragraf (marchează cuvinte cu **cuvânt**)',
     },
     'blocks.timeline': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       kicker: 'Kicker',
       heading: 'Titlu',
       heading_italic: 'Parte italică din titlu',
@@ -1542,6 +1564,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       current_label: 'Etichetă pentru momentul curent (default: ACUM)',
     },
     'blocks.team-grid': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       kicker: 'Kicker',
       heading: 'Titlu',
       cta_text: 'Text link (opțional)',
@@ -1551,6 +1574,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       background_color: 'Culoare fundal',
     },
     'blocks.chapters-grid': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       kicker: 'Kicker',
       heading: 'Titlu',
       cta_text: 'Text link (opțional)',
@@ -1564,6 +1588,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       url: 'URL pagină filială (opțional)',
     },
     'blocks.romania-map': {
+      anchor_id: 'ID ancoră (opțional, pentru link-uri directe ex: #valori)',
       kicker: 'Kicker',
       heading: 'Titlu',
       subheading: 'Subtitlu (descriere)',
@@ -1574,6 +1599,7 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       code: 'Cod ISO județ (ex: B pentru București, CJ pentru Cluj, TM pentru Timiș)',
       name: 'Nume filială (opțional, default folosește numele județului)',
       url: 'URL filială (unde duce click-ul pe județ)',
+      open_in_new_tab: 'Deschide în tab nou (recomandat pentru link-uri externe)',
     },
     'blocks.article-stat': {
       value: 'Valoare (ex: 76%, 1.2M)',
@@ -2191,8 +2217,8 @@ async function migrateContactRebrand(strapi: Core.Strapi) {
     if (!cp) return;
     const patch: Record<string, unknown> = {};
     if (cp.email === OLD_EMAIL) patch.email = NEW_EMAIL;
-    // Backfill kicker fields if the singleton was created before the schema added them.
-    if (!cp.header_eyebrow) patch.header_eyebrow = 'Vorbește cu noi';
+    // form_kicker stays defaulted because it labels a section ("Mesaj direct").
+    // header_eyebrow is intentionally NOT backfilled — empty by default; editors opt in.
     if (!cp.form_kicker) patch.form_kicker = 'Mesaj direct';
     if (Object.keys(patch).length === 0) return;
 
@@ -2202,7 +2228,7 @@ async function migrateContactRebrand(strapi: Core.Strapi) {
       status: 'published',
     });
     if (patch.email) strapi.log.info(`✉️  Contact email rebranded: ${OLD_EMAIL} → ${NEW_EMAIL}`);
-    if (patch.header_eyebrow || patch.form_kicker) strapi.log.info('✉️  Contact page kickers backfilled');
+    if (patch.form_kicker) strapi.log.info('✉️  Contact form_kicker backfilled');
   } catch (err) {
     strapi.log.warn(`Contact rebrand migration failed: ${err}`);
   }

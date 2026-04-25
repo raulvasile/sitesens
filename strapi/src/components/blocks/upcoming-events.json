@@ -6,6 +6,10 @@
     "description": "Listă auto-populată cu următoarele evenimente din /evenimente."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "heading": {
       "type": "string",
       "default": "Evenimente viitoare"

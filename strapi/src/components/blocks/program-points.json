@@ -6,6 +6,10 @@
     "description": "Listă de puncte din programul partidului, cu titlu pentru întreaga secțiune."
   },
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "items": {
       "type": "component",
       "repeatable": true,

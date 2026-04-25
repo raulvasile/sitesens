@@ -7,6 +7,10 @@
   },
   "options": {},
   "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
     "title": {
       "type": "string",
       "default": "Urmărește-ne",

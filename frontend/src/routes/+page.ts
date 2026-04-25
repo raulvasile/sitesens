@@ -19,7 +19,8 @@ export const load: PageLoad = async ({ url, fetch }) => {
 
 	try {
 		// Deep-populate the dynamic zone: nested components (rotating_words, featured_link, items, etc.)
-		// need explicit 'populate' per component type.
+		// need explicit 'populate' per component type. Keep this list in sync with
+		// the components allowed by `homepage.schema.json#/attributes/content/components`.
 		const res = await fetchStrapi<HomepageData>('/homepage', {
 			'populate[content][on][blocks.hero][populate]': '*',
 			'populate[content][on][blocks.hero-refined][populate]': '*',
@@ -40,6 +41,12 @@ export const load: PageLoad = async ({ url, fetch }) => {
 			'populate[content][on][blocks.spacer][populate]': '*',
 			'populate[content][on][blocks.social-feed][populate]': '*',
 			'populate[content][on][blocks.word-carousel][populate]': '*',
+			'populate[content][on][blocks.timeline][populate]': '*',
+			'populate[content][on][blocks.mission-band][populate]': '*',
+			'populate[content][on][blocks.chapters-grid][populate]': '*',
+			'populate[content][on][blocks.team-grid][populate]': '*',
+			'populate[content][on][blocks.page-header][populate]': '*',
+			'populate[content][on][blocks.romania-map][populate]': '*',
 			'populate[seo][populate]': '*',
 			...previewParams,
 		}, undefined, fetch);
