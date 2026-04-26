@@ -108,6 +108,28 @@ Grilă 2/3/4 coloane de carduri. Fiecare card are titlu, descriere, listă bulle
 | `columns` | „2", „3", sau „4" |
 | `cards` | Lista de carduri (repeatable) |
 
+**Câmpuri per card:**
+
+| Câmp | Ce pui |
+|---|---|
+| `title` | Titlul cardului |
+| `description` | Text scurt sub titlu |
+| `points` | Puncte cheie (bullet-uri cu săgeți) |
+| `link_text` + `link_url` | Buton link în josul cardului |
+| `image` | Imagine **inline** (apare ca o bandă deasupra titlului) |
+| `background_image` | 🆕 Imagine **fundal** (acoperă tot cardul, în spatele textului) |
+| `overlay` | 🆕 Bifat (default) = pune un strat color peste imagine pentru lizibilitate text. Debifează doar dacă imaginea e deja întunecată. |
+| `icon` | Pictogramă (emoji ex: `🌱` sau ID icon) |
+| `details` | Text lung pentru modal (când e completat, click pe card deschide modal) |
+
+**Tip pentru `background_image`:** culoarea overlay-ului vine **automat** din culoarea naturală a card-ului (cream / lime / verde închis / verde foarte închis, după poziția în grilă). Tu doar bifezi sau debifezi — culoarea o alege design-ul.
+
+⭐ **Workflow recomandat cu background image:**
+1. Încarci imaginea fundal (1200×800 ideal, JPG, sub 400 KB)
+2. Bifezi `overlay` (default e bifat) — textul rămâne lizibil
+3. Verifici pe Preview pe mobil + desktop
+4. Dacă imaginea e foarte întunecată și textul cream e deja vizibil, debifezi overlay (tot textul devine cream + text shadow subtil)
+
 ### Stats Counter
 Statistici evidențiate (număr mare + label scurt sub).
 

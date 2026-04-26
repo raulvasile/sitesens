@@ -91,6 +91,16 @@
 	/* Layout */
 	--container-max: 1280px;
 	--navbar-height: 72px;
+
+	/* Page H1 — single source of truth so /stiri, /contact, /comunitate,
+	   /doneaza, /inscrie-te etc. all start with the same heading metrics
+	   and the title sits in the same spot of the viewport. */
+	--page-title-size: clamp(2.5rem, 6vw, 5rem);
+	--page-title-line-height: 1;
+	--page-title-letter-spacing: -0.015em;
+	--page-title-weight: 500;
+	--page-header-pt: var(--space-10);
+	--page-header-pb: var(--space-6);
 }
 
 @media (min-width: 768px) {

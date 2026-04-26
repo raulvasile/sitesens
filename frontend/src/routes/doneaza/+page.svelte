@@ -214,8 +214,8 @@
 <style>
 	/* ── Page header (Direction C) ── */
 	.page-header {
-		padding-top: var(--space-10);
-		padding-bottom: var(--space-6);
+		padding-top: var(--page-header-pt);
+		padding-bottom: var(--page-header-pb);
 	}
 	.page-header__bar {
 		margin-top: var(--space-6);
@@ -230,11 +230,11 @@
 	}
 	.page-header__title {
 		font-family: var(--font-display);
-		font-size: clamp(2.25rem, 6vw, 4.5rem);
-		font-weight: 500;
-		letter-spacing: -0.01em;
+		font-size: var(--page-title-size);
+		font-weight: var(--page-title-weight);
+		letter-spacing: var(--page-title-letter-spacing);
+		line-height: var(--page-title-line-height);
 		text-transform: uppercase;
-		line-height: 0.95;
 		color: var(--color-ink);
 		margin: 0 0 var(--space-4);
 	}

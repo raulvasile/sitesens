@@ -34,7 +34,11 @@ export const load: PageLoad = async ({ url, fetch }) => {
 			'populate[content][on][blocks.stats-counter][populate]': '*',
 			'populate[content][on][blocks.program-points][populate]': '*',
 			'populate[content][on][blocks.newsletter-cta][populate]': '*',
-			'populate[content][on][blocks.card-grid][populate]': '*',
+			// card-grid: deep-populate the nested cards' media (image, background_image)
+			// because Strapi v5's populate=* only resolves one level deep.
+			'populate[content][on][blocks.card-grid][populate][cards][populate][image]': 'true',
+			'populate[content][on][blocks.card-grid][populate][cards][populate][background_image]': 'true',
+			'populate[content][on][blocks.card-grid][populate][cards][populate][points]': 'true',
 			'populate[content][on][blocks.latest-articles][populate]': '*',
 			'populate[content][on][blocks.upcoming-events][populate]': '*',
 			'populate[content][on][blocks.contact-form][populate]': '*',

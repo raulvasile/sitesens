@@ -2,9 +2,11 @@
 	import { onDestroy } from 'svelte';
 	import { getIconSvg } from '$lib/icons';
 	import { sanitizeSvg } from '$lib/sanitize';
+	import { getStrapiMediaUrl } from '$lib/strapi';
 	import { openCard, registerCards, type CardDetail } from '$lib/cardModal';
 
 	interface CardPoint { text: string; }
+	interface CardImage { url: string; alternativeText?: string }
 	interface CardItem {
 		id: number;
 		icon?: string;
@@ -13,7 +15,9 @@
 		points?: CardPoint[];
 		link_text?: string;
 		link_url?: string;
-		image?: { url: string; alternativeText?: string };
+		image?: CardImage;
+		background_image?: CardImage | null;
+		overlay?: boolean | null;
 		details?: unknown[];
 	}
 	interface Props {
@@ -61,7 +65,28 @@
 		<div class="card-grid__grid card-grid--cols-{cols}">
 			{#each data.cards as card, i}
 				{@const clickable = hasDetails(card)}
-				<article class="card-grid__card" class:card-grid__card--clickable={clickable} style={`--card-index: ${i}`}>
+				{@const hasBg = !!card.background_image?.url}
+				{@const showOverlay = hasBg && card.overlay !== false}
+				<article
+					class="card-grid__card"
+					class:card-grid__card--clickable={clickable}
+					class:card-grid__card--has-bg={hasBg}
+					style={`--card-index: ${i}`}
+				>
+					{#if hasBg && card.background_image}
+						<img
+							src={getStrapiMediaUrl(card.background_image.url)}
+							alt={card.background_image.alternativeText ?? ''}
+							class="card-grid__bg"
+							loading="lazy"
+							decoding="async"
+							aria-hidden="true"
+						/>
+						{#if showOverlay}
+							<div class="card-grid__bg-overlay" aria-hidden="true"></div>
+						{/if}
+					{/if}
+
 					{#if clickable}
 						<button
 							type="button"
@@ -75,7 +100,7 @@
 
 					{#if card.image?.url}
 						<img
-							src={card.image.url.startsWith('http') ? card.image.url : `${import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337'}${card.image.url}`}
+							src={getStrapiMediaUrl(card.image.url)}
 							alt={card.image.alternativeText ?? card.title}
 							class="card-grid__image"
 							loading="lazy"
@@ -172,6 +197,44 @@
 
 	.card-grid__card--clickable {
 		cursor: pointer;
+	}
+
+	/* Background image + overlay (optional per-card).
+	   The overlay layer inherits the card's natural background-color (set per
+	   nth-child below) so the rotation cream / lime / green-deep / green-dark
+	   still drives the tint — editors don't pick a color, they just toggle. */
+	.card-grid__card--has-bg {
+		isolation: isolate;
+	}
+	.card-grid__bg {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		z-index: 0;
+	}
+	.card-grid__bg-overlay {
+		position: absolute;
+		inset: 0;
+		background-color: inherit;
+		opacity: 0.78;
+		z-index: 1;
+		pointer-events: none;
+	}
+	/* Lift every interactive / visible child above the background layers. */
+	.card-grid__card--has-bg > :not(.card-grid__bg):not(.card-grid__bg-overlay) {
+		position: relative;
+		z-index: 2;
+	}
+	/* When there's no overlay, give the title/description a soft text shadow so
+	   they stay legible against any photo. */
+	.card-grid__card--has-bg:not(:has(.card-grid__bg-overlay)) .card-grid__title,
+	.card-grid__card--has-bg:not(:has(.card-grid__bg-overlay)) .card-grid__desc,
+	.card-grid__card--has-bg:not(:has(.card-grid__bg-overlay)) .card-grid__points {
+		color: var(--color-cream);
+		text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
 	}
 
 	/* Overlay button covers the whole card so any click anywhere triggers the

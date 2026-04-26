@@ -82,12 +82,14 @@ export interface BlocksCardGridItem extends Struct.ComponentSchema {
     icon: 'apps';
   };
   attributes: {
+    background_image: Schema.Attribute.Media<'images'>;
     description: Schema.Attribute.Text;
     details: Schema.Attribute.Blocks;
     icon: Schema.Attribute.String;
     image: Schema.Attribute.Media<'images'>;
     link_text: Schema.Attribute.String;
     link_url: Schema.Attribute.String;
+    overlay: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     points: Schema.Attribute.Component<'homepage.value-point', true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };

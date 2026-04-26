@@ -384,14 +384,18 @@
 	}
 	.event-band__date {
 		display: flex;
-		align-items: baseline;
+		/* Top-align so the month sits at the cap-height of the day number,
+		   not on its baseline. */
+		align-items: flex-start;
 		gap: var(--space-3);
 		color: var(--color-green-deep);
 	}
 	.event-band__day {
 		font-family: var(--font-display);
 		font-size: clamp(4.5rem, 11vw, 7.5rem);
-		line-height: 0.85;
+		/* line-height: 1 lets the month align with the actual top edge of the
+		   digits (no extra leading slack). */
+		line-height: 1;
 		font-weight: 500;
 		letter-spacing: -0.03em;
 	}
@@ -402,6 +406,10 @@
 		text-transform: uppercase;
 		color: var(--color-ink);
 		line-height: 1.2;
+		/* Pulls the small text up to align with the cap-height of the digits.
+		   The number's font is ~88% cap-height; this offset works visually
+		   across the clamp() range. */
+		padding-top: 0.45em;
 	}
 	.event-band__year {
 		opacity: 0.55;
@@ -446,16 +454,17 @@
 			margin: var(--space-2) 0 var(--space-8);
 		}
 		.event-band__date {
-			align-items: baseline;
+			align-items: flex-start;
 			gap: var(--space-2);
 		}
 		.event-band__day {
 			font-size: 3.5rem;
-			line-height: 0.9;
+			line-height: 1;
 		}
 		.event-band__month {
 			font-size: 0.75rem;
 			line-height: 1.3;
+			padding-top: 0.4em;
 		}
 		.event-band__details {
 			display: flex;

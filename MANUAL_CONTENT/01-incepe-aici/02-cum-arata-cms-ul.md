@@ -43,6 +43,8 @@ Aici editezi efectiv conținutul. În funcție de ce ai selectat:
 - **Listă** (pentru colecții) — vezi toate intrările, poți filtra/sorta/căuta
 - **Formular** (când deschizi o intrare) — toate câmpurile editabile
 
+**Toate câmpurile au și o descriere sub ele** (text mic) care îți spune **unde apare pe site**. Vezi [Cum citești etichetele câmpurilor](06-cum-citesti-etichetele.md).
+
 ## 🧰 Bara sus dreapta — acțiuni globale
 
 | Iconiță | Ce face |

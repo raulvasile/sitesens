@@ -78,7 +78,6 @@
 						{/if}
 						<div class="latest-articles__body">
 							<div class="latest-articles__meta">
-								<time class="latest-articles__date">{formatDate(article.createdAt)}</time>
 								{#if data.show_category !== false && article.category}
 									<span
 										class="latest-articles__category"
@@ -87,6 +86,7 @@
 										{article.category.name}
 									</span>
 								{/if}
+								<time class="latest-articles__date">{formatDate(article.createdAt)}</time>
 							</div>
 							<h3 class="latest-articles__title">{article.title}</h3>
 							{#if article.excerpt}

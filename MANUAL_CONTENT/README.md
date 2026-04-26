@@ -14,6 +14,7 @@ Citește-le pe rând prima dată, apoi întoarce-te oricând ai nevoie.
 3. [Pagini unice vs colecții — diferența](01-incepe-aici/03-pagini-unice-vs-colectii.md)
 4. [Draft și Publish — cum funcționează](01-incepe-aici/04-draft-si-publish.md)
 5. [Cum folosești Preview-ul](01-incepe-aici/05-cum-folosesti-preview.md)
+6. [Cum citești etichetele câmpurilor](01-incepe-aici/06-cum-citesti-etichetele.md)
 
 ### 2. Creare conținut
 1. [Cum adaugi un articol nou](02-creare-continut/01-cum-adaugi-un-articol-nou.md)

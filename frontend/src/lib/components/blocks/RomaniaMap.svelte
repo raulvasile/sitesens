@@ -118,6 +118,13 @@
 		lastPointerType = e.pointerType as 'mouse' | 'touch' | 'pen';
 		if (scale <= MIN_SCALE) return; // pan disabled at base zoom
 		if (!mapContainer) return;
+		// Don't start a pan when the press lands on the zoom controls or the
+		// tooltip — otherwise pointer capture eats the button's click event,
+		// making +/-/reset buttons unusable after the first zoom.
+		const target = e.target as Element | null;
+		if (target?.closest('.rmap__controls') || target?.closest('.rmap__tooltip')) {
+			return;
+		}
 		dragging = true;
 		dragMoved = false;
 		dragStart = { x: e.clientX, y: e.clientY, panX, panY };

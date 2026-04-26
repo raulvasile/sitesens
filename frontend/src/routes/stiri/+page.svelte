@@ -302,7 +302,7 @@
 
 <style>
 	.stiri-page {
-		padding-block: var(--space-10) var(--space-16);
+		padding-block: var(--page-header-pt) var(--space-16);
 		background-color: var(--color-paper);
 	}
 	.stiri-header {
@@ -312,16 +312,16 @@
 		align-items: flex-end;
 		gap: var(--space-4);
 		margin-bottom: var(--space-8);
-		padding-bottom: var(--space-6);
+		padding-bottom: var(--page-header-pb);
 		border-bottom: 1px solid rgba(12, 81, 24, 0.15);
 	}
 	.stiri-header h1 {
 		font-family: var(--font-display);
-		font-size: clamp(2.5rem, 6vw, 5rem);
-		font-weight: 500;
-		letter-spacing: -0.015em;
+		font-size: var(--page-title-size);
+		font-weight: var(--page-title-weight);
+		letter-spacing: var(--page-title-letter-spacing);
 		text-transform: uppercase;
-		line-height: 1;
+		line-height: var(--page-title-line-height);
 		color: var(--color-ink);
 	}
 	.stiri-search { display: flex; gap: var(--space-2); }

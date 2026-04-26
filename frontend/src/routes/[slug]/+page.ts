@@ -44,6 +44,14 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 		blockPopulate[`populate[content][on][blocks.${t}][populate]`] = '*';
 		blockPopulate[`populate[sections][populate][content][on][blocks.${t}][populate]`] = '*';
 	}
+	// card-grid: deep-populate the nested cards' media (image, background_image)
+	// because Strapi v5's populate=* only resolves one level deep.
+	blockPopulate['populate[content][on][blocks.card-grid][populate][cards][populate][image]'] = 'true';
+	blockPopulate['populate[content][on][blocks.card-grid][populate][cards][populate][background_image]'] = 'true';
+	blockPopulate['populate[content][on][blocks.card-grid][populate][cards][populate][points]'] = 'true';
+	blockPopulate['populate[sections][populate][content][on][blocks.card-grid][populate][cards][populate][image]'] = 'true';
+	blockPopulate['populate[sections][populate][content][on][blocks.card-grid][populate][cards][populate][background_image]'] = 'true';
+	blockPopulate['populate[sections][populate][content][on][blocks.card-grid][populate][cards][populate][points]'] = 'true';
 
 	const res = await fetchStrapi<StrapiPage[]>('/pages', {
 		'filters[slug][$eq]': params.slug,

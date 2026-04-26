@@ -177,15 +177,15 @@
 
 <style>
 	.page-header {
-		padding-block: var(--space-10) var(--space-4);
+		padding-block: var(--page-header-pt) var(--page-header-pb);
 	}
 	.page-header h1 {
 		font-family: var(--font-display);
-		font-size: clamp(2.5rem, 6vw, 5rem);
-		font-weight: 500;
-		letter-spacing: -0.015em;
+		font-size: var(--page-title-size);
+		font-weight: var(--page-title-weight);
+		letter-spacing: var(--page-title-letter-spacing);
+		line-height: var(--page-title-line-height);
 		text-transform: uppercase;
-		line-height: 1;
 		color: var(--color-ink);
 		margin-top: var(--space-5);
 	}

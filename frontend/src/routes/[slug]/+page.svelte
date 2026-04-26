@@ -103,9 +103,13 @@
 			{/each}
 		</nav>
 
-		<div class="tab-content" role="tabpanel">
-			<DynamicZone content={sections[activeTab]?.content ?? []} />
-		</div>
+		<!-- Keyed wrapper: when activeTab changes, the {#key} block re-renders
+		     and the CSS animation fires, giving a clean cross-fade + slide. -->
+		{#key activeTab}
+			<div class="tab-content tab-content--enter" role="tabpanel">
+				<DynamicZone content={sections[activeTab]?.content ?? []} />
+			</div>
+		{/key}
 	</div>
 {:else}
 	<!-- Pagina simplă → Dynamic Zone direct -->
@@ -130,7 +134,7 @@
 	.tab-nav {
 		display: flex;
 		gap: 0;
-		border-bottom: 1.5px solid var(--color-ink);
+		border-bottom: 1.5px solid rgba(12, 81, 24, 0.15);
 		margin-bottom: var(--space-8);
 		overflow-x: auto;
 		overflow-y: hidden;
@@ -143,33 +147,87 @@
 	}
 
 	.tab-nav__btn {
-		padding: var(--space-3) var(--space-5);
+		position: relative;
+		padding: var(--space-4) var(--space-5);
 		border: none;
 		background: none;
 		cursor: pointer;
 		font-family: var(--font-display);
-		font-size: 0.8125rem;
+		font-size: 0.875rem;
 		font-weight: 500;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
 		color: var(--color-ink-soft);
 		white-space: nowrap;
-		border-bottom: 2px solid transparent;
-		margin-bottom: -1.5px;
-		transition: all var(--transition-fast);
 		line-height: 1.4;
+		transition: color var(--transition-fast);
 	}
 
-	.tab-nav__btn:hover {
-		color: var(--color-ink);
+	/* Animated underline (3px lime). Uses transform scaleX so it slides in/out
+	   smoothly instead of just toggling opacity. */
+	.tab-nav__btn::after {
+		content: '';
+		position: absolute;
+		left: var(--space-5);
+		right: var(--space-5);
+		bottom: -1.5px;
+		height: 3px;
+		background-color: var(--color-lime);
+		transform: scaleX(0);
+		transform-origin: center;
+		transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	@media (hover: hover) {
+		.tab-nav__btn:hover {
+			color: var(--color-ink);
+		}
+		.tab-nav__btn:hover::after {
+			transform: scaleX(0.4);
+			background-color: rgba(145, 255, 0, 0.5);
+		}
 	}
 
 	.tab-nav__btn.active {
 		color: var(--color-ink);
-		border-bottom-color: var(--color-lime);
+		font-weight: 500;
+	}
+	.tab-nav__btn.active::after {
+		transform: scaleX(1);
+		background-color: var(--color-lime);
+	}
+
+	.tab-nav__btn:focus-visible {
+		outline: 2px solid var(--color-lime);
+		outline-offset: -4px;
 	}
 
 	.tab-content {
 		padding-bottom: var(--space-8);
+	}
+
+	/* Content cross-fade animation when switching tabs. Triggered by the {#key}
+	   block re-mount in the template. */
+	.tab-content--enter {
+		animation: tab-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+	}
+
+	@keyframes tab-fade-in {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.tab-content--enter,
+		.tab-nav__btn::after {
+			animation: none !important;
+			transition: none !important;
+		}
 	}
 </style>
