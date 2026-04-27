@@ -64,6 +64,7 @@ Citește-le pe rând prima dată, apoi întoarce-te oricând ai nevoie.
 2. [Lucruri pe care nu trebuie să le atingi](09-ajutor/02-ce-sa-nu-atingi.md)
 3. [Cum îți schimbi parola](09-ajutor/03-cum-iti-schimbi-parola.md)
 4. [Cui te adresezi când ceva nu merge](09-ajutor/04-cui-te-adresezi.md)
+5. [Cum funcționează cache-ul site-ului](09-ajutor/05-cum-functioneaza-cache-ul.md)
 
 ---
 
