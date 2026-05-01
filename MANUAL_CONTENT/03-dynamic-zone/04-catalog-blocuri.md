@@ -183,6 +183,60 @@ Afișează următoarele N evenimente.
 | `count` | Câte (3, 4) |
 | `cta_text` + `cta_link` | Buton „Calendar complet" |
 
+### Calendar
+Calendar interactiv auto-populat cu evenimentele din colecția Evenimente. Are **două vizualizări** între care vizitatorul poate comuta:
+- **Grid lună** — calendar clasic 7×6, click pe zi cu eveniment afișează lista detaliată dedesubt; navigare lună înainte/înapoi
+- **Listă cronologică** — evenimente grupate pe lună, cu ziua/zi-săpt mare în stânga
+
+| Câmp | Ce pui |
+|---|---|
+| `heading` | Titlul mare al calendarului |
+| `default_view` | `month` (grid) sau `list` (cronologic) — care apare prima |
+| `show_view_toggle` | Bifat = vizitatorul poate comuta între cele două vizualizări |
+| `include_past_events` | Bifat = afișează și evenimentele din trecut |
+| `limit` | Câte evenimente preia maxim (default 50, max 200) |
+| `filter_event_type` | Opțional, filtrează doar un tip (dezbatere/acțiune/marș/online) |
+
+⭐ **Tip:** Pentru o pagină dedicată calendarului (ex: `/calendar`), creează o Pagină nouă cu doar acest bloc + `default_view: month`.
+
+⭐ **Diferența vs Upcoming Events:** Upcoming Events e o listă scurtă de 3-4 evenimente apropiate, perfect pentru homepage. Calendar e exhaustiv, perfect pentru o pagină dedicată sau secțiune mare.
+
+### Calendar personalizat
+Calendar **manual**, independent de colecția Evenimente. Editorul adaugă fiecare intrare direct în CMS. Aceeași vizualizare (grid lună + listă cronologică) ca la **Calendar** evenimente.
+
+Când îl folosești:
+- Deadlines interne (ex: „Termen depunere candidaturi")
+- Lansări de campanii
+- Ședințe ale conducerii
+- Evenimente publice care nu au nevoie de pagină proprie pe site
+- Sărbători legale sau date importante
+
+| Câmp | Ce pui |
+|---|---|
+| `heading` | Titlul mare al calendarului |
+| `subheading` | Paragraf scurt sub titlu (opțional) |
+| `entries` | Lista intrărilor (vezi mai jos) |
+| `default_view` | `month` (grid) sau `list` (cronologic) |
+| `show_view_toggle` | Bifat = vizitatorul poate comuta vizualizarea |
+| `empty_state_text` | Mesaj când lista e goală |
+
+**Câmpuri per intrare (`Intrare calendar`):**
+
+| Câmp | Ce pui |
+|---|---|
+| `title` | Numele intrării — apare ca text principal |
+| `start_date` | Data și ora de început (obligatoriu) |
+| `end_date` | Data/ora finală (opțional) — apare ca interval `09:00 – 12:00` |
+| `description` | Descriere scurtă (apare ca meta sub titlu, doar dacă lipsește locația) |
+| `location` | Loc fizic sau platformă online (precedență față de descriere) |
+| `url` | Link opțional. URL extern (`https://...`) → tab nou. Internal (`/...`) → aceeași filă. |
+| `category` | Etichetă scurtă afișată ca chip (ex: „Intern", „Public", „Important") |
+| `accent_color` | Culoare chip categorie: default / lime / cream / rose |
+
+⭐ **Diferența vs Calendar evenimente:**
+- **Calendar evenimente** = preia automat din colecția Evenimente. Folosit pentru evenimente publice cu pagină proprie (`/evenimente/[slug]`).
+- **Calendar personalizat** = editorul adaugă manual. Folosit când nu vrei să creezi un Eveniment complet, doar o intrare în calendar.
+
 ### Team Grid
 Afișează membrii din colecția Echipă.
 
@@ -220,6 +274,19 @@ Formular de abonare la newsletter, integrat în pagină.
 
 ### Contact Form
 Formular de contact, preia config din **Pagină Contact**.
+
+### File List (Listă fișiere)
+Listă de fișiere descărcabile (PDF, Word, Excel). Fiecare apare ca un rând cu iconiță color (roșu pentru PDF, albastru pentru Word, verde pentru Excel), titlu, descriere opțională, dimensiune și buton de download.
+
+| Câmp | Ce pui |
+|---|---|
+| `heading` | Titlul secțiunii (ex: „Statut și documente oficiale") |
+| `subheading` | Paragraf scurt sub titlu (opțional) |
+| `files` | Lista fișierelor (repeatable) — fiecare cu titlu, descriere, fișier |
+
+⭐ **Tip pentru o pagină de Resurse:** Creezi o Pagină nouă cu slug `/resurse`, adaugi un bloc **File List** cu toate documentele oficiale (statut, manifest, rapoarte). Adaugi pagina în Header → vizitatorii au tot ce le trebuie într-un loc.
+
+**Tipuri permise**: PDF (.pdf), Word (.doc, .docx), Excel (.xls, .xlsx). Mărime max per fișier: 10 MB.
 
 ---
 

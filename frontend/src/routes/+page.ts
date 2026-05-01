@@ -51,6 +51,11 @@ export const load: PageLoad = async ({ url, fetch }) => {
 			'populate[content][on][blocks.team-grid][populate]': '*',
 			'populate[content][on][blocks.page-header][populate]': '*',
 			'populate[content][on][blocks.romania-map][populate]': '*',
+			'populate[content][on][blocks.calendar][populate]': '*',
+			// calendar-custom: deep-populate the entries (repeatable component scalars).
+			'populate[content][on][blocks.calendar-custom][populate][entries]': 'true',
+			// file-list: deep-populate the nested files (component) with their media.
+			'populate[content][on][blocks.file-list][populate][files][populate][file]': 'true',
 			'populate[seo][populate]': '*',
 			...previewParams,
 		}, undefined, fetch);
@@ -66,6 +71,8 @@ export const load: PageLoad = async ({ url, fetch }) => {
 		// Surface the failure so the global +error.svelte page renders, instead
 		// of a blank homepage that silently hides Strapi being down.
 		const status = (err as { status?: number })?.status;
+		const message = (err as { message?: string })?.message ?? 'unknown';
+		console.error(`[/] Strapi fetch failed (${status ?? '?'}): ${message}`);
 		throw error(status && status >= 500 ? 503 : 500, 'Nu putem încărca pagina principală momentan.');
 	}
 };

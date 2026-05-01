@@ -2,6 +2,8 @@
 	import { getStrapiMediaUrl } from '$lib/strapi';
 	import { sanitizeHtml } from '$lib/sanitize';
 	import { renderStrapiBlocks } from '$lib/strapiBlocks';
+	import { dayParts, formatTime, formatDateLong } from '$lib/dates';
+	import { eventTypeLabel } from '$lib/events';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import Image from '$lib/components/ui/Image.svelte';
@@ -12,33 +14,6 @@
 	const event = $derived(data.event);
 	const isPast = $derived(data.isPast);
 	const related = $derived(data.relatedEvents);
-
-	const MONTH_RO = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
-	const TYPE_LABEL: Record<string, string> = {
-		dezbatere: 'DEZBATERE',
-		actiune: 'ACȚIUNE',
-		mars: 'MARȘ',
-		online: 'ONLINE',
-	};
-
-	function dayParts(dateStr: string) {
-		const d = new Date(dateStr);
-		return {
-			day: String(d.getDate()).padStart(2, '0'),
-			month: MONTH_RO[d.getMonth()],
-			year: d.getFullYear(),
-		};
-	}
-
-	function formatDateLong(dateStr: string) {
-		return new Date(dateStr).toLocaleDateString('ro-RO', {
-			weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-		});
-	}
-
-	function formatTime(dateStr: string) {
-		return new Date(dateStr).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
-	}
 
 	function shareUrl(platform: string) {
 		const url = typeof window !== 'undefined' ? window.location.href : '';
@@ -106,7 +81,7 @@
 
 		<!-- Chips row (categorie + status; data e în band-ul de mai jos) -->
 		<div class="event-chips">
-			<a href="/evenimente?type={event.event_type}" class="chip chip--filled">{TYPE_LABEL[event.event_type] ?? event.event_type}</a>
+			<a href="/evenimente?type={event.event_type}" class="chip chip--filled">{eventTypeLabel(event.event_type)}</a>
 			{#if event.is_featured}
 				<span class="chip chip--outline">Recomandat</span>
 			{/if}
@@ -273,7 +248,7 @@
 							</div>
 							<div class="related-card__body">
 								<div class="related-card__meta">
-									<span class="chip chip--outline">{TYPE_LABEL[ev.event_type] ?? ev.event_type}</span>
+									<span class="chip chip--outline">{eventTypeLabel(ev.event_type)}</span>
 									{#if ev.city}<span class="related-card__city">{ev.city.toUpperCase()}</span>{/if}
 								</div>
 								<h3 class="related-card__title">

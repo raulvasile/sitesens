@@ -25,6 +25,7 @@ Citește-le pe rând prima dată, apoi întoarce-te oricând ai nevoie.
 6. [Cum modifici un conținut existent](02-creare-continut/06-cum-modifici-continut-existent.md)
 7. [Cum ascunzi sau ștergi conținut](02-creare-continut/07-cum-ascunzi-sau-stergi-continut.md)
 8. [Cum duplici un articol sau o pagină](02-creare-continut/08-cum-duplici-continut.md)
+9. [Cum atașezi documente la un articol](02-creare-continut/09-cum-atasezi-documente-la-articol.md)
 
 ### 3. Dynamic Zone (construire pagini cu blocuri)
 1. [Ce este Dynamic Zone](03-dynamic-zone/01-ce-este-dynamic-zone.md)

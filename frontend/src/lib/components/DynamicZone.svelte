@@ -25,6 +25,9 @@
 	import TeamGrid from './blocks/TeamGrid.svelte';
 	import PageHeader from './blocks/PageHeader.svelte';
 	import RomaniaMap from './blocks/RomaniaMap.svelte';
+	import Calendar from './blocks/Calendar.svelte';
+	import CalendarCustom from './blocks/CalendarCustom.svelte';
+	import FileList from './blocks/FileList.svelte';
 
 	interface Props {
 		content: Array<{ __component: string; anchor_id?: string | null; [key: string]: unknown }>;
@@ -67,6 +70,9 @@
 		'blocks.mission-band',
 		'blocks.chapters-grid',
 		'blocks.romania-map',
+		'blocks.calendar',
+		'blocks.calendar-custom',
+		'blocks.file-list',
 	]);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -95,7 +101,10 @@
 		'blocks.chapters-grid': ChaptersGrid,
 		'blocks.team-grid': TeamGrid,
 		'blocks.page-header': PageHeader,
-		'blocks.romania-map': RomaniaMap
+		'blocks.romania-map': RomaniaMap,
+		'blocks.calendar': Calendar,
+		'blocks.calendar-custom': CalendarCustom,
+		'blocks.file-list': FileList,
 	};
 </script>
 

@@ -1,0 +1,43 @@
+{
+  "collectionName": "components_blocks_calendar_entries",
+  "info": {
+    "displayName": "Intrare calendar",
+    "icon": "calendar",
+    "description": "O intrare în calendarul manual — independentă de colecția Evenimente. Folosită pentru deadlines, lansări, ședințe interne sau orice eveniment care nu are nevoie de pagină proprie."
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "start_date": {
+      "type": "datetime",
+      "required": true
+    },
+    "end_date": {
+      "type": "datetime"
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "location": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "category": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "accent_color": {
+      "type": "enumeration",
+      "enum": ["default", "lime", "cream", "rose"],
+      "default": "default"
+    }
+  }
+}

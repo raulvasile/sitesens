@@ -55,6 +55,137 @@ export interface BlocksArticleStat extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksCalendar extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_calendars';
+  info: {
+    description: 'Calendar auto-populat cu evenimentele din colec\u021Bia Evenimente. Suport\u0103 vizualizare list\u0103 cronologic\u0103 \u0219i grid lunar cu navigare \u00EEntre luni.';
+    displayName: 'Calendar evenimente';
+    icon: 'calendar';
+  };
+  attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'paper'>;
+    default_view: Schema.Attribute.Enumeration<['month', 'list']> &
+      Schema.Attribute.DefaultTo<'month'>;
+    empty_state_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'Niciun eveniment programat momentan.'>;
+    filter_event_type: Schema.Attribute.Enumeration<
+      ['dezbatere', 'actiune', 'mars', 'online']
+    >;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    include_past_events: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    limit: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 200;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<50>;
+    show_view_toggle: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    subheading: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+  };
+}
+
+export interface BlocksCalendarCustom extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_calendar_customs';
+  info: {
+    description: 'Calendar manual: editorul adaug\u0103 fiecare intrare direct \u00EEn CMS (f\u0103r\u0103 leg\u0103tur\u0103 cu colec\u021Bia Evenimente). Util pentru deadlines, lans\u0103ri, \u0219edin\u021Be interne. Aceea\u0219i vizualizare lun\u0103/list\u0103 ca la Calendar evenimente.';
+    displayName: 'Calendar personalizat';
+    icon: 'calendar';
+  };
+  attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'paper'>;
+    default_view: Schema.Attribute.Enumeration<['month', 'list']> &
+      Schema.Attribute.DefaultTo<'month'>;
+    empty_state_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }> &
+      Schema.Attribute.DefaultTo<'Niciun moment programat momentan.'>;
+    entries: Schema.Attribute.Component<'blocks.calendar-entry', true>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    show_view_toggle: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    subheading: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+  };
+}
+
+export interface BlocksCalendarEntry extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_calendar_entries';
+  info: {
+    description: 'O intrare \u00EEn calendarul manual \u2014 independent\u0103 de colec\u021Bia Evenimente. Folosit\u0103 pentru deadlines, lans\u0103ri, \u0219edin\u021Be interne sau orice eveniment care nu are nevoie de pagin\u0103 proprie.';
+    displayName: 'Intrare calendar';
+    icon: 'calendar';
+  };
+  attributes: {
+    accent_color: Schema.Attribute.Enumeration<
+      ['default', 'lime', 'cream', 'rose']
+    > &
+      Schema.Attribute.DefaultTo<'default'>;
+    category: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    end_date: Schema.Attribute.DateTime;
+    location: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    start_date: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+  };
+}
+
 export interface BlocksCardGrid extends Struct.ComponentSchema {
   collectionName: 'components_blocks_card_grids';
   info: {
@@ -255,6 +386,57 @@ export interface BlocksFeaturedLink extends Struct.ComponentSchema {
         maxLength: 160;
       }>;
     url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface BlocksFileItem extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_file_items';
+  info: {
+    description: 'Un fi\u0219ier desc\u0103rcabil din lista de resurse \u2014 cu titlu op\u021Bional \u0219i descriere.';
+    displayName: 'Fi\u0219ier (item)';
+    icon: 'file';
+  };
+  attributes: {
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    file: Schema.Attribute.Media<'files'> & Schema.Attribute.Required;
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+  };
+}
+
+export interface BlocksFileList extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_file_lists';
+  info: {
+    description: 'List\u0103 de fi\u0219iere desc\u0103rcabile (PDF, doc, xls). Fiecare fi\u0219ier apare ca un card cu iconi\u021B\u0103 potrivit\u0103 tipului, dimensiune \u0219i buton de desc\u0103rcare.';
+    displayName: 'List\u0103 fi\u0219iere';
+    icon: 'folder';
+  };
+  attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'paper'>;
+    files: Schema.Attribute.Component<'blocks.file-item', true>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    subheading: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
   };
 }
 
@@ -1855,6 +2037,9 @@ declare module '@strapi/strapi' {
       'blocks.accordion': BlocksAccordion;
       'blocks.accordion-item': BlocksAccordionItem;
       'blocks.article-stat': BlocksArticleStat;
+      'blocks.calendar': BlocksCalendar;
+      'blocks.calendar-custom': BlocksCalendarCustom;
+      'blocks.calendar-entry': BlocksCalendarEntry;
       'blocks.card-grid': BlocksCardGrid;
       'blocks.card-grid-item': BlocksCardGridItem;
       'blocks.chapter-item': BlocksChapterItem;
@@ -1863,6 +2048,8 @@ declare module '@strapi/strapi' {
       'blocks.county-chapter': BlocksCountyChapter;
       'blocks.cta-banner': BlocksCtaBanner;
       'blocks.featured-link': BlocksFeaturedLink;
+      'blocks.file-item': BlocksFileItem;
+      'blocks.file-list': BlocksFileList;
       'blocks.hero': BlocksHero;
       'blocks.hero-direction': BlocksHeroDirection;
       'blocks.hero-editorial': BlocksHeroEditorial;

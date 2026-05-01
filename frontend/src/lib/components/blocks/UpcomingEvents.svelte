@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { dayParts, formatTime } from '$lib/dates';
+	import { eventTypeLabel } from '$lib/events';
+
 	interface StrapiEvent {
 		title: string;
 		slug: string;
@@ -23,27 +26,12 @@
 	let { data }: Props = $props();
 	const count = data.count ?? 3;
 
-	const eventTypeLabels: Record<string, string> = {
-		dezbatere: 'Dezbatere',
-		actiune: 'Acțiune',
-		mars: 'Marș',
-		online: 'Online',
-	};
-
 	const events = $derived(data._events ?? []);
 	const loaded = $derived(data._events !== undefined);
 
-	const MONTH_RO = ['IAN', 'FEB', 'MAR', 'APR', 'MAI', 'IUN', 'IUL', 'AUG', 'SEP', 'OCT', 'NOI', 'DEC'];
-	function formatDay(iso: string) { return String(new Date(iso).getDate()).padStart(2, '0'); }
-	function formatMonth(iso: string) { return MONTH_RO[new Date(iso).getMonth()]; }
-	function formatTime(iso: string) {
-		return new Date(iso).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
-	}
-
 	function metaLine(ev: StrapiEvent): string {
-		const type = eventTypeLabels[ev.event_type] ?? ev.event_type;
 		const place = ev.city ? ev.city.toUpperCase() : ev.location_name?.toUpperCase();
-		const parts = [type.toUpperCase(), place, ev.venue].filter(Boolean);
+		const parts = [eventTypeLabel(ev.event_type).toUpperCase(), place, ev.venue].filter(Boolean);
 		return parts.join(' · ');
 	}
 </script>
@@ -85,14 +73,15 @@
 		{:else if events.length > 0}
 			<ul class="ue__list">
 				{#each events as event}
+					{@const dp = dayParts(event.start_date)}
 					<li>
 						<a href="/evenimente/{event.slug}" class="ue__row">
 							<div class="ue__date">
-								<span class="ue__day">{formatDay(event.start_date)}</span>
-								<span class="ue__month">{formatMonth(event.start_date)}</span>
+								<span class="ue__day">{dp.day}</span>
+								<span class="ue__month">{dp.month}</span>
 							</div>
 							<span class="ue__chip">
-								{eventTypeLabels[event.event_type] ?? event.event_type}
+								{eventTypeLabel(event.event_type)}
 							</span>
 							<div class="ue__info">
 								<div class="ue__title">{event.title}</div>

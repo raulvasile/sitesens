@@ -46,7 +46,10 @@
         "blocks.chapters-grid",
         "blocks.team-grid",
         "blocks.page-header",
-        "blocks.romania-map"
+        "blocks.romania-map",
+        "blocks.calendar",
+        "blocks.calendar-custom",
+        "blocks.file-list"
       ]
     },
     "seo": {

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
+	import { getFileExt, formatFileSize } from '$lib/files';
 	import DynamicZone from '$lib/components/DynamicZone.svelte';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import Image from '$lib/components/ui/Image.svelte';
@@ -131,6 +132,49 @@
 			<div class="article-body article-body--zone">
 				<DynamicZone content={article.content} />
 			</div>
+		{/if}
+
+		<!-- Atașamente (PDF, doc, xls) -->
+		{#if article.attachments?.length}
+			<aside class="article-attachments" aria-label="Documente atașate">
+				<span class="article-attachments__label">— Documente atașate</span>
+				<ul class="article-attachments__list">
+					{#each article.attachments as att}
+						{@const ext = getFileExt(att)}
+						{@const sizeText = formatFileSize(att.size)}
+						<li>
+							<a
+								href={getStrapiMediaUrl(att.url)}
+								download={att.name}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="article-attachments__item"
+							>
+								<span class="article-attachments__icon" aria-hidden="true">
+									<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6">
+										<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+										<polyline points="14 2 14 8 20 8"/>
+									</svg>
+								</span>
+								<span class="article-attachments__body">
+									<span class="article-attachments__title">{att.name}</span>
+									<span class="article-attachments__meta">
+										<span class="article-attachments__ext">{ext}</span>
+										{#if sizeText}<span>· {sizeText}</span>{/if}
+									</span>
+								</span>
+								<span class="article-attachments__action" aria-hidden="true">
+									<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+										<polyline points="7 10 12 15 17 10"/>
+										<line x1="12" y1="15" x2="12" y2="3"/>
+									</svg>
+								</span>
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</aside>
 		{/if}
 
 		<!-- Etichete (la final, după conținut) -->
@@ -427,6 +471,80 @@
 		line-height: 1.5;
 		color: var(--color-ink);
 	}
+
+	/* Atașamente (PDF, Word, Excel) */
+	.article-attachments {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding: var(--space-6) 0;
+		border-top: 1px solid rgba(12, 81, 24, 0.15);
+		margin-top: var(--space-8);
+	}
+	.article-attachments__label {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.7;
+	}
+	.article-attachments__list { list-style: none; padding: 0; margin: 0; }
+	.article-attachments__item {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		gap: var(--space-3);
+		align-items: center;
+		padding: var(--space-3);
+		border: 1px solid rgba(12, 81, 24, 0.15);
+		text-decoration: none;
+		color: var(--color-ink);
+		transition: background-color var(--transition-fast), border-color var(--transition-fast);
+	}
+	.article-attachments__list li + li { margin-top: -1px; }
+	@media (hover: hover) {
+		.article-attachments__item:hover {
+			background-color: var(--color-cream);
+			border-color: var(--color-ink);
+		}
+	}
+	.article-attachments__icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		background: var(--color-cream);
+		color: var(--color-ink);
+		flex-shrink: 0;
+	}
+	.article-attachments__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+	.article-attachments__title {
+		font-family: var(--font-display);
+		font-size: 0.9375rem;
+		font-weight: 500;
+		color: var(--color-ink);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.article-attachments__meta {
+		font-family: var(--font-mono);
+		font-size: 0.625rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-ink-soft);
+		opacity: 0.75;
+		display: inline-flex;
+		gap: 4px;
+	}
+	.article-attachments__ext {
+		display: inline-flex;
+		padding: 1px 5px;
+		background: var(--color-ink);
+		color: var(--color-lime);
+	}
+	.article-attachments__action { color: var(--color-ink-soft); opacity: 0.55; }
 
 	/* Tags (la final, după body) */
 	.article-tags {

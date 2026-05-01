@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { getStrapiMediaUrl } from '$lib/strapi';
+	import { dayParts, formatTime } from '$lib/dates';
+	import { eventTypeLabel } from '$lib/events';
 	import SeoHead from '$lib/components/SeoHead.svelte';
 	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 	import { fade } from 'svelte/transition';
@@ -41,13 +43,6 @@
 	// Events in list show ALL events (featured included — highlighted separately above)
 	const listEvents = $derived(events);
 
-	const eventTypeLabels: Record<string, string> = {
-		dezbatere: 'DEZBATERE',
-		actiune: 'ACȚIUNE',
-		mars: 'MARȘ',
-		online: 'ONLINE',
-	};
-
 	const eventTypes = [
 		{ value: '', label: pageCfg?.filter_all_label ?? 'Toate' },
 		{ value: 'dezbatere', label: 'Dezbatere' },
@@ -56,18 +51,6 @@
 		{ value: 'online', label: 'Online' },
 	];
 
-	function formatDay(dateStr: string): string {
-		return String(new Date(dateStr).getDate()).padStart(2, '0');
-	}
-	function formatMonth(dateStr: string): string {
-		return new Date(dateStr).toLocaleDateString('ro-RO', { month: 'short' }).toUpperCase().replace('.', '');
-	}
-	function formatYear(dateStr: string): string {
-		return String(new Date(dateStr).getFullYear());
-	}
-	function formatTime(dateStr: string): string {
-		return new Date(dateStr).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
-	}
 	function formatInterval(start: string, end?: string | null): string {
 		const s = formatTime(start);
 		if (!end) return s;
@@ -102,6 +85,7 @@
 
 <!-- ═══════ FEATURED EVENT (always visible) ═══════ -->
 {#if featured}
+	{@const fdp = dayParts(featured.start_date)}
 	<section class="featured container">
 		<div class="featured__inner">
 			<div class="featured__photo">
@@ -122,15 +106,15 @@
 
 			<div class="featured__content">
 				<div class="featured__chips">
-					<span class="chip">{eventTypeLabels[featured.event_type] ?? featured.event_type}</span>
+					<span class="chip">{eventTypeLabel(featured.event_type)}</span>
 					{#if featured.is_featured}
 						<span class="chip chip-outline featured__chip-light">{pageCfg?.featured_label ?? 'FEATURED'}</span>
 					{/if}
 				</div>
 
 				<div class="featured__date">
-					<span class="featured__day">{formatDay(featured.start_date)}</span>
-					<span class="featured__month">{formatMonth(featured.start_date)} {formatYear(featured.start_date)}</span>
+					<span class="featured__day">{fdp.day}</span>
+					<span class="featured__month">{fdp.month} {fdp.year}</span>
 				</div>
 
 				<h2 class="featured__title">{featured.title}</h2>
@@ -223,14 +207,15 @@
 	{#if listEvents.length > 0}
 		<ul class="events-list">
 			{#each listEvents as event}
+				{@const dp = dayParts(event.start_date)}
 				<li>
 					<a href="/evenimente/{event.slug}" class="event-row">
 						<div class="event-row__date">
-							<span class="event-row__day">{formatDay(event.start_date)}</span>
-							<span class="event-row__month">{formatMonth(event.start_date)}</span>
+							<span class="event-row__day">{dp.day}</span>
+							<span class="event-row__month">{dp.month}</span>
 						</div>
 						<span class="chip chip-outline event-row__tag">
-							{eventTypeLabels[event.event_type] ?? event.event_type}
+							{eventTypeLabel(event.event_type)}
 						</span>
 						<div class="event-row__info">
 							<div class="event-row__title">{event.title}</div>

@@ -2,6 +2,9 @@ import { fetchStrapi } from '$lib/strapi';
 
 type Block = { __component: string; [key: string]: unknown };
 
+/** Mirrors the `max: 200` constraint on `blocks.calendar.limit` in Strapi. */
+const MAX_CALENDAR_EVENTS = 200;
+
 /**
  * Îmbogățește blocurile din Dynamic Zone cu date server-side.
  * Ex: latest-articles primește articolele, upcoming-events primește evenimentele.
@@ -67,6 +70,29 @@ export async function enrichDynamicZone(content: Block[], fetchFn: typeof fetch 
 					'pagination[pageSize]': String(count),
 					'populate[cover_image]': 'true',
 				}, undefined, fetchFn);
+				enriched[i] = { ...block, _events: res.data ?? [] };
+			} catch {
+				enriched[i] = { ...block, _events: [] };
+			}
+		}
+
+		if (block.__component === 'blocks.calendar') {
+			const limit = (block.limit as number) ?? 50;
+			const includePast = (block.include_past_events as boolean) ?? false;
+			const filterType = block.filter_event_type as string | null;
+			const params: Record<string, string> = {
+				'sort[0]': 'start_date:asc',
+				'pagination[pageSize]': String(Math.min(limit, MAX_CALENDAR_EVENTS)),
+				'populate[cover_image]': 'true',
+			};
+			if (!includePast) {
+				params['filters[start_date][$gte]'] = new Date().toISOString();
+			}
+			if (filterType) {
+				params['filters[event_type][$eq]'] = filterType;
+			}
+			try {
+				const res = await fetchStrapi<unknown[]>('/events', params, undefined, fetchFn);
 				enriched[i] = { ...block, _events: res.data ?? [] };
 			} catch {
 				enriched[i] = { ...block, _events: [] };

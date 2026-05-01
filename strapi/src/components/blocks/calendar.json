@@ -1,0 +1,60 @@
+{
+  "collectionName": "components_blocks_calendars",
+  "info": {
+    "displayName": "Calendar evenimente",
+    "icon": "calendar",
+    "description": "Calendar auto-populat cu evenimentele din colecția Evenimente. Suportă vizualizare listă cronologică și grid lunar cu navigare între luni."
+  },
+  "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "kicker": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "heading": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "subheading": {
+      "type": "text",
+      "maxLength": 400
+    },
+    "default_view": {
+      "type": "enumeration",
+      "enum": ["month", "list"],
+      "default": "month"
+    },
+    "show_view_toggle": {
+      "type": "boolean",
+      "default": true
+    },
+    "include_past_events": {
+      "type": "boolean",
+      "default": false
+    },
+    "limit": {
+      "type": "integer",
+      "min": 1,
+      "max": 200,
+      "default": 50
+    },
+    "filter_event_type": {
+      "type": "enumeration",
+      "enum": ["dezbatere", "actiune", "mars", "online"]
+    },
+    "empty_state_text": {
+      "type": "string",
+      "maxLength": 200,
+      "default": "Niciun eveniment programat momentan."
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": ["paper", "cream"],
+      "default": "paper"
+    }
+  }
+}

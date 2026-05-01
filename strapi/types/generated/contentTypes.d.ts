@@ -442,6 +442,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    attachments: Schema.Attribute.Media<'files', true>;
     author: Schema.Attribute.Relation<
       'manyToOne',
       'api::team-member.team-member'
@@ -1065,6 +1066,9 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
         'blocks.team-grid',
         'blocks.page-header',
         'blocks.romania-map',
+        'blocks.calendar',
+        'blocks.calendar-custom',
+        'blocks.file-list',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -1482,6 +1486,9 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'blocks.team-grid',
         'blocks.page-header',
         'blocks.romania-map',
+        'blocks.calendar',
+        'blocks.calendar-custom',
+        'blocks.file-list',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -1585,6 +1592,9 @@ export interface ApiSectionSection extends Struct.CollectionTypeSchema {
         'blocks.team-grid',
         'blocks.page-header',
         'blocks.romania-map',
+        'blocks.calendar',
+        'blocks.calendar-custom',
+        'blocks.file-list',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
