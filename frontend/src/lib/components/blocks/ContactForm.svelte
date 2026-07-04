@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { toasts } from '$stores/toast';
+	import { mutateStrapi } from '$lib/strapi';
 
 	interface Props {
 		data: {
@@ -15,18 +16,24 @@
 	let email = $state('');
 	let subject = $state('');
 	let message = $state('');
+	let consent = $state(false);
+	let website = $state(''); // honeypot — rămâne gol la oameni
 	let loading = $state(false);
 	let submitted = $state(false);
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		if (!name || !email || !message) return;
+		if (!consent) {
+			toasts.error('Bifează acordul pentru prelucrarea datelor pentru a trimite mesajul.');
+			return;
+		}
 		loading = true;
 
 		try {
-			// In viitor, se poate conecta la un endpoint Strapi custom
-			// Deocamdată trimitem la un endpoint generic
-			await new Promise(resolve => setTimeout(resolve, 800));
+			await mutateStrapi('/contact-submissions', 'POST', {
+				data: { name, email, subject: subject || undefined, message, consent_gdpr: consent, website },
+			});
 			submitted = true;
 			toasts.success(data.success_message ?? 'Mesajul tău a fost trimis cu succes!');
 		} catch {
@@ -71,6 +78,18 @@
 					<label for="cf-message">Mesaj *</label>
 					<textarea id="cf-message" bind:value={message} required rows="5" placeholder="Scrie mesajul tău aici..."></textarea>
 				</div>
+				<!-- Honeypot anti-spam: invizibil pentru oameni, completat de boți -->
+				<div class="contact-form-block__hp" aria-hidden="true">
+					<label for="cf-website">Website</label>
+					<input id="cf-website" type="text" bind:value={website} tabindex="-1" autocomplete="off" />
+				</div>
+				<label class="contact-form-block__consent">
+					<input type="checkbox" bind:checked={consent} required />
+					<span>
+						Sunt de acord cu prelucrarea datelor mele (nume, email) pentru a primi un răspuns la
+						acest mesaj, conform <a href="/politica-confidentialitate">Politicii de confidențialitate</a>.
+					</span>
+				</label>
 				<button type="submit" class="btn btn-primary" disabled={loading}>
 					{loading ? 'Se trimite...' : 'Trimite mesajul'}
 				</button>
@@ -117,6 +136,24 @@
 	}
 
 	.contact-form-block__field { display: flex; flex-direction: column; gap: var(--space-1); }
+
+	.contact-form-block__hp {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+
+	.contact-form-block__consent {
+		display: flex;
+		gap: var(--space-2);
+		align-items: flex-start;
+		font-size: var(--text-sm);
+		color: var(--color-text-muted);
+		cursor: pointer;
+	}
+	.contact-form-block__consent input { margin-top: 3px; flex-shrink: 0; }
 
 	.contact-form-block__field label {
 		font-size: var(--text-sm);

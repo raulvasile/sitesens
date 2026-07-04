@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_blocks_chapter_coordinators",
+  "info": {
+    "displayName": "Coordonatori filială",
+    "icon": "user",
+    "description": "Afișează coordonatorii filialei curente (member + localitate + rol). Se auto-populează din filială."
+  },
+  "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "kicker": {
+      "type": "string",
+      "default": "Echipa filialei",
+      "maxLength": 80
+    },
+    "heading": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": [
+        "paper",
+        "cream"
+      ],
+      "default": "paper"
+    }
+  }
+}

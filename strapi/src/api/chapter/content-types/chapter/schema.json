@@ -1,0 +1,105 @@
+{
+  "kind": "collectionType",
+  "collectionName": "chapters",
+  "info": {
+    "singularName": "chapter",
+    "pluralName": "chapters",
+    "displayName": "Filiale",
+    "description": "Filialele teritoriale SENS (una per județ). Accesibile la /filiale/{slug}. Landing-ul e construit cu Dynamic Zone."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "county": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::county.county"
+    },
+    "coordinators": {
+      "type": "component",
+      "repeatable": true,
+      "component": "chapter.coordinator"
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "blocks.hero",
+        "blocks.hero-refined",
+        "blocks.hero-editorial",
+        "blocks.text-block",
+        "blocks.cta-banner",
+        "blocks.image-gallery",
+        "blocks.accordion",
+        "blocks.quote",
+        "blocks.video-embed",
+        "blocks.stats-counter",
+        "blocks.program-points",
+        "blocks.newsletter-cta",
+        "blocks.card-grid",
+        "blocks.latest-articles",
+        "blocks.upcoming-events",
+        "blocks.contact-form",
+        "blocks.spacer",
+        "blocks.timeline",
+        "blocks.mission-band",
+        "blocks.team-grid",
+        "blocks.page-header",
+        "blocks.file-list",
+        "blocks.chapter-coordinators",
+        "blocks.chapter-feed",
+        "blocks.chapter-contact"
+      ]
+    },
+    "cover_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "email": {
+      "type": "email",
+      "maxLength": 254
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 30
+    },
+    "address": {
+      "type": "text",
+      "maxLength": 300
+    },
+    "social_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.social-link"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "pages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::chapter-page.chapter-page",
+      "mappedBy": "chapter"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

@@ -1,11 +1,34 @@
 import type { Core } from '@strapi/strapi';
 
+/**
+ * Slugify cu suport pentru diacritice românești. Folosit pentru a genera slug-uri
+ * la seed (tipul `uid` din Strapi NU se auto-completează la create programatic —
+ * doar în admin UI). Ex: „Bistrița-Năsăud" → „bistrita-nasaud".
+ */
+function slugifyRo(input: string): string {
+  return input
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '') // elimină semnele diacritice combinate
+    .replace(/[șş]/gi, 's')
+    .replace(/[țţ]/gi, 't')
+    .replace(/ă/gi, 'a')
+    .replace(/â/gi, 'a')
+    .replace(/î/gi, 'i')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export default {
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     // ── Seed: configurare rol Public ──
     await setupPublicPermissions(strapi);
+
+    // ── Hardening: dezactivează înregistrarea publică de utilizatori ──
+    await hardenAuth(strapi);
 
     // ── Seed: date demo (doar dacă nu există deja) ──
     await seedData(strapi);
@@ -16,8 +39,20 @@ export default {
     // ── Top-up: județe (idempotent) ──
     await topUpCounties(strapi);
 
+    // ── Migration: backfill slug pe județele create înainte de câmpul slug ──
+    await backfillCountySlugs(strapi);
+
     // ── Top-up: domenii de interes (idempotent) ──
     await topUpInterestAreas(strapi);
+
+    // ── Top-up: filiale demo (idempotent) ──
+    await topUpChapters(strapi);
+
+    // ── Top-up: campanie demo (idempotent) ──
+    await topUpCampaigns(strapi);
+
+    // ── Top-up: petiție demo (idempotent) ──
+    await topUpPetitions(strapi);
 
     // ── Top-up: pagini single type (idempotent — populate dacă sunt goale) ──
     await topUpInscriptionPage(strapi);
@@ -165,6 +200,17 @@ async function setupPublicPermissions(strapi: Core.Strapi) {
 
   if (!publicRole) return;
 
+  // Când există un API token read-only (STRAPI_API_TOKEN), frontend-ul SSR
+  // citește autentificat → putem închide `find`/`findOne` public (API-ul nu
+  // mai e citibil anonim din exterior). Scrierile publice (`create`) și
+  // acțiunile custom de formular (`count`/`verify`) rămân publice, fiindcă
+  // formularele încă postează din browser.
+  const hasApiToken = !!process.env.STRAPI_API_TOKEN;
+
+  // Acțiuni de READ care se pot închide când avem token. Restul (create/count/
+  // verify) rămân mereu publice.
+  const READ_ACTIONS = new Set(['find', 'findOne']);
+
   const publicEndpoints = [
     // Collection types
     { controller: 'api::article.article', actions: ['find', 'findOne'] },
@@ -176,6 +222,12 @@ async function setupPublicPermissions(strapi: Core.Strapi) {
     { controller: 'api::section.section', actions: ['find', 'findOne'] },
     { controller: 'api::county.county', actions: ['find', 'findOne'] },
     { controller: 'api::interest-area.interest-area', actions: ['find', 'findOne'] },
+    { controller: 'api::chapter.chapter', actions: ['find', 'findOne'] },
+    { controller: 'api::chapter-page.chapter-page', actions: ['find', 'findOne'] },
+    { controller: 'api::campaign.campaign', actions: ['find', 'findOne'] },
+    { controller: 'api::petition.petition', actions: ['find', 'findOne'] },
+    // Petiție — semnături: create + count + verify (custom). NU find/findOne (date personale).
+    { controller: 'api::petition-signature.petition-signature', actions: ['create', 'count', 'verify'] },
     // Single types
     { controller: 'api::homepage.homepage', actions: ['find'] },
     { controller: 'api::contact-page.contact-page', actions: ['find'] },
@@ -192,33 +244,99 @@ async function setupPublicPermissions(strapi: Core.Strapi) {
     { controller: 'api::newsletter-subscriber.newsletter-subscriber', actions: ['create'] },
     // Membership — doar create (înscriere)
     { controller: 'api::membership-request.membership-request', actions: ['create'] },
+    // Contact — doar create (mesaje din blocul contact-form)
+    { controller: 'api::contact-submission.contact-submission', actions: ['create'] },
   ];
 
+  let granted = 0;
+  let revoked = 0;
   for (const endpoint of publicEndpoints) {
     for (const action of endpoint.actions) {
+      const actionId = `${endpoint.controller}.${action}`;
       const existing = await strapi
         .query('plugin::users-permissions.permission')
-        .findOne({
-          where: {
-            role: publicRole.id,
-            action: `${endpoint.controller}.${action}`,
-          },
-        });
+        .findOne({ where: { role: publicRole.id, action: actionId } });
 
-      if (!existing) {
+      // Cu token: revocă permisiunile publice de READ (idempotent).
+      const shouldBePublic = !(hasApiToken && READ_ACTIONS.has(action));
+
+      if (shouldBePublic && !existing) {
         await strapi
           .query('plugin::users-permissions.permission')
-          .create({
-            data: {
-              role: publicRole.id,
-              action: `${endpoint.controller}.${action}`,
-            },
-          });
+          .create({ data: { role: publicRole.id, action: actionId } });
+        granted++;
+      } else if (!shouldBePublic && existing) {
+        await strapi
+          .query('plugin::users-permissions.permission')
+          .delete({ where: { id: existing.id } });
+        revoked++;
       }
     }
   }
 
-  strapi.log.info('✅ Public API permissions configured');
+  if (hasApiToken) {
+    strapi.log.info(
+      `🔒 Public API permissions: read închis (STRAPI_API_TOKEN prezent). +${granted} scrieri publice, -${revoked} citiri revocate.`
+    );
+  } else {
+    strapi.log.warn(
+      '⚠️  STRAPI_API_TOKEN LIPSEȘTE din env-ul Strapi → citirile publice `find`/`findOne` rămân DESCHISE. ' +
+        'Setează-l (același token read-only injectat în frontend) ca să se închidă. ' +
+        'PII e protejat oricum prin flag-uri `private` pe scheme + lockdown-ul de mai jos.'
+    );
+    strapi.log.info(`✅ Public API permissions configured (+${granted}). Read PUBLIC (fără STRAPI_API_TOKEN).`);
+  }
+
+  // ── Defense-in-depth: lockdown PII ────────────────────────────────────────
+  // Tipurile cu date personale NU trebuie să aibă NICIODATĂ `find`/`findOne`/
+  // `update`/`delete` public — indiferent de token și indiferent dacă cineva le-a
+  // activat manual din admin. Seed-ul de mai sus e doar aditiv pe lista lui; ăsta
+  // e revoke-ul care prinde o activare manuală. (Aliniat cu flag-urile `private`
+  // din schemele PII — vezi docs/audit-2026-07-02.md C1/C2.)
+  const PII_CONTROLLERS = [
+    'api::petition-signature.petition-signature',
+    'api::membership-request.membership-request',
+    'api::newsletter-subscriber.newsletter-subscriber',
+    'api::contact-submission.contact-submission',
+  ];
+  const FORBIDDEN_PUBLIC_ACTIONS = ['find', 'findOne', 'update', 'delete'];
+  let piiRevoked = 0;
+  for (const controller of PII_CONTROLLERS) {
+    for (const action of FORBIDDEN_PUBLIC_ACTIONS) {
+      const actionId = `${controller}.${action}`;
+      const existing = await strapi
+        .query('plugin::users-permissions.permission')
+        .findOne({ where: { role: publicRole.id, action: actionId } });
+      if (existing) {
+        await strapi.query('plugin::users-permissions.permission').delete({ where: { id: existing.id } });
+        piiRevoked++;
+        strapi.log.warn(`🔒 [PII lockdown] Revocat permisiunea publică ${actionId}.`);
+      }
+    }
+  }
+  if (piiRevoked === 0) {
+    strapi.log.info('🔒 [PII lockdown] OK — niciun tip cu PII nu are read/write public.');
+  }
+}
+
+/**
+ * Hardening auth: dezactivează înregistrarea publică de utilizatori cât timp
+ * conturile de membru NU sunt lansate (rutele /cont, /auth sunt stub-uri).
+ * `/api/auth/local/register` e activ by default în users-permissions → fără asta
+ * oricine poate crea conturi (spam / enumerare). Idempotent.
+ */
+async function hardenAuth(strapi: Core.Strapi) {
+  try {
+    const pluginStore = strapi.store({ type: 'plugin', name: 'users-permissions' });
+    const advanced = (await pluginStore.get({ key: 'advanced' })) as Record<string, unknown> | null;
+    if (advanced && advanced.allow_register === true) {
+      advanced.allow_register = false;
+      await pluginStore.set({ key: 'advanced', value: advanced });
+      strapi.log.info('🔒 [auth] Înregistrarea publică de utilizatori a fost DEZACTIVATĂ.');
+    }
+  } catch (err) {
+    strapi.log.warn(`[auth] Nu am putut dezactiva înregistrarea publică: ${err}`);
+  }
 }
 
 /**
@@ -1605,7 +1723,6 @@ async function configureAdminLabels(strapi: Core.Strapi) {
       interests_help: { label: 'Text ajutor domenii', description: 'Text mic afișat sub label-ul listei de domenii.' },
     },
     'form.validation-messages': {
-      required_generic: { label: 'Mesaj generic obligatoriu', description: 'Folosit când un câmp obligatoriu e gol.' },
       email_required: { label: 'Email obligatoriu', description: 'Folosit când câmpul Email e gol.' },
       email_invalid: { label: 'Email invalid', description: 'Folosit când Email-ul nu are format valid.' },
       phone_required: { label: 'Telefon obligatoriu', description: 'Folosit când câmpul Telefon e gol.' },
@@ -1843,7 +1960,7 @@ async function topUpCounties(strapi: Core.Strapi) {
     if (existing.length === 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await strapi.documents('api::county.county' as any).create({
-        data: { name, order: i } as any,
+        data: { name, slug: slugifyRo(name), order: i } as any,
       });
       added++;
     }
@@ -1851,6 +1968,177 @@ async function topUpCounties(strapi: Core.Strapi) {
 
   if (added > 0) {
     strapi.log.info(`🗺️  Județe adăugate: ${added}/${counties.length}`);
+  }
+}
+
+/**
+ * Top-up petiție demo (idempotent — creează doar dacă nu există nicio petiție).
+ */
+async function topUpPetitions(strapi: Core.Strapi) {
+  const existing = await strapi.documents('api::petition.petition' as any).findMany({ limit: 1 });
+  if (existing.length > 0) return;
+
+  try {
+    await strapi.documents('api::petition.petition' as any).create({
+      data: {
+        title: 'Mai multe spații verzi în orașe',
+        slug: 'spatii-verzi',
+        summary: 'Cerem autorităților locale să crească suprafața de spații verzi la minimum 26 mp/locuitor.',
+        signature_target: 5000,
+        petition_status: 'open',
+        content: [
+          {
+            __component: 'blocks.page-header',
+            title: 'Mai multe spații verzi în orașe',
+            lead: 'Pentru un aer mai curat și comunități mai sănătoase.',
+          },
+          {
+            __component: 'blocks.text-block',
+            body: [
+              {
+                type: 'paragraph',
+                children: [{ type: 'text', text: 'Spațiile verzi sunt esențiale pentru sănătatea noastră și pentru combaterea schimbărilor climatice. Cerem un angajament ferm pentru extinderea lor.' }],
+              },
+            ],
+            alignment: 'left',
+          },
+        ],
+      } as any,
+      status: 'published',
+    });
+    strapi.log.info('✍️  Petiție demo creată: spatii-verzi');
+  } catch (err) {
+    strapi.log.warn(`[seed] Petiție demo eșuată: ${err}`);
+  }
+}
+
+/**
+ * Top-up campanie demo (idempotent — creează doar dacă nu există nicio campanie).
+ * Leagă articole/evenimente existente + un județ, ca să se vadă agregarea.
+ */
+async function topUpCampaigns(strapi: Core.Strapi) {
+  const existing = await strapi.documents('api::campaign.campaign' as any).findMany({ limit: 1 });
+  if (existing.length > 0) return;
+
+  const [cluj] = await strapi.documents('api::county.county' as any).findMany({
+    filters: { name: 'Cluj' },
+    limit: 1,
+  });
+  const articles = await strapi.documents('api::article.article' as any).findMany({ limit: 2 });
+  const events = await strapi.documents('api::event.event' as any).findMany({ limit: 2 });
+
+  try {
+    await strapi.documents('api::campaign.campaign' as any).create({
+      data: {
+        title: 'Aer curat pentru orașele noastre',
+        slug: 'aer-curat',
+        summary: 'O campanie pentru reducerea poluării și transport public verde în marile orașe.',
+        goal: 5000,
+        progress: 1240,
+        is_featured: true,
+        cta_label: 'Susține campania',
+        cta_url: '/inscrie-te',
+        content: [
+          {
+            __component: 'blocks.page-header',
+            title: 'Aer curat pentru orașele noastre',
+            lead: 'Împreună pentru un viitor fără poluare.',
+          },
+          {
+            __component: 'blocks.text-block',
+            body: [
+              {
+                type: 'paragraph',
+                children: [{ type: 'text', text: 'Această campanie reunește inițiative locale pentru aer curat, transport verde și spații verzi în orașele din România.' }],
+              },
+            ],
+            alignment: 'left',
+          },
+        ],
+        ...(cluj ? { counties: [cluj.documentId] } : {}),
+        ...(articles.length ? { articles: articles.map((a: any) => a.documentId) } : {}),
+        ...(events.length ? { events: events.map((e: any) => e.documentId) } : {}),
+      } as any,
+      status: 'published',
+    });
+    strapi.log.info('📣 Campanie demo creată: Aer curat');
+  } catch (err) {
+    strapi.log.warn(`[seed] Campanie demo eșuată: ${err}`);
+  }
+}
+
+/**
+ * Backfill slug pe județe (idempotent). Județele seed-uite înainte de adăugarea
+ * câmpului `slug` au slug=null, ceea ce rupe filtrarea pe județ (?judet=) la
+ * știri/evenimente/filiale. Generează slug-ul din nume pentru cele lipsă.
+ */
+async function backfillCountySlugs(strapi: Core.Strapi) {
+  const counties = await strapi.documents('api::county.county' as any).findMany({
+    filters: { slug: { $null: true } },
+    limit: 100,
+  } as any);
+
+  let fixed = 0;
+  for (const c of counties) {
+    try {
+      await strapi.documents('api::county.county' as any).update({
+        documentId: (c as any).documentId,
+        data: { slug: slugifyRo((c as any).name) } as any,
+      });
+      fixed++;
+    } catch (err) {
+      strapi.log.warn(`[migration] Slug județ eșuat pentru ${(c as any).name}: ${err}`);
+    }
+  }
+
+  if (fixed > 0) {
+    strapi.log.info(`🗺️  Slug-uri județe completate: ${fixed}`);
+  }
+}
+
+/**
+ * Top-up filiale demo (idempotent — creează doar dacă nu există nicio filială).
+ * Leagă filiala de un județ existent și adaugă un coordonator + landing minimal.
+ */
+async function topUpChapters(strapi: Core.Strapi) {
+  const existing = await strapi.documents('api::chapter.chapter' as any).findMany({ limit: 1 });
+  if (existing.length > 0) return; // deja există filiale — nu suprascrie
+
+  // Leagă de județul Cluj dacă există.
+  const [cluj] = await strapi.documents('api::county.county' as any).findMany({
+    filters: { name: 'Cluj' },
+    limit: 1,
+  });
+  // Primul membru de echipă disponibil → coordonator demo (opțional).
+  const [member] = await strapi.documents('api::team-member.team-member' as any).findMany({ limit: 1 });
+
+  try {
+    await strapi.documents('api::chapter.chapter' as any).create({
+      data: {
+        name: 'Cluj',
+        slug: 'cluj',
+        is_active: true,
+        email: 'cluj@cusens.eu',
+        ...(cluj ? { county: cluj.documentId } : {}),
+        ...(member
+          ? { coordinators: [{ member: member.documentId, locality: 'Cluj-Napoca', local_role: 'Coordonator filială' }] }
+          : {}),
+        content: [
+          {
+            __component: 'blocks.page-header',
+            title: 'Filiala SENS Cluj',
+            lead: 'Echipa, știrile și evenimentele noastre din județul Cluj.',
+          },
+          { __component: 'blocks.chapter-coordinators', heading: 'Echipa filialei' },
+          { __component: 'blocks.chapter-feed', heading: 'Activitate locală', show: 'both', limit: 3 },
+          { __component: 'blocks.chapter-contact', heading: 'Contactează filiala' },
+        ],
+      } as any,
+      status: 'published',
+    });
+    strapi.log.info('🏛️  Filială demo creată: Cluj');
+  } catch (err) {
+    strapi.log.warn(`[seed] Filială demo eșuată: ${err}`);
   }
 }
 
@@ -1926,7 +2214,6 @@ async function topUpInscriptionPage(strapi: Core.Strapi) {
       interests_help: 'Alege domeniile în care vrei să te implici. Poți selecta mai multe.',
     },
     validation: {
-      required_generic: 'Acest câmp este obligatoriu',
       email_required: 'Email-ul este obligatoriu',
       email_invalid: 'Email invalid',
       phone_required: 'Telefonul este obligatoriu',

@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_blocks_chapter_contacts",
+  "info": {
+    "displayName": "Contact filială",
+    "icon": "phone",
+    "description": "Datele de contact ale filialei curente (email, telefon, adresă, social). Se auto-populează din filială."
+  },
+  "attributes": {
+    "anchor_id": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "kicker": {
+      "type": "string",
+      "default": "Contact",
+      "maxLength": 80
+    },
+    "heading": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "background_color": {
+      "type": "enumeration",
+      "enum": [
+        "paper",
+        "cream",
+        "green-dark"
+      ],
+      "default": "green-dark"
+    }
+  }
+}

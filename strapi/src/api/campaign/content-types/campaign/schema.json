@@ -1,0 +1,110 @@
+{
+  "kind": "collectionType",
+  "collectionName": "campaigns",
+  "info": {
+    "singularName": "campaign",
+    "pluralName": "campaigns",
+    "displayName": "Campanii",
+    "description": "Campanii SENS — agregă știri, evenimente și un îndemn la acțiune. Accesibile la /campanii/{slug}."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "summary": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "cover_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "blocks.hero",
+        "blocks.hero-refined",
+        "blocks.hero-editorial",
+        "blocks.text-block",
+        "blocks.cta-banner",
+        "blocks.image-gallery",
+        "blocks.accordion",
+        "blocks.quote",
+        "blocks.video-embed",
+        "blocks.stats-counter",
+        "blocks.program-points",
+        "blocks.newsletter-cta",
+        "blocks.card-grid",
+        "blocks.latest-articles",
+        "blocks.upcoming-events",
+        "blocks.spacer",
+        "blocks.timeline",
+        "blocks.mission-band",
+        "blocks.team-grid",
+        "blocks.page-header",
+        "blocks.file-list"
+      ]
+    },
+    "start_date": {
+      "type": "datetime"
+    },
+    "end_date": {
+      "type": "datetime"
+    },
+    "cta_label": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "cta_url": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "goal": {
+      "type": "integer",
+      "min": 0
+    },
+    "progress": {
+      "type": "integer",
+      "min": 0,
+      "default": 0
+    },
+    "articles": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::article.article"
+    },
+    "events": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::event.event"
+    },
+    "counties": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::county.county"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

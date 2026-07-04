@@ -1,0 +1,72 @@
+{
+  "kind": "collectionType",
+  "collectionName": "chapter_pages",
+  "info": {
+    "singularName": "chapter-page",
+    "pluralName": "chapter-pages",
+    "displayName": "Pagini filiale",
+    "description": "Sub-pagini ale unei filiale, accesibile la /filiale/{filiala}/{slug}. Slug-ul e unic PER filială (vezi lifecycle)."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 150
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120,
+      "regex": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "chapter": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::chapter.chapter",
+      "inversedBy": "pages"
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "blocks.hero",
+        "blocks.hero-refined",
+        "blocks.hero-editorial",
+        "blocks.text-block",
+        "blocks.cta-banner",
+        "blocks.image-gallery",
+        "blocks.accordion",
+        "blocks.quote",
+        "blocks.video-embed",
+        "blocks.stats-counter",
+        "blocks.program-points",
+        "blocks.newsletter-cta",
+        "blocks.card-grid",
+        "blocks.latest-articles",
+        "blocks.upcoming-events",
+        "blocks.contact-form",
+        "blocks.spacer",
+        "blocks.timeline",
+        "blocks.mission-band",
+        "blocks.team-grid",
+        "blocks.page-header",
+        "blocks.file-list",
+        "blocks.chapter-coordinators",
+        "blocks.chapter-feed",
+        "blocks.chapter-contact"
+      ]
+    },
+    "display_order": {
+      "type": "integer",
+      "default": 0
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

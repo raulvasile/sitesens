@@ -47,6 +47,19 @@ export const handle: Handle = async ({ event, resolve }) => {
 	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 	response.headers.set('X-XSS-Protection', '0'); // Disabled per modern best practice (CSP is preferred)
 
+	// HSTS — forțează HTTPS 2 ani + preload. Cloudflare poate adăuga și el, dar
+	// îl setăm explicit ca să nu depindem de config-ul edge. (audit 2026-07-02 L7)
+	response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+	// Izolare cross-origin — reduce suprafața de atac (leak-uri de referință cross-window).
+	response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+	// `same-site` (nu `same-origin`): media Strapi + embed-urile terțe trebuie să încarce.
+	response.headers.set('Cross-Origin-Resource-Policy', 'same-site');
+
+	// NOTĂ CSP (audit 2026-07-02 M4): CSP-ul de mai sus păstrează `unsafe-inline` +
+	// `unsafe-eval`, cerute azi de embed-urile TikTok/GTM. Migrarea la nonce-based
+	// (fără `unsafe-eval`) necesită testare live cu embed-urile active + click-to-load
+	// — de făcut la Epic 5/6 (analytics), împreună cu cookie-consent.
+
 	// Cache-Control pentru HTML — dacă endpoint-ul nu a setat deja prin setHeaders()
 	// 30s fresh, 60s stale-while-revalidate — reduce fetch-urile repetate din SSR
 	const contentType = response.headers.get('content-type') ?? '';

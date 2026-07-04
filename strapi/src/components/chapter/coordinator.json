@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_chapter_coordinators",
+  "info": {
+    "displayName": "Coordonator filială",
+    "icon": "user",
+    "description": "Un coordonator al filialei, cu localitatea și rolul local. Leagă un membru din colecția Echipă."
+  },
+  "attributes": {
+    "member": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::team-member.team-member"
+    },
+    "locality": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "local_role": {
+      "type": "string",
+      "maxLength": 120
+    }
+  }
+}

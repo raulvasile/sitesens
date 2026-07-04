@@ -457,9 +457,9 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
         'blocks.stats-counter',
         'blocks.cta-banner',
         'blocks.spacer',
-        'blocks.article-stat',
       ]
     >;
+    counties: Schema.Attribute.Relation<'manyToMany', 'api::county.county'>;
     cover_image: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -488,6 +488,100 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     tags: Schema.Attribute.Relation<'manyToMany', 'api::tag.tag'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCampaignCampaign extends Struct.CollectionTypeSchema {
+  collectionName: 'campaigns';
+  info: {
+    description: 'Campanii SENS \u2014 agreg\u0103 \u0219tiri, evenimente \u0219i un \u00EEndemn la ac\u021Biune. Accesibile la /campanii/{slug}.';
+    displayName: 'Campanii';
+    pluralName: 'campaigns';
+    singularName: 'campaign';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    articles: Schema.Attribute.Relation<'manyToMany', 'api::article.article'>;
+    content: Schema.Attribute.DynamicZone<
+      [
+        'blocks.hero',
+        'blocks.hero-refined',
+        'blocks.hero-editorial',
+        'blocks.text-block',
+        'blocks.cta-banner',
+        'blocks.image-gallery',
+        'blocks.accordion',
+        'blocks.quote',
+        'blocks.video-embed',
+        'blocks.stats-counter',
+        'blocks.program-points',
+        'blocks.newsletter-cta',
+        'blocks.card-grid',
+        'blocks.latest-articles',
+        'blocks.upcoming-events',
+        'blocks.spacer',
+        'blocks.timeline',
+        'blocks.mission-band',
+        'blocks.team-grid',
+        'blocks.page-header',
+        'blocks.file-list',
+      ]
+    >;
+    counties: Schema.Attribute.Relation<'manyToMany', 'api::county.county'>;
+    cover_image: Schema.Attribute.Media<'images'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    cta_label: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    cta_url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    end_date: Schema.Attribute.DateTime;
+    events: Schema.Attribute.Relation<'manyToMany', 'api::event.event'>;
+    goal: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    is_featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::campaign.campaign'
+    > &
+      Schema.Attribute.Private;
+    progress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    start_date: Schema.Attribute.DateTime;
+    summary: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -528,6 +622,161 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     parent: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiChapterPageChapterPage extends Struct.CollectionTypeSchema {
+  collectionName: 'chapter_pages';
+  info: {
+    description: 'Sub-pagini ale unei filiale, accesibile la /filiale/{filiala}/{slug}. Slug-ul e unic PER filial\u0103 (vezi lifecycle).';
+    displayName: 'Pagini filiale';
+    pluralName: 'chapter-pages';
+    singularName: 'chapter-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    chapter: Schema.Attribute.Relation<'manyToOne', 'api::chapter.chapter'>;
+    content: Schema.Attribute.DynamicZone<
+      [
+        'blocks.hero',
+        'blocks.hero-refined',
+        'blocks.hero-editorial',
+        'blocks.text-block',
+        'blocks.cta-banner',
+        'blocks.image-gallery',
+        'blocks.accordion',
+        'blocks.quote',
+        'blocks.video-embed',
+        'blocks.stats-counter',
+        'blocks.program-points',
+        'blocks.newsletter-cta',
+        'blocks.card-grid',
+        'blocks.latest-articles',
+        'blocks.upcoming-events',
+        'blocks.contact-form',
+        'blocks.spacer',
+        'blocks.timeline',
+        'blocks.mission-band',
+        'blocks.team-grid',
+        'blocks.page-header',
+        'blocks.file-list',
+        'blocks.chapter-coordinators',
+        'blocks.chapter-feed',
+        'blocks.chapter-contact',
+      ]
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    display_order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::chapter-page.chapter-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    slug: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiChapterChapter extends Struct.CollectionTypeSchema {
+  collectionName: 'chapters';
+  info: {
+    description: 'Filialele teritoriale SENS (una per jude\u021B). Accesibile la /filiale/{slug}. Landing-ul e construit cu Dynamic Zone.';
+    displayName: 'Filiale';
+    pluralName: 'chapters';
+    singularName: 'chapter';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    address: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    content: Schema.Attribute.DynamicZone<
+      [
+        'blocks.hero',
+        'blocks.hero-refined',
+        'blocks.hero-editorial',
+        'blocks.text-block',
+        'blocks.cta-banner',
+        'blocks.image-gallery',
+        'blocks.accordion',
+        'blocks.quote',
+        'blocks.video-embed',
+        'blocks.stats-counter',
+        'blocks.program-points',
+        'blocks.newsletter-cta',
+        'blocks.card-grid',
+        'blocks.latest-articles',
+        'blocks.upcoming-events',
+        'blocks.contact-form',
+        'blocks.spacer',
+        'blocks.timeline',
+        'blocks.mission-band',
+        'blocks.team-grid',
+        'blocks.page-header',
+        'blocks.file-list',
+        'blocks.chapter-coordinators',
+        'blocks.chapter-feed',
+        'blocks.chapter-contact',
+      ]
+    >;
+    coordinators: Schema.Attribute.Component<'chapter.coordinator', true>;
+    county: Schema.Attribute.Relation<'oneToOne', 'api::county.county'>;
+    cover_image: Schema.Attribute.Media<'images'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 254;
+      }>;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::chapter.chapter'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    pages: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::chapter-page.chapter-page'
+    >;
+    phone: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 30;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    social_links: Schema.Attribute.Component<'shared.social-link', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -653,6 +902,65 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     validation: Schema.Attribute.Component<'form.validation-messages', false>;
+  };
+}
+
+export interface ApiContactSubmissionContactSubmission
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'contact_submissions';
+  info: {
+    description: 'Mesaje primite din blocul Formular Contact. Read-only din admin (\u00EEnregistrate prin POST).';
+    displayName: 'Mesaje Contact';
+    pluralName: 'contact-submissions';
+    singularName: 'contact-submission';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    consent_gdpr: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 254;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contact-submission.contact-submission'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 3000;
+      }>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 150;
+        minLength: 1;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['new', 'read', 'answered']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'new'>;
+    subject: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -821,6 +1129,7 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 120;
       }>;
+    county: Schema.Attribute.Relation<'manyToOne', 'api::county.county'>;
     cover_image: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1069,6 +1378,7 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
         'blocks.calendar',
         'blocks.calendar-custom',
         'blocks.file-list',
+        'blocks.featured-campaigns',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -1224,12 +1534,16 @@ export interface ApiMembershipRequestMembershipRequest
   attributes: {
     address: Schema.Attribute.Text &
       Schema.Attribute.Required &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
       }>;
-    birth_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    birth_date: Schema.Attribute.Date &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private;
     city: Schema.Attribute.String &
       Schema.Attribute.Required &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
@@ -1246,6 +1560,7 @@ export interface ApiMembershipRequestMembershipRequest
       Schema.Attribute.DefaultTo<false>;
     county: Schema.Attribute.String &
       Schema.Attribute.Required &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 50;
       }>;
@@ -1254,19 +1569,22 @@ export interface ApiMembershipRequestMembershipRequest
       Schema.Attribute.Private;
     email: Schema.Attribute.Email &
       Schema.Attribute.Required &
+      Schema.Attribute.Private &
       Schema.Attribute.Unique &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 254;
       }>;
     first_name: Schema.Attribute.String &
       Schema.Attribute.Required &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
         minLength: 1;
       }>;
-    interests: Schema.Attribute.JSON;
+    interests: Schema.Attribute.JSON & Schema.Attribute.Private;
     last_name: Schema.Attribute.String &
       Schema.Attribute.Required &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 100;
         minLength: 1;
@@ -1278,6 +1596,7 @@ export interface ApiMembershipRequestMembershipRequest
     > &
       Schema.Attribute.Private;
     motivation: Schema.Attribute.Text &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 1000;
       }>;
@@ -1288,6 +1607,7 @@ export interface ApiMembershipRequestMembershipRequest
       }>;
     phone: Schema.Attribute.String &
       Schema.Attribute.Required &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 20;
       }>;
@@ -1413,14 +1733,10 @@ export interface ApiNewsletterSubscriberNewsletterSubscriber
       Schema.Attribute.Private;
     email: Schema.Attribute.Email &
       Schema.Attribute.Required &
+      Schema.Attribute.Private &
       Schema.Attribute.Unique &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 254;
-      }>;
-    ip_address: Schema.Attribute.String &
-      Schema.Attribute.Private &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 45;
       }>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -1429,6 +1745,7 @@ export interface ApiNewsletterSubscriberNewsletterSubscriber
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 200;
       }>;
@@ -1489,6 +1806,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'blocks.calendar',
         'blocks.calendar-custom',
         'blocks.file-list',
+        'blocks.featured-campaigns',
       ]
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -1502,6 +1820,159 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPetitionSignaturePetitionSignature
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'petition_signatures';
+  info: {
+    description: 'Semn\u0103turi primite prin formularul de peti\u021Bie. Read-only din admin (\u00EEnregistrate prin POST). Datele personale NU se afi\u0219eaz\u0103 public.';
+    displayName: 'Semn\u0103turi peti\u021Bie';
+    pluralName: 'petition-signatures';
+    singularName: 'petition-signature';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    city: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    comment: Schema.Attribute.Text &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    consent_gdpr: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    county: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 254;
+      }>;
+    first_name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+        minLength: 1;
+      }>;
+    last_name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+        minLength: 1;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::petition-signature.petition-signature'
+    > &
+      Schema.Attribute.Private;
+    petition: Schema.Attribute.Relation<'manyToOne', 'api::petition.petition'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    verification_token: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    verified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+  };
+}
+
+export interface ApiPetitionPetition extends Struct.CollectionTypeSchema {
+  collectionName: 'petitions';
+  info: {
+    description: 'Peti\u021Bii publice SENS. Accesibile la /petitii/{slug}. Semn\u0103turile se \u00EEnregistreaz\u0103 prin formular (vezi Semn\u0103turi peti\u021Bie).';
+    displayName: 'Peti\u021Bii';
+    pluralName: 'petitions';
+    singularName: 'petition';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    campaign: Schema.Attribute.Relation<'manyToOne', 'api::campaign.campaign'>;
+    consent_text: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 1000;
+      }>;
+    content: Schema.Attribute.DynamicZone<
+      [
+        'blocks.hero',
+        'blocks.hero-refined',
+        'blocks.hero-editorial',
+        'blocks.text-block',
+        'blocks.image-gallery',
+        'blocks.accordion',
+        'blocks.quote',
+        'blocks.video-embed',
+        'blocks.stats-counter',
+        'blocks.program-points',
+        'blocks.spacer',
+        'blocks.timeline',
+        'blocks.page-header',
+        'blocks.file-list',
+      ]
+    >;
+    cover_image: Schema.Attribute.Media<'images'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    deadline: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::petition.petition'
+    > &
+      Schema.Attribute.Private;
+    petition_status: Schema.Attribute.Enumeration<['open', 'closed']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'open'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
+    signature_target: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1000>;
+    signatures: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::petition-signature.petition-signature'
+    >;
+    slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    summary: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -2227,9 +2698,13 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::article.article': ApiArticleArticle;
+      'api::campaign.campaign': ApiCampaignCampaign;
       'api::category.category': ApiCategoryCategory;
+      'api::chapter-page.chapter-page': ApiChapterPageChapterPage;
+      'api::chapter.chapter': ApiChapterChapter;
       'api::community-page.community-page': ApiCommunityPageCommunityPage;
       'api::contact-page.contact-page': ApiContactPageContactPage;
+      'api::contact-submission.contact-submission': ApiContactSubmissionContactSubmission;
       'api::county.county': ApiCountyCounty;
       'api::donate-page.donate-page': ApiDonatePageDonatePage;
       'api::event.event': ApiEventEvent;
@@ -2243,6 +2718,8 @@ declare module '@strapi/strapi' {
       'api::newsletter-page.newsletter-page': ApiNewsletterPageNewsletterPage;
       'api::newsletter-subscriber.newsletter-subscriber': ApiNewsletterSubscriberNewsletterSubscriber;
       'api::page.page': ApiPagePage;
+      'api::petition-signature.petition-signature': ApiPetitionSignaturePetitionSignature;
+      'api::petition.petition': ApiPetitionPetition;
       'api::privacy-policy-page.privacy-policy-page': ApiPrivacyPolicyPagePrivacyPolicyPage;
       'api::section.section': ApiSectionSection;
       'api::site-theme.site-theme': ApiSiteThemeSiteTheme;

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { COUNTIES, COUNTY_BY_CODE } from '$lib/data/romania-counties';
+	import { sanitizeUrl } from '$lib/sanitize';
 	// Static SVG bundled at build time via Vite's ?raw query — no runtime fetch,
 	// no sanitization needed (it's our own asset, not user-supplied).
 	import romaniaSvg from '../../../../static/maps/romania-counties.svg?raw';
@@ -16,11 +17,13 @@
 	}
 
 	function openChapterUrl(chapter: CountyChapter): void {
-		if (!chapter.url) return;
+		// URL din CMS — sanitizeUrl blochează javascript:/data:/vbscript:.
+		const url = sanitizeUrl(chapter.url ?? '');
+		if (!url) return;
 		if (chapter.open_in_new_tab === false) {
-			window.location.href = chapter.url;
+			window.location.href = url;
 		} else {
-			window.open(chapter.url, '_blank', 'noopener');
+			window.open(url, '_blank', 'noopener');
 		}
 	}
 
@@ -376,7 +379,7 @@
 				>
 					<span class="rmap__tooltip-name">{visibleChapter.name ?? visibleCountyMeta.name}</span>
 					<a
-						href={visibleChapter.url}
+						href={sanitizeUrl(visibleChapter.url ?? '')}
 						target={inNewTab ? '_blank' : undefined}
 						rel={inNewTab ? 'noopener noreferrer' : undefined}
 						class="rmap__tooltip-cta"

@@ -1,0 +1,13 @@
+# Owner implicit pentru tot repo-ul.
+* @raulvasile
+
+# Zone sensibile — review obligatoriu pe securitate / date personale.
+/strapi/src/api/*/controllers/       @raulvasile
+/strapi/src/api/*/content-types/     @raulvasile
+/strapi/src/middlewares/             @raulvasile
+/strapi/config/                      @raulvasile
+/frontend/src/hooks.server.ts        @raulvasile
+/frontend/src/lib/server/            @raulvasile
+/frontend/src/lib/sanitize.ts        @raulvasile
+/docs/                               @raulvasile
+SECURITY.md                          @raulvasile

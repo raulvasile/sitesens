@@ -16,11 +16,13 @@
       "type": "email",
       "required": true,
       "unique": true,
-      "maxLength": 254
+      "maxLength": 254,
+      "private": true
     },
     "name": {
       "type": "string",
-      "maxLength": 200
+      "maxLength": 200,
+      "private": true
     },
     "consent_date": {
       "type": "datetime",
@@ -40,11 +42,6 @@
       ],
       "default": "pending",
       "required": true
-    },
-    "ip_address": {
-      "type": "string",
-      "private": true,
-      "maxLength": 45
     }
   }
 }

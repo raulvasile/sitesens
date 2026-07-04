@@ -34,8 +34,7 @@
         "blocks.video-embed",
         "blocks.stats-counter",
         "blocks.cta-banner",
-        "blocks.spacer",
-        "blocks.article-stat"
+        "blocks.spacer"
       ]
     },
     "cover_image": {
@@ -62,6 +61,11 @@
       "relation": "manyToMany",
       "target": "api::tag.tag",
       "inversedBy": "articles"
+    },
+    "counties": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::county.county"
     },
     "seo": {
       "type": "component",

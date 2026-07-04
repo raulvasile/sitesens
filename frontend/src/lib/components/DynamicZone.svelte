@@ -28,6 +28,10 @@
 	import Calendar from './blocks/Calendar.svelte';
 	import CalendarCustom from './blocks/CalendarCustom.svelte';
 	import FileList from './blocks/FileList.svelte';
+	import ChapterCoordinators from './blocks/ChapterCoordinators.svelte';
+	import ChapterFeed from './blocks/ChapterFeed.svelte';
+	import ChapterContact from './blocks/ChapterContact.svelte';
+	import FeaturedCampaigns from './blocks/FeaturedCampaigns.svelte';
 
 	interface Props {
 		content: Array<{ __component: string; anchor_id?: string | null; [key: string]: unknown }>;
@@ -73,6 +77,7 @@
 		'blocks.calendar',
 		'blocks.calendar-custom',
 		'blocks.file-list',
+		'blocks.chapter-contact',
 	]);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,6 +110,10 @@
 		'blocks.calendar': Calendar,
 		'blocks.calendar-custom': CalendarCustom,
 		'blocks.file-list': FileList,
+		'blocks.chapter-coordinators': ChapterCoordinators,
+		'blocks.chapter-feed': ChapterFeed,
+		'blocks.chapter-contact': ChapterContact,
+		'blocks.featured-campaigns': FeaturedCampaigns,
 	};
 </script>
 

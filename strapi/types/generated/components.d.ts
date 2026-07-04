@@ -226,6 +226,96 @@ export interface BlocksCardGridItem extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksChapterContact extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_chapter_contacts';
+  info: {
+    description: 'Datele de contact ale filialei curente (email, telefon, adres\u0103, social). Se auto-populeaz\u0103 din filial\u0103.';
+    displayName: 'Contact filial\u0103';
+    icon: 'phone';
+  };
+  attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    background_color: Schema.Attribute.Enumeration<
+      ['paper', 'cream', 'green-dark']
+    > &
+      Schema.Attribute.DefaultTo<'green-dark'>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Contact'>;
+  };
+}
+
+export interface BlocksChapterCoordinators extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_chapter_coordinators';
+  info: {
+    description: 'Afi\u0219eaz\u0103 coordonatorii filialei curente (member + localitate + rol). Se auto-populeaz\u0103 din filial\u0103.';
+    displayName: 'Coordonatori filial\u0103';
+    icon: 'user';
+  };
+  attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'paper'>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Echipa filialei'>;
+  };
+}
+
+export interface BlocksChapterFeed extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_chapter_feeds';
+  info: {
+    description: '\u0218tiri \u0219i/sau evenimente filtrate automat pe jude\u021Bul filialei curente.';
+    displayName: 'Feed local filial\u0103';
+    icon: 'bell';
+  };
+  attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'cream'>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    limit: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 12;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<3>;
+    show: Schema.Attribute.Enumeration<['articles', 'events', 'both']> &
+      Schema.Attribute.DefaultTo<'both'>;
+  };
+}
+
 export interface BlocksChapterItem extends Struct.ComponentSchema {
   collectionName: 'components_blocks_chapter_items';
   info: {
@@ -361,6 +451,51 @@ export interface BlocksCtaBanner extends Struct.ComponentSchema {
     button_text: Schema.Attribute.String & Schema.Attribute.Required;
     description: Schema.Attribute.Text;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface BlocksFeaturedCampaigns extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_featured_campaigns';
+  info: {
+    description: 'Afi\u0219eaz\u0103 campaniile active (sau cele marcate eviden\u021Biate). Se auto-populeaz\u0103 din colec\u021Bia Campanii.';
+    displayName: 'Campanii eviden\u021Biate';
+    icon: 'rocket';
+  };
+  attributes: {
+    anchor_id: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    background_color: Schema.Attribute.Enumeration<['paper', 'cream']> &
+      Schema.Attribute.DefaultTo<'paper'>;
+    cta_link: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    cta_text: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    kicker: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }> &
+      Schema.Attribute.DefaultTo<'Campanii'>;
+    limit: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 12;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<3>;
+    mode: Schema.Attribute.Enumeration<['featured', 'active', 'all']> &
+      Schema.Attribute.DefaultTo<'active'>;
   };
 }
 
@@ -1280,6 +1415,29 @@ export interface BlocksWordRotation extends Struct.ComponentSchema {
   };
 }
 
+export interface ChapterCoordinator extends Struct.ComponentSchema {
+  collectionName: 'components_chapter_coordinators';
+  info: {
+    description: 'Un coordonator al filialei, cu localitatea \u0219i rolul local. Leag\u0103 un membru din colec\u021Bia Echip\u0103.';
+    displayName: 'Coordonator filial\u0103';
+    icon: 'user';
+  };
+  attributes: {
+    local_role: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    locality: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    member: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::team-member.team-member'
+    >;
+  };
+}
+
 export interface DonatePresetAmount extends Struct.ComponentSchema {
   collectionName: 'components_donate_preset_amounts';
   info: {
@@ -1800,11 +1958,6 @@ export interface FormValidationMessages extends Struct.ComponentSchema {
         maxLength: 150;
       }> &
       Schema.Attribute.DefaultTo<'Telefonul este obligatoriu'>;
-    required_generic: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 150;
-      }> &
-      Schema.Attribute.DefaultTo<'Acest c\u00E2mp este obligatoriu'>;
   };
 }
 
@@ -2042,11 +2195,15 @@ declare module '@strapi/strapi' {
       'blocks.calendar-entry': BlocksCalendarEntry;
       'blocks.card-grid': BlocksCardGrid;
       'blocks.card-grid-item': BlocksCardGridItem;
+      'blocks.chapter-contact': BlocksChapterContact;
+      'blocks.chapter-coordinators': BlocksChapterCoordinators;
+      'blocks.chapter-feed': BlocksChapterFeed;
       'blocks.chapter-item': BlocksChapterItem;
       'blocks.chapters-grid': BlocksChaptersGrid;
       'blocks.contact-form': BlocksContactForm;
       'blocks.county-chapter': BlocksCountyChapter;
       'blocks.cta-banner': BlocksCtaBanner;
+      'blocks.featured-campaigns': BlocksFeaturedCampaigns;
       'blocks.featured-link': BlocksFeaturedLink;
       'blocks.file-item': BlocksFileItem;
       'blocks.file-list': BlocksFileList;
@@ -2078,6 +2235,7 @@ declare module '@strapi/strapi' {
       'blocks.word-carousel': BlocksWordCarousel;
       'blocks.word-carousel-item': BlocksWordCarouselItem;
       'blocks.word-rotation': BlocksWordRotation;
+      'chapter.coordinator': ChapterCoordinator;
       'donate.preset-amount': DonatePresetAmount;
       'donate.transparency-item': DonateTransparencyItem;
       'event.social-post': EventSocialPost;

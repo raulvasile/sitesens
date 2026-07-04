@@ -6,11 +6,6 @@
     "description": "Texte pentru erori comune de validare (câmp obligatoriu, email invalid etc.)."
   },
   "attributes": {
-    "required_generic": {
-      "type": "string",
-      "default": "Acest câmp este obligatoriu",
-      "maxLength": 150
-    },
     "email_required": {
       "type": "string",
       "default": "Email-ul este obligatoriu",

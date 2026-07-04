@@ -6,10 +6,33 @@ type Block = { __component: string; [key: string]: unknown };
 const MAX_CALENDAR_EVENTS = 200;
 
 /**
+ * Context opțional de filială. Când e prezent (pe paginile /filiale/*), blocurile
+ * specifice filialei (chapter-coordinators, chapter-feed, chapter-contact) se
+ * auto-populează din datele filialei curente, fără ca editorul să le configureze.
+ */
+export interface ChapterContext {
+	countySlug?: string | null;
+	coordinators?: unknown[];
+	contact?: {
+		name?: string;
+		email?: string | null;
+		phone?: string | null;
+		address?: string | null;
+		social_links?: unknown[];
+	} | null;
+}
+
+/**
  * Îmbogățește blocurile din Dynamic Zone cu date server-side.
  * Ex: latest-articles primește articolele, upcoming-events primește evenimentele.
+ *
+ * `chapter` (opțional) activează îmbogățirea blocurilor de filială.
  */
-export async function enrichDynamicZone(content: Block[], fetchFn: typeof fetch = fetch): Promise<Block[]> {
+export async function enrichDynamicZone(
+	content: Block[],
+	fetchFn: typeof fetch = fetch,
+	chapter?: ChapterContext
+): Promise<Block[]> {
 	const enriched = [...content];
 
 	for (let i = 0; i < enriched.length; i++) {
@@ -150,6 +173,74 @@ export async function enrichDynamicZone(content: Block[], fetchFn: typeof fetch 
 			}
 
 			enriched[i] = updated;
+		}
+
+		// Campanii evidențiate: auto-populare din colecția /campaigns.
+		if (block.__component === 'blocks.featured-campaigns') {
+			const mode = (block.mode as string) ?? 'active';
+			const limit = (block.limit as number) ?? 3;
+			const params: Record<string, string> = {
+				'sort[0]': 'start_date:desc',
+				'pagination[pageSize]': String(limit),
+				'populate[cover_image]': 'true',
+			};
+			if (mode === 'featured') {
+				params['filters[is_featured][$eq]'] = 'true';
+			} else if (mode === 'active') {
+				// Activă = fără end_date SAU end_date în viitor.
+				const now = new Date().toISOString();
+				params['filters[$or][0][end_date][$null]'] = 'true';
+				params['filters[$or][1][end_date][$gte]'] = now;
+			}
+			try {
+				const res = await fetchStrapi<unknown[]>('/campaigns', params, undefined, fetchFn);
+				enriched[i] = { ...block, _campaigns: res.data ?? [] };
+			} catch {
+				enriched[i] = { ...block, _campaigns: [] };
+			}
+		}
+
+		// ─── Blocuri specifice filialei (doar când avem context de filială) ───
+
+		// Coordonatori: injectează lista din filiala curentă.
+		if (block.__component === 'blocks.chapter-coordinators' && chapter) {
+			enriched[i] = { ...block, _coordinators: chapter.coordinators ?? [] };
+		}
+
+		// Contact: injectează datele de contact ale filialei curente.
+		if (block.__component === 'blocks.chapter-contact' && chapter) {
+			enriched[i] = { ...block, _contact: chapter.contact ?? null };
+		}
+
+		// Feed local: articole + evenimente filtrate pe județul filialei.
+		if (block.__component === 'blocks.chapter-feed' && chapter?.countySlug) {
+			const show = (block.show as string) ?? 'both';
+			const limit = (block.limit as number) ?? 3;
+			const wantArticles = show === 'articles' || show === 'both';
+			const wantEvents = show === 'events' || show === 'both';
+
+			const [articles, events] = await Promise.all([
+				wantArticles
+					? fetchStrapi<unknown[]>('/articles', {
+							'filters[counties][slug][$eq]': chapter.countySlug,
+							'sort[0]': 'createdAt:desc',
+							'pagination[pageSize]': String(limit),
+							'populate[cover_image]': 'true',
+							'populate[category]': 'true',
+						}, undefined, fetchFn).then((r) => r.data ?? []).catch(() => [])
+					: Promise.resolve([]),
+				wantEvents
+					? fetchStrapi<unknown[]>('/events', {
+							'filters[county][slug][$eq]': chapter.countySlug,
+							'filters[start_date][$gte]': new Date().toISOString(),
+							'sort[0]': 'start_date:asc',
+							'pagination[pageSize]': String(limit),
+							'populate[cover_image]': 'true',
+						}, undefined, fetchFn).then((r) => r.data ?? []).catch(() => [])
+					: Promise.resolve([]),
+			]);
+
+			enriched[i] = { ...block, _articles: articles, _events: events };
 		}
 	}
 

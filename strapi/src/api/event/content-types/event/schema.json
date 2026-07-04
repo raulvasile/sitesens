@@ -42,6 +42,11 @@
       "type": "string",
       "maxLength": 120
     },
+    "county": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::county.county"
+    },
     "cover_image": {
       "type": "media",
       "multiple": false,

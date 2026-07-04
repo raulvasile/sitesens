@@ -1,0 +1,93 @@
+{
+  "kind": "collectionType",
+  "collectionName": "petitions",
+  "info": {
+    "singularName": "petition",
+    "pluralName": "petitions",
+    "displayName": "Petiții",
+    "description": "Petiții publice SENS. Accesibile la /petitii/{slug}. Semnăturile se înregistrează prin formular (vezi Semnături petiție)."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "summary": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "cover_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "blocks.hero",
+        "blocks.hero-refined",
+        "blocks.hero-editorial",
+        "blocks.text-block",
+        "blocks.image-gallery",
+        "blocks.accordion",
+        "blocks.quote",
+        "blocks.video-embed",
+        "blocks.stats-counter",
+        "blocks.program-points",
+        "blocks.spacer",
+        "blocks.timeline",
+        "blocks.page-header",
+        "blocks.file-list"
+      ]
+    },
+    "signature_target": {
+      "type": "integer",
+      "min": 1,
+      "default": 1000
+    },
+    "petition_status": {
+      "type": "enumeration",
+      "enum": [
+        "open",
+        "closed"
+      ],
+      "default": "open",
+      "required": true
+    },
+    "deadline": {
+      "type": "datetime"
+    },
+    "consent_text": {
+      "type": "text",
+      "maxLength": 1000
+    },
+    "campaign": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::campaign.campaign"
+    },
+    "signatures": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::petition-signature.petition-signature",
+      "mappedBy": "petition"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

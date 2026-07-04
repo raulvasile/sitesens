@@ -16,51 +16,61 @@
       "type": "string",
       "required": true,
       "maxLength": 100,
-      "minLength": 1
+      "minLength": 1,
+      "private": true
     },
     "last_name": {
       "type": "string",
       "required": true,
       "maxLength": 100,
-      "minLength": 1
+      "minLength": 1,
+      "private": true
     },
     "email": {
       "type": "email",
       "required": true,
       "unique": true,
-      "maxLength": 254
+      "maxLength": 254,
+      "private": true
     },
     "phone": {
       "type": "string",
       "required": true,
       "maxLength": 20,
-      "regex": "^(\\+?4)?0[0-9]{9}$"
+      "regex": "^(\\+?4)?0[0-9]{9}$",
+      "private": true
     },
     "birth_date": {
       "type": "date",
-      "required": true
+      "required": true,
+      "private": true
     },
     "county": {
       "type": "string",
       "required": true,
-      "maxLength": 50
+      "maxLength": 50,
+      "private": true
     },
     "city": {
       "type": "string",
       "required": true,
-      "maxLength": 100
+      "maxLength": 100,
+      "private": true
     },
     "address": {
       "type": "text",
       "required": true,
-      "maxLength": 500
+      "maxLength": 500,
+      "private": true
     },
     "motivation": {
       "type": "text",
-      "maxLength": 1000
+      "maxLength": 1000,
+      "private": true
     },
     "interests": {
-      "type": "json"
+      "type": "json",
+      "private": true
     },
     "consent_gdpr": {
       "type": "boolean",

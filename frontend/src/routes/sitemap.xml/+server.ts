@@ -13,10 +13,14 @@ interface SlugItem {
  * Fetch-uiește articole, evenimente și pagini din Strapi.
  */
 export const GET: RequestHandler = async ({ fetch }) => {
-	const [articles, events, pages] = await Promise.all([
+	const [articles, events, pages, chapters, chapterPages, campaigns, petitions] = await Promise.all([
 		fetchSlugs('/articles', fetch),
 		fetchSlugs('/events', fetch),
 		fetchSlugs('/pages', fetch),
+		fetchSlugs('/chapters', fetch),
+		fetchChapterPageSlugs(fetch),
+		fetchSlugs('/campaigns', fetch),
+		fetchSlugs('/petitions', fetch),
 	]);
 
 	const staticRoutes = [
@@ -27,6 +31,9 @@ export const GET: RequestHandler = async ({ fetch }) => {
 		{ loc: '/doneaza', priority: '0.7', changefreq: 'monthly' },
 		{ loc: '/inscrie-te', priority: '0.7', changefreq: 'monthly' },
 		{ loc: '/comunitate', priority: '0.5', changefreq: 'weekly' },
+		{ loc: '/filiale', priority: '0.7', changefreq: 'weekly' },
+		{ loc: '/campanii', priority: '0.7', changefreq: 'weekly' },
+		{ loc: '/petitii', priority: '0.7', changefreq: 'weekly' },
 		{ loc: '/newsletter', priority: '0.5', changefreq: 'monthly' },
 		{ loc: '/politica-confidentialitate', priority: '0.3', changefreq: 'yearly' },
 	];
@@ -49,6 +56,30 @@ export const GET: RequestHandler = async ({ fetch }) => {
 			lastmod: p.updatedAt,
 			priority: '0.7',
 			changefreq: 'monthly',
+		})),
+		...chapters.map((c) => ({
+			loc: `/filiale/${c.slug}`,
+			lastmod: c.updatedAt,
+			priority: '0.6',
+			changefreq: 'weekly',
+		})),
+		...chapterPages.map((cp) => ({
+			loc: `/filiale/${cp.chapterSlug}/${cp.slug}`,
+			lastmod: cp.updatedAt,
+			priority: '0.5',
+			changefreq: 'monthly',
+		})),
+		...campaigns.map((c) => ({
+			loc: `/campanii/${c.slug}`,
+			lastmod: c.updatedAt,
+			priority: '0.6',
+			changefreq: 'weekly',
+		})),
+		...petitions.map((p) => ({
+			loc: `/petitii/${p.slug}`,
+			lastmod: p.updatedAt,
+			priority: '0.6',
+			changefreq: 'weekly',
 		})),
 	];
 
@@ -77,6 +108,52 @@ ${allRoutes
 		},
 	});
 };
+
+interface ChapterPageSlugItem {
+	slug: string;
+	chapterSlug: string;
+	updatedAt?: string;
+}
+
+/**
+ * Fetch chapter-page slugs together with their parent chapter slug, needed to
+ * build the nested URL /filiale/{chapter}/{page}.
+ */
+async function fetchChapterPageSlugs(fetchFn: typeof fetch): Promise<ChapterPageSlugItem[]> {
+	const items: ChapterPageSlugItem[] = [];
+	let page = 1;
+	let pageCount = 1;
+
+	try {
+		while (page <= pageCount) {
+			const res = await fetchStrapi<Array<{ slug: string; updatedAt?: string; chapter?: { slug?: string } }>>(
+				'/chapter-pages',
+				{
+					'fields[0]': 'slug',
+					'fields[1]': 'updatedAt',
+					'populate[chapter][fields][0]': 'slug',
+					'pagination[page]': String(page),
+					'pagination[pageSize]': '100',
+					'sort': 'updatedAt:desc',
+				},
+				undefined,
+				fetchFn
+			);
+
+			for (const row of res.data ?? []) {
+				if (row.slug && row.chapter?.slug) {
+					items.push({ slug: row.slug, chapterSlug: row.chapter.slug, updatedAt: row.updatedAt });
+				}
+			}
+			pageCount = res.meta?.pagination?.pageCount ?? 1;
+			page++;
+		}
+	} catch {
+		// Strapi unavailable — return what we have
+	}
+
+	return items;
+}
 
 /**
  * Fetch all slugs (with pagination) from a Strapi collection.

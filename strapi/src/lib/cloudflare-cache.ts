@@ -45,6 +45,9 @@ async function callPurge(body: object): Promise<void> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+      // Lifecycle-urile AȘTEAPTĂ purge-ul: fără timeout, un Cloudflare căzut
+      // ar bloca fiecare salvare din admin pe termen nelimitat.
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) {
       const text = await res.text();
@@ -110,6 +113,40 @@ export const cacheUrls = {
   page(slug?: string): string[] {
     const { site } = getEnv();
     return slug ? [`${site}/${slug}`] : [];
+  },
+
+  /** Petiție: pagina ei + indexul /petitii. */
+  petition(slug?: string): string[] {
+    const { site } = getEnv();
+    return [
+      `${site}/petitii`,
+      ...(slug ? [`${site}/petitii/${slug}`] : []),
+    ];
+  },
+
+  /** Campanie: pagina ei + indexul /campanii + homepage (featured-campaigns). */
+  campaign(slug?: string): string[] {
+    const { site } = getEnv();
+    return [
+      `${site}/`,
+      `${site}/campanii`,
+      ...(slug ? [`${site}/campanii/${slug}`] : []),
+    ];
+  },
+
+  /** Filială: landing-ul ei + indexul /filiale (care listează filialele). */
+  chapter(slug?: string): string[] {
+    const { site } = getEnv();
+    return [
+      `${site}/filiale`,
+      ...(slug ? [`${site}/filiale/${slug}`] : []),
+    ];
+  },
+
+  /** Pagină de filială: URL-ul sub-paginii. Necesită slug-ul filialei + al paginii. */
+  chapterPage(chapterSlug?: string, pageSlug?: string): string[] {
+    const { site } = getEnv();
+    return chapterSlug && pageSlug ? [`${site}/filiale/${chapterSlug}/${pageSlug}`] : [];
   },
 
   /** Single-type → URL fix. */

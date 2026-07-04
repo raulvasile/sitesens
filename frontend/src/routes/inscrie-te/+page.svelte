@@ -46,6 +46,8 @@
 	let consentStatute = $state(false);
 	let consentDataProcessing = $state(false);
 	let consentNewsletter = $state(false);
+	// Honeypot anti-spam — rămâne gol pentru oameni; boții îl completează.
+	let website = $state('');
 
 	let step1Errors = $state<Record<string, string>>({});
 	let step3Errors = $state<Record<string, string>>({});
@@ -113,16 +115,15 @@
 					consent_statute: consentStatute,
 					consent_data_processing: consentDataProcessing,
 					consent_newsletter: consentNewsletter,
+					website, // honeypot
 				}
 			});
+			// Server-ul răspunde idempotent (nu dezvăluie dacă emailul e deja înscris —
+			// ar fi un oracle de apartenență politică). Afișăm mereu succes.
 			submitted = true;
 			toasts.success(success?.title ?? 'Cererea de aderare a fost trimisă cu succes!');
 		} catch (err: any) {
-			if (err?.message?.includes('unique')) {
-				toasts.error(v('duplicate_error', 'Există deja o cerere cu acest email.'));
-			} else {
-				toasts.error(v('generic_error', 'A apărut o eroare. Te rugăm să încerci din nou.'));
-			}
+			toasts.error(v('generic_error', 'A apărut o eroare. Te rugăm să încerci din nou.'));
 		} finally {
 			loading = false;
 		}
@@ -226,6 +227,11 @@
 							<input id="phone" type="tel" bind:value={phone} placeholder={t('phone_placeholder', '07xx xxx xxx')} required />
 							{#if step1Errors.phone}<span class="form-error">{step1Errors.phone}</span>{/if}
 						</div>
+					</div>
+					<!-- Honeypot anti-spam: invizibil pentru oameni, completat de boți. -->
+					<div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+						<label for="signup-website">Website</label>
+						<input id="signup-website" type="text" bind:value={website} tabindex="-1" autocomplete="off" />
 					</div>
 					<div class="form-row form-row--single">
 						<div class="form-group" class:has-error={step1Errors.birthDate}>

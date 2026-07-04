@@ -1,0 +1,71 @@
+{
+  "kind": "collectionType",
+  "collectionName": "petition_signatures",
+  "info": {
+    "singularName": "petition-signature",
+    "pluralName": "petition-signatures",
+    "displayName": "Semnături petiție",
+    "description": "Semnături primite prin formularul de petiție. Read-only din admin (înregistrate prin POST). Datele personale NU se afișează public."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "first_name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "minLength": 1,
+      "private": true
+    },
+    "last_name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "minLength": 1,
+      "private": true
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "maxLength": 254,
+      "private": true
+    },
+    "county": {
+      "type": "string",
+      "maxLength": 50,
+      "private": true
+    },
+    "city": {
+      "type": "string",
+      "maxLength": 100,
+      "private": true
+    },
+    "comment": {
+      "type": "text",
+      "maxLength": 500,
+      "private": true
+    },
+    "consent_gdpr": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "verification_token": {
+      "type": "string",
+      "private": true,
+      "maxLength": 100
+    },
+    "petition": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::petition.petition",
+      "inversedBy": "signatures"
+    }
+  }
+}

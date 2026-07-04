@@ -66,11 +66,20 @@ export function sanitizeSvg(dirty: string): string {
 	if (!browser) {
 		return dirty
 			.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-			.replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '');
+			.replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '')
+			// <style> dintr-un SVG inline se aplică întregului document (defacement);
+			// <foreignObject> poate îngloba HTML arbitrar.
+			.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+			.replace(/<foreignObject\b[^>]*>[\s\S]*?<\/foreignObject>/gi, '');
 	}
 
 	const p = purify;
-	if (p) return p.sanitize(dirty, { USE_PROFILES: { svg: true, svgFilters: true }, ALLOW_DATA_ATTR: false });
+	if (p)
+		return p.sanitize(dirty, {
+			USE_PROFILES: { svg: true, svgFilters: true },
+			ALLOW_DATA_ATTR: false,
+			FORBID_TAGS: ['style', 'foreignObject'],
+		});
 
 	getPurify();
 	return dirty;

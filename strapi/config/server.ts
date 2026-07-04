@@ -12,6 +12,11 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Server =>
   app: {
     keys: env.array('APP_KEYS'),
   },
+  // Cron pentru job-urile de retenție date (config/cron.ts). Task-urile în sine
+  // sunt gate-uite pe RETENTION_ENABLED, deci activarea cron-ului e sigură.
+  cron: {
+    enabled: env.bool('CRON_ENABLED', true),
+  },
 });
 
 export default config;

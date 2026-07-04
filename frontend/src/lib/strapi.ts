@@ -1,20 +1,38 @@
 /**
- * STRAPI_URL — uses VITE_STRAPI_URL (inlined at build time).
- * For Docker SSR, set STRAPI_URL_INTERNAL env var at runtime (e.g. http://strapi:1337).
- * The internal URL is only used server-side; client always uses the public URL.
+ * STRAPI_URL — uses VITE_STRAPI_URL (inlined at build time) for the CLIENT
+ * (needed by getStrapiMediaUrl to render images). On the SERVER, prefer the
+ * private runtime vars so the API base can differ from the media host.
+ *
+ * NOTE: `strapi.ts` is imported by client components (getStrapiMediaUrl,
+ * mutateStrapi), so we CANNOT use `$env/dynamic/private` here (would break the
+ * client build). We read `process.env.*` guarded by `typeof window`, exactly
+ * like the existing STRAPI_URL_INTERNAL pattern — the branch is dead code on
+ * the client, so no secret is inlined.
  */
 const PUBLIC_STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
 
 function getStrapiBaseUrl(): string {
 	if (typeof window === 'undefined') {
-		// Server-side: prefer internal URL for Docker networking
+		// Server-side: internal Docker URL → private STRAPI_URL → public fallback.
 		// @ts-ignore — process.env is available at runtime in Node
-		return process.env.STRAPI_URL_INTERNAL || PUBLIC_STRAPI_URL;
+		return process.env.STRAPI_URL_INTERNAL || process.env.STRAPI_URL || PUBLIC_STRAPI_URL;
 	}
 	return PUBLIC_STRAPI_URL;
 }
 
 const STRAPI_URL = getStrapiBaseUrl();
+
+/**
+ * Read-only API token, SERVER-ONLY. When set, `fetchStrapi` attaches it to
+ * server-side reads so Strapi's public `find`/`findOne` permissions can be
+ * closed (the seed removes them when this token is present). Never exposed to
+ * the client — the branch below is unreachable in the browser bundle.
+ */
+function getServerApiToken(): string | undefined {
+	if (typeof window !== 'undefined') return undefined;
+	// @ts-ignore — process.env is available at runtime in Node
+	return process.env.STRAPI_API_TOKEN || undefined;
+}
 
 export interface StrapiResponse<T> {
 	data: T;
@@ -57,8 +75,11 @@ export async function fetchStrapi<T = unknown>(
 		'Content-Type': 'application/json'
 	};
 
-	if (token) {
-		headers['Authorization'] = `Bearer ${token}`;
+	// Prefer an explicit token (user JWT); otherwise fall back to the server-only
+	// read-only API token so public read permissions can be closed in Strapi.
+	const authToken = token ?? getServerApiToken();
+	if (authToken) {
+		headers['Authorization'] = `Bearer ${authToken}`;
 	}
 
 	const res = await fetchFn(url.toString(), { headers });
@@ -110,31 +131,9 @@ export async function mutateStrapi<T = unknown>(
 	return res.json();
 }
 
-const PREVIEW_SECRET = import.meta.env.VITE_PREVIEW_SECRET;
-
-if (!PREVIEW_SECRET && typeof window === 'undefined') {
-	console.warn('[SENS] VITE_PREVIEW_SECRET is not set — preview mode is disabled in production.');
-}
-
-/**
- * Verifică dacă URL-ul curent este în modul preview.
- * Returnează parametrii Strapi necesari pentru draft content.
- */
-export function getPreviewStatus(url: URL): { isPreview: boolean; params: Record<string, string> } {
-	if (!PREVIEW_SECRET) return { isPreview: false, params: {} };
-
-	const secret = url.searchParams.get('secret');
-	const status = url.searchParams.get('status');
-
-	if (secret === PREVIEW_SECRET && status === 'draft') {
-		return {
-			isPreview: true,
-			params: { status: 'draft' }
-		};
-	}
-
-	return { isPreview: false, params: {} };
-}
+// NOTĂ: getPreviewStatus + PREVIEW_SECRET au fost mutate în
+// `$lib/server/preview.ts` (server-only). Stăteau aici cu VITE_PREVIEW_SECRET,
+// care se inlinează în bundle-ul de CLIENT → secretul era citibil din sursa JS.
 
 /**
  * Construiește URL complet pentru media din Strapi.

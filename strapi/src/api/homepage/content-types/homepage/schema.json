@@ -42,7 +42,8 @@
         "blocks.romania-map",
         "blocks.calendar",
         "blocks.calendar-custom",
-        "blocks.file-list"
+        "blocks.file-list",
+        "blocks.featured-campaigns"
       ]
     },
     "seo": {
