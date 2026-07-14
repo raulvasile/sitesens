@@ -63,6 +63,11 @@ Click pe rând.
 
 Statusul se actualizează. **Nu există Publish** — modificarea e live în CMS imediat.
 
+> **Notă (retenție GDPR):** cererile marcate **`rejected`** pot fi **șterse automat** după o
+> perioadă (configurabilă), ca să nu păstrăm date personale mai mult decât e necesar. Dacă vrei
+> să păstrezi urma unei respingeri, notează motivul în altă parte înainte — după ștergere, cererea
+> dispare complet.
+
 ### 6. Contact extern (manual)
 
 ⚠️ **CMS-ul NU trimite emailuri automat** către aplicant. Trebuie să **contactezi manual** persoana:

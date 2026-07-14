@@ -20,7 +20,10 @@ Pentru fiecare abonat:
 | **Consent date** | Data consimțământului (timestamp automat) |
 | **Source** | De unde a venit (ex: `/newsletter`, `/contact`, `homepage`) |
 | **Status** | pending / confirmed / unsubscribed |
-| **IP address** | IP-ul de la care s-a abonat (pentru GDPR) |
+
+> **Notă:** abonații rămași în **`pending`** (care nu confirmă double opt-in) pot fi
+> **șterși automat** după o perioadă (curățare de retenție GDPR), dacă e activată în
+> configurare. Nu e o eroare — sunt înscrieri neconfirmate, fără bază legală de păstrare.
 
 ## Status-uri explicate
 
@@ -101,7 +104,7 @@ Periodic (ex: lunar):
 ## ⚠️ Reguli GDPR cheie
 
 - Pentru fiecare abonat trebuie **consimțământ explicit**, **clear**, **informat**
-- Trebuie să le poți **demonstra** consimțământul (de aceea avem `consent_date` și `IP address`)
+- Trebuie să le poți **demonstra** consimțământul (de aceea avem `consent_date` — timestamp la înscriere)
 - Au dreptul să-și **vadă** datele și să **fie șterși** la cerere
 - Datele se păstrează **doar cât timp e necesar** scopului
 

@@ -1,0 +1,31 @@
+{
+  "data": {
+    "id": 2,
+    "documentId": "vbtbkyomqw1f0trp8xvq8r9t",
+    "title": "Contact",
+    "subtitle": "Ai o întrebare, o propunere sau vrei să te implici? Scrie-ne!",
+    "email": "contact@cusens.eu",
+    "address": "Str. Exemplu nr. 42, Sector 1, București, 010101",
+    "schedule": "Luni – Vineri: 09:00 – 18:00",
+    "newsletter_title": "Nu rata nicio veste",
+    "newsletter_description": "Abonează-te la newsletter-ul SENS.",
+    "header_eyebrow": null,
+    "form_kicker": "Mesaj direct",
+    "form_title": "Trimite-ne un mesaj",
+    "info_heading": "Date de contact",
+    "social_heading": "Urmărește-ne",
+    "createdAt": "2026-05-01T19:39:34.820Z",
+    "updatedAt": "2026-05-01T19:39:34.820Z",
+    "publishedAt": "2026-05-01T19:39:34.892Z",
+    "seo": {
+      "id": 4,
+      "meta_title": "Contact — Partidul SENS",
+      "meta_description": "Contactează Partidul SENS. Adresă, email, program de lucru.",
+      "canonical_url": null,
+      "no_index": false
+    },
+    "form": null,
+    "validation": null
+  },
+  "meta": {}
+}

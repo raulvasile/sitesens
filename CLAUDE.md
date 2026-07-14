@@ -72,6 +72,15 @@ client-side: `/cont/*`, `/auth/*` (JWT user, date personale).
 `strapi.ts` comută server/client: pe server folosește `STRAPI_URL_INTERNAL` (Docker),
 în browser `VITE_STRAPI_URL` (public). Media URL rămâne mereu public.
 
+### Fallback content (când Strapi e jos)
+Shell-ul (navigație, footer, temă) + paginile fixe (single-types) au **conținut de rezervă**
+committat în `src/lib/server/fallback/data/*.json` (server-only). Când Strapi e inaccesibil,
+`fetchContent()` din `$lib/server/content` întoarce fallback-ul în loc de pagină goală / 503.
+Deja conectate: `+layout.server.ts` (shell) + homepage + contact (`/contact-page`). Pentru o pagină fixă nouă: folosește
+`fetchContent('/x-page', …)` în loc de `fetchStrapi`, și completează `fallback/data/x-page.json`
+cu răspunsul REAL al endpoint-ului (vezi `fallback/README.md`). Colecțiile (știri, evenimente)
+NU au fallback — degradează grațios (listă goală). Scaffold gol (`data: null`) = fallback inactiv.
+
 ### ⚠️ Gotcha 0 — NICIODATĂ secrete în variabile `VITE_*`
 `VITE_*` se inlinează în bundle-ul de CLIENT la build — oricine le citește din sursa JS.
 (Audit 2026-06-10: `VITE_PREVIEW_SECRET` era expus așa.) Secretele se citesc DOAR prin
@@ -92,7 +101,16 @@ Seed-ul `setupPublicPermissions` revocă `find`/`findOne` public când tokenul e
 
 - **Content-types**: `src/api/<name>/content-types/<name>/schema.json` + `controllers/` + `routes/` + `services/`.
 - **Componente**: `src/components/<category>/<name>.json` (ex. `blocks/`, `shared/`, `form/`).
-- **Seed**: `src/index.ts` (bootstrap) — populează date demo la prima rulare.
+- **Bootstrap & seed**: `src/index.ts` e DOAR orchestrator subțire. Logica reală e în `src/seed/`:
+  - `seed/permissions.ts` — permisiuni publice + PII lockdown + hardening auth (securitate).
+  - `seed/admin-labels.ts` — etichete RO pentru câmpurile din admin (UX editori).
+  - `seed/index.ts` → `taxonomies/` (județe, interese = referință; categorii, tag-uri = editorial),
+    `org/` (echipă, filiale), `base/` (temă, navigație, footer, homepage, single-types).
+  - **Strategie conținut (hibrid, 2026-07-04):** baza + structura în seed (re-rulabil pe clean
+    deploy, idempotent), editorialul (articole/evenimente) din CMS. Scaffold-urile goale au
+    `TODO(content)` și nu creează nimic până le completezi. Helper-e idempotente în `seed/helpers.ts`
+    (`seedSingle`, `seedCollection`, `slugifyRo`).
+  - ⚠️ `interest-area` din seed e cuplat cu `VALID_INTERESTS` din controllerul membership — sincron.
 - **i18n**: displayName-urile sunt în română.
 
 ### ⚠️ Gotcha 1 — Populate pe Dynamic Zone (Strapi v5)
@@ -178,7 +196,8 @@ adaugă-i lifecycle + un URL mapper în `cacheUrls`.**
 4. Dacă are pagină publică: `lifecycles.ts` cu purge + URL mapper în `cloudflare-cache.ts`.
 5. Permisiuni: public `find`/`findOne` (sau token read-only — vezi Epic 3).
 6. **Frontend**: tipuri + `load` server (`+page.server.ts`) + componente.
-7. Seed opțional în `strapi/src/index.ts`.
+7. Seed opțional: adaugă un modul în `strapi/src/seed/` (base/taxonomies/org) + apel în
+   orchestratorul relevant. Dacă e pagină fixă cu fallback: `fetchContent` + `fallback/data/`.
 8. `npm run check`.
 
 ---

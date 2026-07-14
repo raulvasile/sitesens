@@ -51,11 +51,14 @@ Conține text **legal obligatoriu** sub GDPR. Modificarea greșită = **risc leg
 - Ștergi paragrafe
 - Schimbi adrese de contact (acelea sunt în pagina Contact)
 
-## 🚫 5. Bootstrap migrations / Seed data
+## 🚫 5. Bootstrap / Seed data
 
-Nu e accesibil prin UI, dar dacă vezi referințe la `migrate*` sau `topUp*` sau `seed*` în URL-uri sau cod — nu modifica.
+Nu e accesibil prin UI, dar dacă vezi referințe la `seed*` sau la conținutul de bază
+(navigație, footer, temă) generat automat la pornirea CMS-ului — nu modifica din afara admin-ului.
 
-**De ce:** rulează automat la pornirea CMS-ului; modificarea poate corupe DB.
+**De ce:** seed-ul rulează automat la pornirea CMS-ului (creează conținutul de bază dacă lipsește);
+modificarea lui din cod poate corupe DB. Editarea normală a conținutului **din admin** e OK — seed-ul
+nu suprascrie ce ai editat tu.
 
 ## 🚫 6. Câmpurile interne ale intrărilor
 

@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { fetchStrapi } from '$lib/strapi';
+import { getFallback } from '$lib/server/fallback';
 import { getPreviewStatus } from '$lib/server/preview';
 import { enrichDynamicZone } from '$lib/enrichDynamicZone';
 
@@ -70,8 +71,18 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 
 		return { homepage };
 	} catch (err) {
-		// Surface the failure so the global +error.svelte page renders, instead
-		// of a blank homepage that silently hides Strapi being down.
+		// Strapi jos → servește homepage-ul de rezervă dacă e completat
+		// (`$lib/server/fallback`), altfel arată pagina de eroare.
+		const fb = getFallback<HomepageData>('/homepage');
+		if (fb?.data) {
+			console.warn('[fallback] /homepage — servesc conținut de rezervă (Strapi indisponibil).');
+			const homepage = fb.data;
+			if (homepage?.content) {
+				homepage.content = await enrichDynamicZone(homepage.content, fetch);
+			}
+			return { homepage };
+		}
+
 		const status = (err as { status?: number })?.status;
 		const message = (err as { message?: string })?.message ?? 'unknown';
 		console.error(`[/] Strapi fetch failed (${status ?? '?'}): ${message}`);

@@ -32,6 +32,22 @@ Epicele sunt ordonate pe dependențe. Recomandarea de ordine:
 > elemente moarte). Rămase ca recomandări: CSP nonce (la Epic 6), `npm audit fix`, migrare
 > `/inscrie-te` pe server actions.
 
+> **🔍 Audit + hardening (2 iul 2026)** — vezi `docs/audit-2026-07-02.md` + `docs/pii-inventory.md`
+> + `SECURITY.md`. Reparat leak-ul de PII prin `populate` (semnături petiție citibile anonim →
+> flag-uri `private` pe toate tipurile PII + PII lockdown în seed), rate-limit pe `CF-Connecting-IP`,
+> CORS fail-closed, whitelist+honeypot+idempotent pe formulare, HSTS/COOP/CORP, înregistrare
+> publică dezactivată, job cron de retenție, `npm audit fix` (FE 17→5, Strapi 70→56). CI:
+> `.github/` (audit + gitleaks + check) + Dependabot. Rămas: upgrade Strapi 5.50, CSP nonce.
+
+> **🧹 Curățare conținut + restructurare seed (4 iul 2026)** — seed-ul demo (`index.ts`, 2694 linii)
+> a fost curățat și mutat în **`strapi/src/seed/`** (permissions / admin-labels / taxonomies / org /
+> base). `index.ts` = orchestrator subțire. Strategie conținut **hibrid**: bază+structură în seed
+> (idempotent, re-rulabil pe clean deploy), editorial (articole/evenimente) din CMS. Referințele mai
+> vechi din acest document la funcții `topUp*`/`migrate*`/`setupPublicPermissions` din
+> `strapi/src/index.ts` reflectă structura de-atunci — acum sunt în `src/seed/`. Nou: **fallback
+> content** (`frontend/src/lib/server/fallback/`) pentru shell + pagini fixe când Strapi e jos
+> (conectat: layout + homepage). Vezi CLAUDE.md (secțiunile seed + fallback).
+
 > Numerotarea epicelor (#0–8) urmează lista originală de todo-uri. Coloana „Ordine"
 > e succesiunea reală de execuție. Epicul 1 (filiale) e cel mai detaliat fiindcă a
 > fost specificat complet; restul au task-uri + decizii deschise marcate.

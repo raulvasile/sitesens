@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import { fetchStrapi } from '$lib/strapi';
+import { fetchContent } from '$lib/server/content';
 import type { NavigationData, FooterData, SiteThemeData } from './+layout';
 import { themeToCssVars } from '$lib/theme';
 
@@ -14,8 +14,10 @@ import { themeToCssVars } from '$lib/theme';
  *   that contains this data.
  */
 export const load: LayoutServerLoad = async ({ fetch, setHeaders }) => {
+	// `fetchContent` = fetchStrapi + fallback la conținut committat când Strapi e jos
+	// (shell-ul — nav/footer/temă — apare pe fiecare pagină, deci fallback-ul lui e critic).
 	const [navResult, footerResult, themeResult] = await Promise.all([
-		fetchStrapi<NavigationData>(
+		fetchContent<NavigationData>(
 			'/navigation',
 			{
 				'populate[main_menu][populate]': 'children',
@@ -23,22 +25,20 @@ export const load: LayoutServerLoad = async ({ fetch, setHeaders }) => {
 				'populate[logo]': 'true',
 				'populate[mobile_extra_links]': 'true',
 			},
-			undefined,
 			fetch
-		).catch(() => null),
+		),
 
-		fetchStrapi<FooterData>(
+		fetchContent<FooterData>(
 			'/footer',
 			{
 				'populate[logo]': 'true',
 				'populate[footer_links]': 'true',
 				'populate[social_links]': 'true',
 			},
-			undefined,
 			fetch
-		).catch(() => null),
+		),
 
-		fetchStrapi<SiteThemeData>(
+		fetchContent<SiteThemeData>(
 			'/site-theme',
 			{
 				'populate[brand]': 'true',
@@ -46,15 +46,8 @@ export const load: LayoutServerLoad = async ({ fetch, setHeaders }) => {
 				'populate[accents]': 'true',
 				'populate[typography]': 'true',
 			},
-			undefined,
 			fetch
-		).catch((err) => {
-			// In dev, surface why the theme isn't loading (404, perms, network).
-			if (import.meta.env.DEV) {
-				console.warn('[theme] /site-theme fetch failed:', err?.message ?? err);
-			}
-			return null;
-		}),
+		),
 	]);
 
 	const themeCss = themeToCssVars(themeResult?.data ?? null);

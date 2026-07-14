@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { fetchStrapi } from '$lib/strapi';
+import { fetchContent } from '$lib/server/content';
 import { getPreviewStatus } from '$lib/server/preview';
 
 export interface ContactFormConfig {
@@ -46,16 +46,17 @@ export interface ContactPageData {
 export const load: PageServerLoad = async ({ url, fetch }) => {
 	const { params: previewParams } = getPreviewStatus(url);
 
-	try {
-		const res = await fetchStrapi<ContactPageData>('/contact-page', {
-			'populate[seo]': 'true',
-			'populate[form]': 'true',
-			'populate[validation]': 'true',
-			...previewParams,
-		}, undefined, fetch);
-		return { contactPage: res.data };
-	} catch (err) {
-		const status = (err as { status?: number })?.status;
-		throw error(status && status >= 500 ? 503 : 500, 'Nu putem încărca pagina de Contact momentan.');
+	// Strapi jos → servește snapshot-ul din `$lib/server/fallback/data/contact-page.json`.
+	const res = await fetchContent<ContactPageData>('/contact-page', {
+		'populate[seo]': 'true',
+		'populate[form]': 'true',
+		'populate[validation]': 'true',
+		...previewParams,
+	}, fetch);
+
+	if (!res?.data) {
+		throw error(503, 'Nu putem încărca pagina de Contact momentan.');
 	}
+
+	return { contactPage: res.data };
 };

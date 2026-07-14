@@ -81,7 +81,7 @@ export const load: LayoutLoad = async ({ data }) => {
 			{ label: 'Contact', url: '/contact', order: 4, open_in_new_tab: false, children: [] },
 		],
 		secondary_menu: [
-			{ label: 'Înscrie-te', url: '/inscrie-te', order: 1, open_in_new_tab: false, children: [] },
+			{ label: 'Înscrie-te', url: 'https://www.cusens.eu/implica-te', order: 1, open_in_new_tab: false, children: [] },
 		],
 	};
 
@@ -102,7 +102,7 @@ export const load: LayoutLoad = async ({ data }) => {
 			{ platform: 'twitter', label: 'X / Twitter', url: 'https://twitter.com/cusens' },
 			{ platform: 'tiktok', label: 'TikTok', url: 'https://tiktok.com/@cusens' },
 		],
-		legal_text: 'Partidul SENS · Mandatar financiar CMF nr. 11240065',
+		legal_text: 'Partidul SENS',
 		privacy_link_text: 'Politica de confidențialitate',
 		privacy_link_url: '/politica-confidentialitate',
 	};

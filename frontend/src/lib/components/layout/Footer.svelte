@@ -23,7 +23,7 @@
 	const euText = $derived(footer?.eu_text ?? '');
 	const footerLinks = $derived(footer?.footer_links ?? []);
 	const socialLinks = $derived(footer?.social_links ?? []);
-	const legalText = $derived(footer?.legal_text ?? 'Partidul SENS · Mandatar financiar CMF nr. 11240065');
+	const legalText = $derived(footer?.legal_text ?? 'Partidul SENS');
 	const privacyText = $derived(footer?.privacy_link_text ?? 'Politica de confidențialitate');
 	const privacyUrl = $derived(footer?.privacy_link_url ?? '/politica-confidentialitate');
 </script>
